@@ -1,0 +1,312 @@
+# Copyright (C) 2012 User Meta Manager
+# This file is distributed under the same license as the User Meta Manager package.
+msgid ""
+msgstr ""
+"Project-Id-Version: User Meta Manager 1.4.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/user-meta-manager\n"
+"POT-Creation-Date: 2012-06-30 16:29:34+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: user-meta-manager.php:44
+msgid "user"
+msgstr ""
+
+#: user-meta-manager.php:45
+msgid "users"
+msgstr ""
+
+#: user-meta-manager.php:71
+msgid "Edit User Meta"
+msgstr ""
+
+#: user-meta-manager.php:71
+msgid "Edit Meta Data"
+msgstr ""
+
+#: user-meta-manager.php:72
+msgid "Add User Meta"
+msgstr ""
+
+#: user-meta-manager.php:72
+msgid "Add Meta Data"
+msgstr ""
+
+#: user-meta-manager.php:73
+msgid "Delete User Meta"
+msgstr ""
+
+#: user-meta-manager.php:73
+msgid "Delete Meta Data"
+msgstr ""
+
+#: user-meta-manager.php:83 user-meta-manager.php:172
+msgid "ID"
+msgstr ""
+
+#: user-meta-manager.php:84 user-meta-manager.php:172
+msgid "User Login"
+msgstr ""
+
+#: user-meta-manager.php:85 user-meta-manager.php:172
+msgid "Nice Name"
+msgstr ""
+
+#: user-meta-manager.php:86 user-meta-manager.php:172
+msgid "Display Name"
+msgstr ""
+
+#: user-meta-manager.php:87 user-meta-manager.php:172
+msgid "Date Registered"
+msgstr ""
+
+#: user-meta-manager.php:112 user-meta-manager.php:119
+#: user-meta-manager.php:153
+msgid "Close"
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: user-meta-manager.php:150
+msgid "User Meta Manager"
+msgstr ""
+
+#: user-meta-manager.php:151
+msgid "Manage User Meta Data"
+msgstr ""
+
+#: user-meta-manager.php:154
+msgid ""
+"What is <em>User Meta</em>? <em>User Meta</em> is user-specific data which "
+"is stored in the <em>wp_usermeta</em> database table. This data is stored by "
+"WordPress and various and sundry plugins, and can consist of anything from "
+"profile information to membership levels."
+msgstr ""
+
+#: user-meta-manager.php:155
+msgid ""
+"This plugin gives you the tools to manage the data which is stored for each "
+"user. Not only can you manage existing meta data, but you can also create "
+"new custom meta data for each user or for all users."
+msgstr ""
+
+#: user-meta-manager.php:156
+msgid "Follow the steps below to manage user meta data."
+msgstr ""
+
+#: user-meta-manager.php:158
+msgid "Always backup your data before making changes to your website."
+msgstr ""
+
+#: user-meta-manager.php:159
+msgid ""
+"Locate from the list which User you want to work with and place your mouse "
+"on that item. Action links will appear as your mouse moves over each user."
+msgstr ""
+
+#: user-meta-manager.php:161
+msgid ""
+"<strong>Edit Meta Data:</strong> Edit existing meta data for each member."
+msgstr ""
+
+#: user-meta-manager.php:162
+msgid ""
+"<strong>Add Meta Data:</strong> Add new, custom meta data for each user, or "
+"for <em>All Users</em>. If the meta data is added to <em>All Users</em>, new "
+"registrations will automatically receive the meta key and default value."
+msgstr ""
+
+#: user-meta-manager.php:163
+msgid ""
+"<strong>Delete Meta Data:</strong> Delete individual meta keys for a single "
+"user or for <em>All Users</em>. You can select which meta data to delete "
+"from the drop menu."
+msgstr ""
+
+#: user-meta-manager.php:166
+msgid ""
+"<strong>Shorttags:</strong><p>Shorttags can be inserted into Posts or Pages "
+"to display user meta data or control access to content.</p><strong>Display "
+"data for a particular user:</strong> <br /><code>[usermeta key=\"meta key\" "
+"user=\"user id\"]</code> <br /><br /><strong>Display data for the current "
+"user:</strong> <br /><code>[usermeta key=\"meta key\"]</code> <br /><br /"
+"><strong>Restrict access based on meta key and value:</strong> <br /><code>"
+"[useraccess key=\"meta key\" value=\"meta value\" message=\"You do not have "
+"permission to view this content.\"]Restricted content.[/useraccess]</code> "
+"<br />Allowed users will have a matching meta value. <br /><br /"
+"><strong>Restrict access based on user ID:</strong> <br /><code>[useraccess "
+"users=\"1 22 301\" message=\"You do not have permission to view this content."
+"\"]Restricted content.[/useraccess]</code> <br />Allowed user IDs are listed "
+"in the <em>users</em> attribute."
+msgstr ""
+
+#: user-meta-manager.php:171
+msgid "Items Per Page"
+msgstr ""
+
+#: user-meta-manager.php:171
+msgid "Go"
+msgstr ""
+
+#: user-meta-manager.php:183
+msgid "Search"
+msgstr ""
+
+#: user-meta-manager.php:227 user-meta-manager.php:253
+#: user-meta-manager.php:306 user-meta-manager.php:336
+msgid "Key"
+msgstr ""
+
+#: user-meta-manager.php:228 user-meta-manager.php:307
+msgid "Value"
+msgstr ""
+
+#: user-meta-manager.php:237 user-meta-manager.php:264
+#: user-meta-manager.php:290 user-meta-manager.php:320
+#: user-meta-manager.php:344 user-meta-manager.php:367
+msgid "Wait..."
+msgstr ""
+
+#: user-meta-manager.php:237 user-meta-manager.php:264
+#: user-meta-manager.php:320 user-meta-manager.php:344
+msgid "Update"
+msgstr ""
+
+#: user-meta-manager.php:241 user-meta-manager.php:268
+#: user-meta-manager.php:294 user-meta-manager.php:324
+#: user-meta-manager.php:348 user-meta-manager.php:371
+msgid "FYI"
+msgstr ""
+
+#: user-meta-manager.php:241
+msgid ""
+"Be careful when editing items. Editing an item here will only edit the item "
+"for the selected user and not for all users. Not all users share the same "
+"meta keys.<br /><a href=\"admin-ajax.php?action=editcustommeta&amp;"
+"width=600&amp;height=500&amp;u=1\" title=\"Edit Custom Meta\" class="
+"\"thickbox\">Edit Custom Meta Data For All Users</a>"
+msgstr ""
+
+#: user-meta-manager.php:254 user-meta-manager.php:337
+msgid "Default Value"
+msgstr ""
+
+#: user-meta-manager.php:257 user-meta-manager.php:278
+#: user-meta-manager.php:340 user-meta-manager.php:357
+msgid "Meta Key"
+msgstr ""
+
+#: user-meta-manager.php:257 user-meta-manager.php:340
+msgid "Meta Default Value"
+msgstr ""
+
+#: user-meta-manager.php:258 user-meta-manager.php:285
+msgid "All Users"
+msgstr ""
+
+#: user-meta-manager.php:259 user-meta-manager.php:286
+msgid "No"
+msgstr ""
+
+#: user-meta-manager.php:260 user-meta-manager.php:287
+msgid "Yes"
+msgstr ""
+
+#: user-meta-manager.php:268
+msgid ""
+"Insert a meta key and default value and press <em>Update</em>. Select "
+"<em>All Users</em> to add the meta key and default value to all users. New "
+"registrations will receive the meta key and default value."
+msgstr ""
+
+#: user-meta-manager.php:279 user-meta-manager.php:358
+msgid "Select A Meta Key"
+msgstr ""
+
+#: user-meta-manager.php:290 user-meta-manager.php:367
+msgid "Delete"
+msgstr ""
+
+#: user-meta-manager.php:294
+msgid ""
+"Be careful when selecting items to delete. This cannot be undone. Select "
+"<em>All Users</em> to delete the selected item from all users."
+msgstr ""
+
+#: user-meta-manager.php:312
+msgid "No custom meta to display."
+msgstr ""
+
+#: user-meta-manager.php:324
+msgid ""
+"Editing custom meta data here will edit the value for all existing users. "
+"The value you set will become the default value for all users. New "
+"registrations will receive the custom meta key and default value."
+msgstr ""
+
+#: user-meta-manager.php:348
+msgid ""
+"Adding custom meta data will add the meta key and value to all existing "
+"users. The value you set will become the default value for all users. New "
+"registrations will receive the custom meta key and default value."
+msgstr ""
+
+#: user-meta-manager.php:371
+msgid ""
+"Deleting custom meta data here will delete the meta key and value for all "
+"existing users. New registrations will no longer receive the custom meta key "
+"and default value."
+msgstr ""
+
+#: user-meta-manager.php:392
+msgid "Meta data successfully added."
+msgstr ""
+
+#: user-meta-manager.php:418
+msgid "Meta data successfully updated."
+msgstr ""
+
+#: user-meta-manager.php:437
+msgid "Meta data successfully deleted."
+msgstr ""
+
+#: user-meta-manager.php:446
+msgid "You do not have the appropriate permission to view this content."
+msgstr ""
+
+#: user-meta-manager.php:488
+msgid "You do not have sufficient permissions to access this content."
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
+#. Plugin URI of the plugin/theme
+#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
+#. Author URI of the plugin/theme
+msgid "http://websitedev.biz"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"User Meta Manager allows administrators to add, edit, or delete user meta "
+"data. User   Meta Manager also provides a shorttag for inserting user meta "
+"data into posts or pages. <strong>To display data for a particular user:</"
+"strong> <code>[usermeta key=\"meta key\" user=\"user id\"]</code> <strong>To "
+"display data for the current user:</strong> <code>[usermeta key=\"meta key\"]"
+"</code> An additional shorttag is available for restricting user access "
+"based on a meta key and value or user ID. <strong>To restrict access based "
+"on meta key and value:</strong> <code>[useraccess key=\"meta key\" value="
+"\"meta value\" message=\"You do not have permission to view this content.\"]"
+"Restricted content.[/useraccess]</code> Allowed users will have a matching "
+"meta value. <strong>To restrict access based on user ID:</strong> <code>"
+"[useraccess users=\"1 22 301\" message=\"You do not have permission to view "
+"this content.\"]Restricted content.[/useraccess]</code> Allowed user IDs are "
+"listed in the users attribute."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Jason Lau"
+msgstr ""

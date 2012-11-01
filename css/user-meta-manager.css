@@ -1,0 +1,89 @@
+#umm-left-panel{
+    position: relative;
+    margin: 0px 0px 0px 0px !important;
+    border: 0px solid red;
+}
+
+.umm-error-field{
+    border: 1px solid red;
+    background-color: #FFFF99;
+}
+
+.umm-close-icon, .umm-close-info-icon{
+    float: right;
+    margin: 5px 0px;
+}
+
+.umm-info{
+    background: #ECECEC;
+    border: 1px solid #CCC;
+    padding: 0 10px;
+    margin: 5px 0px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.umm-hidden{
+    display: none;
+}
+
+#umm-left-panel{
+    z-index: 1;
+    width:100%;
+}
+
+#umm-form, #umm-list-table-form{
+    position: relative;
+    margin: 0px 0px 0px 0px !important;
+}
+
+#umm-form{
+    z-index: 2;
+}
+
+#umm-list-table-form{
+    z-index: 1;
+}
+
+.wp-list-table{
+    width:100%;
+}
+
+.column-ID{
+    width:100px;
+    min-width: 100px !important;
+}
+
+.wrap h3{
+    margin: 20px 0px 0px 0px !important; 
+}
+
+div.actions{
+    margin: -10px 0px 0px 0px !important; 
+}
+
+div#umm-search{
+    float: right;
+}
+
+label{
+    font-weight: bold;
+}
+
+.umm_update_user_meta-result{
+    background-color: lightYellow;
+    border: 1px solid #E6DB55;
+    padding: 4px 4px 4px 4px;
+    margin: 10px 0px 10px 0px !important;
+}
+
+.umm-slogan{
+    padding: 0px 0px 0px 46px;
+    margin: -5px 0px 0px 0px;
+    font-style: italic;
+}
+
+.umm-top-links{
+    padding: 10px 0px 0px 0px;
+}
