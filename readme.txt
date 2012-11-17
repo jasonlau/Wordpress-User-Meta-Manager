@@ -2,14 +2,15 @@
 
 Contributors: Jason Lau
 Donate link: http://jasonlau.biz
-Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz
+Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.0
+Stable tag: 2.0.0 beta-dev 1.1
 Tested up to: 3.4.2
 
 == Description ==
 
-<h2>THIS IS THE BETA-DEV VERSION OF THIS PLUGIN. BUGS ARE POSSIBLE!!</h2>
+THIS IS THE BETA-DEV VERSION OF THIS PLUGIN; BUGS ARE POSSIBLE AND SUPPORT IS LIMITED.
+
 <p>User Meta Manager allows administrators to add, edit, or delete user meta data.</p> 
 <p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content.</p>
 <p><strong>To display data for a particular user:</strong><br /><pre>[usermeta key="meta key" user="user id"]</pre></p>
