@@ -2,18 +2,19 @@
 
 Contributors: Jason Lau
 Donate link: http://jasonlau.biz
-Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, shorttag, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz
+Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz
 Requires at least: 3.3.1 
-Stable tag: 1.5.7
+Stable tag: 2.0.0
 Tested up to: 3.4.2
 
 == Description ==
 
+<h2>THIS IS THE BETA-DEV VERSION OF THIS PLUGIN. BUGS ARE POSSIBLE!!</h2>
 <p>User Meta Manager allows administrators to add, edit, or delete user meta data.</p> 
-<p>User Meta Manager also provides a shorttag for inserting user meta data into posts or pages.</p>
+<p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content.</p>
 <p><strong>To display data for a particular user:</strong><br /><pre>[usermeta key="meta key" user="user id"]</pre></p>
 <p><strong>To display data for the current user:</strong><br /><pre>[usermeta key="meta key"]</pre></p>
-<p>An additional shorttag is available for restricting user access based on a meta key and value or user ID.</p>
+<p>An additional short code is available for restricting user access based on a meta key and value or user ID.</p>
 <p><strong>To restrict access based on meta key and value:</strong><br /><pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
 Allowed users will have a matching meta value.</p>
 <p><strong>To restrict access based on multiple meta keys and values:</strong><br /><pre>[useraccess json='{"access_level":"gold","sub_level":"silver"}' message="You do not have permission to view this content."]Restricted content goes here.[/useraccess]</pre>
@@ -75,10 +76,10 @@ Minor change.
 Minor code changes.
 
 = 1.5.3 =
-Added a new shorttag attribute, which allows you to restrict content based upon multiple meta keys and values.
+Added a new short code attribute, which allows you to restrict content based upon multiple meta keys and values.
 
 = 1.5.4 =
-Made a slight change to the new json shorttag attribute.
+Made a slight change to the new json short code attribute.
 
 = 1.5.5 =
 This update adds features which allow you to edit which columns are displayed in the results table. Look for the new Edit Columns link.
@@ -119,10 +120,10 @@ Minor change.
 Minor code changes.
 
 = 1.5.3 =
-Added a new shorttag attribute, which allows you to restrict content based upon multiple meta keys and values.
+Added a new short code attribute, which allows you to restrict content based upon multiple meta keys and values.
 
 = 1.5.4 =
-Made a slight change to the new json shorttag attribute.
+Made a slight change to the new json short code attribute.
 
 = 1.5.5 =
 This update adds features which allow you to edit which columns are displayed in the results table. Look for the new Edit Columns link.

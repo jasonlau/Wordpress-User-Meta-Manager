@@ -1,66 +1,86 @@
-#umm-left-panel{
+.umm-wrapper{
     position: relative;
-    margin: 0px 0px 0px 0px !important;
-    border: 0px solid red;
+    margin: 10px 20px 10px 0px;
+    padding: 20px;
+    border: 1px solid #808080;  
+    box-shadow: 5px 5px 5px #DFDFDF;
+}
+
+.umm-slogan{
+    padding: 0px 0px 0px 46px;
+    margin: -5px 0px 0px 0px;
+    font-style: italic;
+}
+
+.umm-nav{
+    padding: 5px 20px;
+    margin: 10px 0px 5px 0px;
+    background-color: #F5F5F5;
+}
+
+.umm-message{
+    background-color: #FFFFBB;
+    border: 1px solid #E6DB55;
+}
+
+.umm-warning{
+    background-color: #FFDFDF;
+    border: 1px solid #DF0000;
+}
+
+.umm-message,
+.umm-warning{
+    padding: 4px 4px 4px 4px;
+}
+
+.umm-secondary-wrapper{
+    width: 100% !important;   
+}
+
+.umm-subpage-wrapper{
+    background-color: #F5F5F5;  
+}
+
+.umm-nav button{
+    margin: 0px 1px;
+    min-width: 110px;
 }
 
 .umm-error-field{
-    border: 1px solid red;
+    border: 1px solid #FF0000;
     background-color: #FFFF99;
-}
-
-.umm-close-icon, .umm-close-info-icon{
-    float: right;
-    margin: 5px 0px;
-}
-
-.umm-info{
-    background: #ECECEC;
-    border: 1px solid #CCC;
-    padding: 0 10px;
-    margin: 5px 0px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
 }
 
 .umm-hidden{
     display: none;
 }
 
-#umm-left-panel{
-    z-index: 1;
-    width:100%;
-}
-
-#umm-form, #umm-list-table-form{
+#umm-home{
     position: relative;
-    margin: 0px 0px 0px 0px !important;
+    z-index: 1;
 }
 
-#umm-form{
-    z-index: 2;
+#umm-form,
+#umm-list-table-form{
+    position: relative;
+    margin: 0px 0px 0px 0px;
 }
 
 #umm-list-table-form{
-    z-index: 1;
+    z-index: 2;
+}
+
+#umm-form{
+    z-index: 3;
 }
 
 .wp-list-table{
-    width:100%;
+    width: 100%;
 }
 
 .column-ID{
-    width:100px;
+    width: 100px;
     min-width: 100px !important;
-}
-
-.wrap h3{
-    margin: 20px 0px 0px 0px !important; 
-}
-
-div.actions{
-    margin: -10px 0px 0px 0px !important; 
 }
 
 div#umm-search{
@@ -71,19 +91,76 @@ label{
     font-weight: bold;
 }
 
-.umm_update_user_meta-result{
-    background-color: lightYellow;
-    border: 1px solid #E6DB55;
-    padding: 4px 4px 4px 4px;
-    margin: 10px 0px 10px 0px !important;
+.umm-back-button{
+    display: block;
+    margin: 0px 0px 10px 0px;
 }
 
-.umm-slogan{
-    padding: 0px 0px 0px 46px;
-    margin: -5px 0px 0px 0px;
-    font-style: italic;
+div#contextual-help-link-wrap{
+    z-index: 1000 !important;
+    border: 1px solid #808080;
+    box-shadow: 2px 2px 2px #DFDFDF;
 }
 
-.umm-top-links{
-    padding: 10px 0px 0px 0px;
+.umm-subpage-title{
+    margin: 0px 0px 10px 0px;
+    padding: 0px;
+}
+
+.umm-subpage-title em, .umm-highlight{
+    background-color: #FFFFBB;
+}
+
+#umm_update_user_meta_submit{
+    margin: 5px 0px;
+}
+
+.umm-result-container{
+    display: none;
+}
+
+.umm-message,
+.umm-warning,
+.umm-subpage form,
+.umm-backup-page-container,
+#umm-home,
+.umm-fyi
+{
+    margin: 10px 0px 10px 0px;
+}
+
+.umm-subpage-wrapper,
+.umm-subpage form,
+.umm-backup-page-container,
+#umm-home,
+.umm-fyi
+{
+    padding: 10px 10px 10px 10px;
+}
+
+.umm-wrapper,
+.umm-subpage form,
+.umm-backup-page-container,
+#umm-home,
+.umm-fyi
+{
+   background-color: #FFFFFF; 
+}
+
+code,
+.umm-wrapper,
+.umm-nav, 
+.umm-message,
+.umm-warning,
+#umm-home,
+.umm-subpage-wrapper,
+.umm-subpage,
+.umm-subpage form,
+.umm-backup-page-container,
+.umm-fyi
+{
+    -moz-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
 }

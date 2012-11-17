@@ -2,7 +2,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 1.5.7
+ * Version: 2.0.0
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -25,59 +25,11 @@
  * http://www.gnu.org/licenses/gpl.html
  */
  
-jQuery.cookie = function(name, value, options) {
-    if (typeof value != 'undefined') {
-        options = options || {};
-        if (value === null) {
-            value = '';
-            options.expires = -1;
-        }
-        var expires = '';
-        if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
-            var date;
-            if (typeof options.expires == 'number') {
-                date = new Date();
-                date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
-            } else {
-                date = options.expires;
-            }
-            expires = '; expires=' + date.toUTCString();
-        }
-        var path = options.path ? '; path=' + (options.path) : '';
-        var domain = options.domain ? '; domain=' + (options.domain) : '';
-        var secure = options.secure ? '; secure' : '';
-        document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
-    } else {
-        var cookieValue = null;
-        if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-};
-    
-    jQuery(function($){
-        $("div.actions").first().prepend($("div.umm-per-page-menu").html()).append('<input class="umm-help button-secondary hidden" type="button" value="?" title="Info" />');
+jQuery(function($){
+        var page_data = $("div.umm-wrapper").data();
+        $("div.actions").first().prepend($("div.umm-per-page-menu").html());
         $("div.umm-per-page-menu").html('');
         $("#get-search-input").after($("div.umm-search-mode-menu").html());
-        $('.umm-help').css('border-color','#FFFF00');
-        $(".umm-mode").each(function(){
-            $(this).bind('mouseup',function(){
-                try{
-                    $("#umm-list-table-form input[type='checkbox']").prop('checked',false);
-                    $("#umm-form select").val('');
-                }catch(e){}
-                $(".umm-mode").val($(this).attr('rel'));
-                $("#umm-form").submit();
-            });
-       });
        
        $(".umm-go").each(function(){
         $(this).bind('mouseup',function(){
@@ -85,57 +37,206 @@ jQuery.cookie = function(name, value, options) {
             $("#umm-form").submit();
         }); 
        });
-
-       $(".umm-help").bind('mouseup',function(){
-        $(".umm-info").show('slow');
-	    $(this).hide('slow');
-        $.cookie('umminfo',1);
-	   });
-
-       if($.cookie('umminfo') == 1){
-        $(".umm-info").show();
-        $(".umm-help").hide();
-       } else {
-        $(".umm-info").hide();
-        $(".umm-help").show();
-       }
-
-       $(".umm-close-info-icon").css('text-decoration','none').click(function(){
-       $(this).parent().hide('slow');
-       $(".umm-help").show('slow');
-       $.cookie('umminfo',0);
+    
+    $("a.umm-subpage").live('click', function(event){
+        event.preventDefault();
+        var obj = $(this),
+        d = obj.data();
+        if(d.nav_button){
+           $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false).toggleClass('button-secondary', true);
+           $(".umm-nav .umm-subpage-go:contains('" + d.nav_button + "')").toggleClass('button-primary', true); 
+        }
+        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage").load(d.subpage, function(){
+            $("div.umm-subpage").show('slow');
+            $("div.umm-subpage-loading").hide('slow');
+            $("div#umm-home").hide('slow');
+            if(d.message){
+                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+            }         
+        });
     });
-
-    $(".umm-close-icon").css('text-decoration','none').click(function(){
-       $(this).parent().hide('slow');
+    
+    $(".umm-button").live('click', function(event){
+        event.preventDefault();
+        var obj = $(this),
+        d = obj.data(),
+        loading_image = '<img class="umm-loading" src="' + $("div.umm-wrapper").data().umm_loading_image + '" alt="..." />';
+        $("div.umm-subpage-loading").show('slow');
+        
+        if(obj.hasClass('umm-homelink')){
+            $("div.umm-subpage").hide('slow');
+            $("div.umm-subpage-loading").hide('slow');
+            $("div#umm-home").show('slow');
+        } else {
+           $("div.umm-subpage").load(d.subpage, function(){
+            $("div.umm-subpage-loading").hide('slow');
+            $("div.umm-subpage").show('slow'); 
+            if(d.message){
+                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+            }
+           }); 
+        }      
     });
-
-    $("div.actions:last").css({
-        'margin': '0px 0px 0px 0px !important'
+    
+    $(".umm-subpage-go").live('click', function(event){
+        event.preventDefault();
+        var obj = $(this),
+        d = obj.data();
+        
+        $(".umm-subpage-go").toggleClass('umm-active-link', false);
+        
+        $(".umm-nav .umm-subpage-go").toggleClass('button-secondary', true);
+        $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false);
+        $("div#umm-home").hide('slow');
+        $("div.umm-subpage").hide('slow');
+        $("div.umm-subpage-loading").show('slow');
+        if((obj.hasClass('button-primary') || obj.hasClass('button-secondary')) && !obj.hasClass('umm-go-back-button')){
+            $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false);
+            $(".umm-nav .umm-subpage-go").toggleClass('button-secondary', true);
+            obj.toggleClass('button-primary', true);
+        }           
+        obj.toggleClass('umm-active-link', true);
+        if(obj.hasClass('umm-homelink')){
+            $("div.umm-subpage-loading").hide('slow');
+            $("div#umm-home").show('slow');
+        } else {
+            
+        $("div.umm-subpage").load(d.subpage, function(){
+            $("div.umm-subpage-loading").hide('slow');
+            $("div.umm-subpage").show('slow'); 
+            if(d.message){
+                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+            }        
+        });
+        }       
+    });
+    
+    $("#umm_edit_custom_meta_submit").live('click', function(event){
+        event.preventDefault();
+        if($("#umm_edit_key").val() != ""){
+            var obj = $(this),
+        d = obj.data(),
+        original_value = obj.val(),
+        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + $("#umm_edit_key").val();
+        obj.prop('disabled',true).val(d.wait);
+        $("div.umm-subpage").load(return_page, function(){
+                if(d.message){
+                    $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+                }
+                $("div.umm-subpage").show('slow');
+                $("div#umm-home").hide('slow');    
+        });
+        } else {
+           $("#umm_edit_key").effect('highlight',1000); 
+        }        
     });
 
     $("#umm_update_user_meta_submit").live('click', function(event){
         event.preventDefault();
+        if($("#umm_edit_key").val() != ""){
         var obj = $(this),
         d = obj.data(),
-        original_value = $(this).val(),
-        return_page = $("#" + d.form + " input[name='return_page']").val();
+        original_value = obj.val(),
+        edit_key = ($("#umm_edit_key").val() == undefined) ? '' : $("#umm_edit_key").val(),
+        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
         obj.prop('disabled',true).val(d.wait);
-        $.post('admin-ajax.php?action=' + d.action + '&width=600&height=500', $("#" + d.form).serialize(), function(data){
-            $("div.umm-result-container").load(location.href + " div#umm-left-panel", function(){
-                
-                $("table.wp-list-table:first").replaceWith($("div.umm-result-container table.wp-list-table"));
-                $("div#umm-search select.um-search-mode").replaceWith($("div.umm-result-container select.um-search-mode"));
+        
+        $("div.umm-subpage-loading").show('slow');
+        $.post('admin-ajax.php?action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
+                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
+                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
                 $("div.umm-result-container").html('');
             });
-            $("#TB_ajaxContent").load(return_page, function(){
-                // new Effect.Highlight("TB_ajaxContent", { startcolor: '#ffff99', endcolor: '#ffffff' });
-            $('#' + d.form + ' div.umm_update_user_meta-result').html(data).show('slow').delay(5000).hide('slow');
+            $("div.umm-subpage").load(return_page, function(){
+                if(data){
+                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                } 
+               $("div.umm-subpage").show('slow'); 
+               $("div#umm-home").hide('slow');
+               $("div.umm-subpage-loading").hide('slow');          
             });
         });
+        } else {
+           $("#umm_edit_key").effect('highlight',1000); 
+        }
     });
     
+    $("select.umm-profile-field-type").live('change', function(){
+        $(".umm-profile-field-options").hide('slow');
+        switch($(this).val()){
+            case 'text':
+            case 'color':
+            case 'date':
+            case 'datetime':
+            case 'datetime-local':
+            case 'email':
+            case 'month':
+            case 'number':
+            case 'range':
+            case 'search':
+            case 'tel':
+            case 'time':
+            case 'url':
+            case 'week':
+            case 'textarea':
+            case 'checkbox':
+            $(".umm-input-options").show('slow');
+            break;
+                       
+            case 'radio':
+            case 'select':
+            $(".umm-input-options").show('slow');
+            $(".umm-select-options").show('slow');
+            $(".umm-remove-option:first").hide();
+            break;
+            
+            default:
+            $(".umm-profile-field-options").hide('slow');
+        }
+    });
+    
+    switch($("select.umm-profile-field-type").val()){
+            case 'text':
+            case 'color':
+            case 'date':
+            case 'datetime':
+            case 'datetime-local':
+            case 'email':
+            case 'month':
+            case 'number':
+            case 'range':
+            case 'search':
+            case 'tel':
+            case 'time':
+            case 'url':
+            case 'week':
+            case 'textarea':
+            case 'checkbox':
+            $(".umm-input-options").show('slow');
+            break;
+                      
+            case 'radio':
+            case 'select':
+            $(".umm-input-options").show('slow');
+            $(".umm-select-options").show('slow');
+            $(".umm-remove-option:first").hide();
+            break;
+            
+            default:
+            $(".umm-profile-field-options").hide('slow');
+        }
+    
+    $(".umm-add-row").live('click', function(event){
+        event.preventDefault();
+        $(".umm-select-options-clone tr").clone().appendTo(".umm-select-options-table").show();
+    });
+        
     $(".umm-remove-row").live('click', function(event){
+        event.preventDefault();
         $(this).closest("tr").remove();
     });
-    }); // jQuery
+       
+    $("#contextual-help-link").html(page_data.help_text).delay(1500).effect('highlight', 2000);
+}); // jQuery
