@@ -10,6 +10,7 @@ Tested up to: 3.4.2
 == Description ==
 
 THIS IS THE BETA-DEV VERSION OF THIS PLUGIN; BUGS ARE POSSIBLE AND SUPPORT IS LIMITED.
+For the current stable release, go to http://wordpress.org/extend/plugins/user-meta-manager/
 
 <p>User Meta Manager allows administrators to add, edit, or delete user meta data.</p> 
 <p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content.</p>
