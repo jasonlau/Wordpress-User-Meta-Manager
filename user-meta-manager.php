@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.1
+ * Version: 2.0.0 beta-dev 1.3
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0 beta-dev 1.1');
+define('UMM_VERSION', '2.0.0 beta-dev 1.3');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -211,14 +211,18 @@ function umm_column_exists($key){
 }
 
 function umm_deactivate(){
-    // Preserve data
-    // delete_option('user_meta_manager_data');
-    // delete_option('umm_users_columns');
-    // delete_option('umm_usermeta_columns');
-    // delete_option('umm_backup');
-    // delete_option('umm_backup_date');
-    // delete_option('umm_backup_files');
-    // delete_option('umm_profile_fields');
+    $umm_settings = get_option('umm_settings');
+    if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
+    if($umm_settings['retain_data'] == 'no'):
+     delete_option('user_meta_manager_data');
+     delete_option('umm_users_columns');
+     delete_option('umm_usermeta_columns');
+     delete_option('umm_backup');
+     delete_option('umm_backup_date');
+     delete_option('umm_backup_files');
+     delete_option('umm_profile_fields');
+     delete_option('umm_settings');
+    endif;
 }
 
 function umm_delete_backup_files(){
@@ -502,6 +506,7 @@ function umm_install(){
    add_option('umm_users_columns', array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')));
    add_option('umm_usermeta_columns', array());
    add_option('umm_backup_files', array());
+   add_option('umm_settings', array('retain_data' => 'yes'));
 }
 
 function umm_load_scripts($hook) {
@@ -969,6 +974,13 @@ function umm_update_profile_fields(){
     endforeach;
 }
 
+function umm_update_settings(){
+    update_option('umm_settings', $_POST);
+    $output = __('Settings successfully saved.', 'user-meta-manager');
+    print $output;
+    exit; 
+}
+
 function umm_update_user_meta(){
     global $wpdb;
     $mode = $_POST['mode'];
@@ -1243,6 +1255,7 @@ add_action('wp_ajax_umm_backup','umm_backup');
 add_action('wp_ajax_umm_delete_backup_files','umm_delete_backup_files');
 add_action('wp_ajax_umm_restore','umm_restore');
 add_action('wp_ajax_umm_restore_confirm','umm_restore_confirm');
+add_action('wp_ajax_umm_update_settings','umm_update_settings');
 
 add_shortcode('usermeta', 'umm_usermeta_shortcode');
 add_shortcode('useraccess', 'umm_useraccess_shortcode');

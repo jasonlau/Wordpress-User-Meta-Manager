@@ -18,7 +18,7 @@
     background-color: #F5F5F5;
 }
 
-.umm-message{
+.umm-message, .umm-update-settings-result{
     background-color: #FFFFBB;
     border: 1px solid #E6DB55;
 }
@@ -29,8 +29,30 @@
 }
 
 .umm-message,
-.umm-warning{
+.umm-warning,
+.umm-update-settings-result{
     padding: 4px 4px 4px 4px;
+    box-shadow: 5px 5px 5px #DFDFDF;
+    -moz-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+
+h2{
+     text-shadow: 3px 3px 7px #C0C0C0;
+}
+
+pre{
+     box-shadow: 3px 3px 7px #C0C0C0;
+     padding: 4px 4px 4px 4px;
+     overflow-y: auto;
+     border: 1px solid #C0C0C0;
+     -moz-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+     
 }
 
 .umm-secondary-wrapper{
