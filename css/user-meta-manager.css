@@ -1,4 +1,10 @@
-.umm-wrapper{
+/**
+ * @author Jason Lau
+ * @copyright 2012
+ * @package user-meta-manager
+ */
+ 
+ .umm-wrapper{
     position: relative;
     margin: 10px 15px 10px 5px;
     padding: 20px;

@@ -1,6 +1,9 @@
 <?php
+
 /**
- * Contextual Help Version: 1.3
+ * @author Jason Lau
+ * @copyright 2012
+ * @package user-meta-manager
  */
  
 if(!defined("UMM_PATH")) die();
@@ -118,7 +121,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre><br /><br />
     <strong>Display a form in a Post or Page:</strong><br />
     Display a form which allows members to update meta data. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. 
-    <pre>[usermeta class="my-form-css-class" submit="Submit" message="Update successful!" fields="test1, test2" vars="one=1&amp;two=2&amp;three=3" email="admin@your-site" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
+    <pre>[usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;two=2&amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
     </p>', 'user-meta-manager')
     ),
     
