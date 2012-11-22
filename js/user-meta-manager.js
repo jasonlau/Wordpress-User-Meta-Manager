@@ -2,7 +2,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.3
+ * Version: 2.0.0 beta-dev 1.4
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -143,7 +143,7 @@ jQuery(function($){
         obj.prop('disabled',true).val(d.wait);
         
         $("div.umm-subpage-loading").show('slow');
-        $.post('admin-ajax.php?action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
                 $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
@@ -252,4 +252,39 @@ jQuery(function($){
     });
        
     $("#contextual-help-link").html(page_data.help_text).delay(1500).effect('highlight', 2000);
+    
+    if(page_data.first_run == 'yes'){
+        $(document).bind('ready', function(){
+            $('a#contextual-help-link').trigger('click');
+        });
+    }
+    
+    $("input[name='meta_key']").live('keyup change', function(){
+       var obj = $(this),
+        original_value = obj.val(),
+        new_value = original_value.replace(' ', '_').replace(/\W/g, ''),
+        invalidChars = /\W/; // letters, numbers, and underscores
+       
+        if(new_value.replace('_', '') == ''){
+            new_value = '';
+            obj.attr('placeholder', page_data.no_spaces);
+        }
+        
+        if(new_value != original_value){
+            obj.effect('highlight', 2000);
+            obj.val(new_value);
+        }
+        
+        if(invalidChars.test(new_value)){
+            if(!$(".invalid-chars-warning").html()){
+            obj.after('<div class="umm-warning invalid-chars-warning hidden">' + page_data.invalid_chars_warning + '</div>');
+            $(".invalid-chars-warning").show('slow');
+            }
+        } else {
+            if($(".invalid-chars-warning").html()){
+                $(".invalid-chars-warning").hide('slow').remove();
+            }
+        }        
+    });
+    
 }); // jQuery

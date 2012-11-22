@@ -1,6 +1,6 @@
 <?php
 /**
- * Contextual Help Version: 1.2
+ * Contextual Help Version: 1.3
  */
  
 if(!defined("UMM_PATH")) die();
@@ -35,14 +35,15 @@ function umm_help($contextual_help, $screen_id, $screen) {
         __('Plugin Settings', 'user-meta-manager'),
         '<h2>' . __( 'User Meta Manager Settings', 'user-meta-manager') . '</h2>
         <div class="umm-update-settings-result hidden"></div>
-        <form id="umm_update_settings_form" action="admin-ajax.php?action=umm_update_settings&amp;u=0" method="post">
+        <form id="umm_update_settings_form" action="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_update_settings&amp;u=0" method="post">
         <strong>' . __('Retain Saved Data On Uninstall', 'user-meta-manager') . ':</strong><br />
         <select size="1" name="retain_data">
 	<option value="' . __('yes', 'user-meta-manager') . '"' . $retain_yes . '>' . __('Yes', 'user-meta-manager') . '</option>
 	<option value="' . __('no', 'user-meta-manager') . '"' . $retain_no . '>' . __('No', 'user-meta-manager') . '</option>
 </select><br />
         <input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', 'user-meta-manager') . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', 'user-meta-manager') . '">
-        <input name="return_page" type="hidden" value="admin-ajax.php?action=umm_update_settings&amp;u=0">
+        <input name="first_run" type="hidden" value="no">
+        <input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_update_settings&amp;u=0">
         </form>'
     ),
     
@@ -61,13 +62,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
     array(
         __('Add Custom Meta', 'user-meta-manager'),
         $backup_notice . 
-        '<h2>' . __( 'Custom Meta-Data For All Users', 'user-meta-manager') . '</h2><p>' . __('Adding custom meta-data will add the  <strong><em>Key</em></strong> and <strong><em>Default Value</em></strong> to all existing users. The <strong><em>Default Value</em></strong> you set will become the default value for all users, and all future registrations. Optionally, select a <strong><em>Profile Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor.', 'user-meta-manager').'</p>'
+        '<h2>' . __( 'Custom Meta-Data For All Users', 'user-meta-manager') . '</h2><p>' . __('Adding custom meta-data will add the  <strong><em>Key</em></strong> and <strong><em>Default Value</em></strong> to all existing users. The <strong><em>Default Value</em></strong> you set will become the default value for all users, and all future registrations. Optionally, select a <strong><em>Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page.', 'user-meta-manager').'</p>'
     ),
     
     array(
         __('Edit Custom Meta', 'user-meta-manager'),
         $backup_notice . 
-        '<h2>' . __( 'Edit Custom Meta-Data For All Users' ) . '</h2><p>' . __('Editing custom meta-data will edit the <strong><em>Key</em></strong> and default <strong><em>Value</em></strong> for future registrations. Selecting <em>Yes</em> for <strong><em>Update Value For All Current Users</em></strong> will update the current value for all existing members, overwriting any existing value. Optionally, select a <strong><em>Profile Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor. Select <em>None</em> from the <strong><em>Profile Field Type</em></strong> menu to remove an existing custom profile field.', 'user-meta-manager').'</p>'
+        '<h2>' . __( 'Edit Custom Meta-Data For All Users' ) . '</h2><p>' . __('Editing custom meta-data will edit the <strong><em>Key</em></strong> and default <strong><em>Value</em></strong> for future registrations. Selecting <em>Yes</em> for <strong><em>Update Value For All Current Users</em></strong> will update the current value for all existing members, overwriting any existing value. Optionally, select a <strong><em>Profile Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page. Select <em>None</em> from the <strong><em>Field Type</em></strong> menu to remove an existing custom field.', 'user-meta-manager').'</p>'
     ),
     
     array(
@@ -114,7 +115,11 @@ function umm_help($contextual_help, $screen_id, $screen) {
     JSON formatting -
     <pre>{"meta_key":"meta_value", "meta_key":"meta_value", "meta_key":"meta_value"}</pre>
     Additionally, you could repeat the same meta key multiple times.
-    <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre></p>', 'user-meta-manager')
+    <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre><br /><br />
+    <strong>Display a form in a Post or Page:</strong><br />
+    Display a form which allows members to update meta data. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. 
+    <pre>[usermeta class="my-form-css-class" submit="Submit" message="Update successful!" fields="test1, test2" vars="one=1&amp;two=2&amp;three=3" email="admin@your-site" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
+    </p>', 'user-meta-manager')
     ),
     
     array(

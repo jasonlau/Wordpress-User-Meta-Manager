@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.3
+ * Version: 2.0.0 beta-dev 1.4
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0 beta-dev 1.3');
+define('UMM_VERSION', '2.0.0 beta-dev 1.4');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -43,14 +43,14 @@ function umm_add_custom_meta(){
     $output = umm_fyi('<p>'.__('Insert a key and default value in the fields below.', 'user-meta-manager').'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', 'user-meta-manager').':</strong><br />
-    <input name="meta_key" type="text" value="" placeholder="'.__('Meta Key', 'user-meta-manager').'" /><br />
+    <input name="meta_key" title="'.__('Letters, numbers, and underscores only', 'user-meta-manager').'" type="text" value="" placeholder="'.__('Meta Key', 'user-meta-manager').'" /><br />
     <strong>'.__('Default Value', 'user-meta-manager').':</strong><br />
     <textarea rows="3" cols="40" name="meta_value"  placeholder=""></textarea>
     ';
     $output .= umm_profile_field_editor();
     $output .= '<br />
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Submit', 'user-meta-manager').'" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_add_custom_meta&u=0" />
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_add_custom_meta&u=0" />
     </form>  
     ';
     print $output;
@@ -64,12 +64,12 @@ function umm_add_user_meta(){
     $output .= umm_fyi('<p>'.__('Insert a meta key and default value and press <em>Submit</em>. The new meta-data will be applied to this user only, and can only be managed via the table actions, and not via the <em>Custom Meta</em> actions.', 'user-meta-manager').'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', 'user-meta-manager').':</strong><br />
-    <input name="meta_key" type="text" value="" placeholder="'.__('Meta Key', 'user-meta-manager').'" /><br />
+    <input name="meta_key" title="'.__('Letters, numbers, and underscores only', 'user-meta-manager').'" type="text" value="" placeholder="'.__('Meta Key', 'user-meta-manager').'" /><br />
     <strong>'.__('Value', 'user-meta-manager').':</strong><br />
     <input name="meta_value" type="text" value="" size="40" placeholder="'.__('Default Value', 'user-meta-manager').'" />';
     $output .= '<br />
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Submit', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_add_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_add_user_meta&u=' . $user_id . '" />
     </form>  
     ';   
     print $output;
@@ -173,18 +173,19 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
 }
 
 function umm_backup_page(){
+//TODO:Style dialogues    
     global $wpdb;
     $budate = get_option('umm_backup_date');
     if($budate == "") $budate = __("No backup", "user-meta-manager");
     
     $output = umm_fyi('<p>'.__('Use the following links to backup and restore user meta data.', 'user-meta-manager').'</p>');  
     $output .= '<div class="umm-backup-page-container">';
-    $output .= '<ul><li><a href="#" data-subpage="admin-ajax.php?action=umm_backup&amp;u=1" title="'.__('Backup', 'user-meta-manager').'" class="umm-subpage">'.__('Backup', 'user-meta-manager').'</a> <strong>'.__('Last Backup:', 'user-meta-manager'). '</strong> ' . $budate . '</li>';  
-    $output .= '<li><a href="#" data-subpage="admin-ajax.php?action=umm_restore_confirm&amp;u=1" title="'.__('Restore', 'user-meta-manager').'" class="umm-subpage">'.__('Restore', 'user-meta-manager').'</a></li>
-    <li><a href="#" data-subpage="admin-ajax.php?action=umm_backup&amp;mode=sql&amp;u=1" title="'.__('Generate SQL', 'user-meta-manager').'" class="umm-subpage">'.__('Generate SQL', 'user-meta-manager').'</a></li>
-    <li><a href="#" data-subpage="admin-ajax.php?action=umm_backup&amp;mode=php&amp;u=1" title="'.__('Generate PHP', 'user-meta-manager').'" class="umm-subpage">'.__('Generate PHP', 'user-meta-manager').'</a></li>
-    <li><a href="#" data-subpage="admin-ajax.php?action=umm_backup&amp;mode=php&amp;tofile=yes&amp;u=1" title="'.__('Generate PHP Restoration File', 'user-meta-manager').'" class="umm-subpage">'.__('Generate PHP Restoration File', 'user-meta-manager').'</a></li>
-    <li><a href="#" data-subpage="admin-ajax.php?action=umm_delete_backup_files" title="'.__('Delete All Backup Files', 'user-meta-manager').'" class="umm-subpage">'.__('Delete All Backup Files', 'user-meta-manager').'</a></li>
+    $output .= '<ul><li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup&amp;u=1" title="'.__('Backup', 'user-meta-manager').'" class="umm-subpage">'.__('Backup', 'user-meta-manager').'</a> <strong>'.__('Last Backup:', 'user-meta-manager'). '</strong> ' . $budate . '</li>';  
+    $output .= '<li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_restore_confirm&amp;u=1" title="'.__('Restore', 'user-meta-manager').'" class="umm-subpage">'.__('Restore', 'user-meta-manager').'</a></li>
+    <li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup&amp;mode=sql&amp;u=1" title="'.__('Generate SQL', 'user-meta-manager').'" class="umm-subpage">'.__('Generate SQL', 'user-meta-manager').'</a></li>
+    <li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup&amp;mode=php&amp;u=1" title="'.__('Generate PHP', 'user-meta-manager').'" class="umm-subpage">'.__('Generate PHP', 'user-meta-manager').'</a></li>
+    <li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup&amp;mode=php&amp;tofile=yes&amp;u=1" title="'.__('Generate PHP Restoration File', 'user-meta-manager').'" class="umm-subpage">'.__('Generate PHP Restoration File', 'user-meta-manager').'</a></li>
+    <li><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_backup_files" title="'.__('Delete All Backup Files', 'user-meta-manager').'" class="umm-subpage">'.__('Delete All Backup Files', 'user-meta-manager').'</a></li>
     </ul>';
     $output .= '</div>';
     print $output;
@@ -200,7 +201,7 @@ function umm_button($go_to, $label=null, $css_class=null){
         break;
         
         default:
-        $umm_button = '<button href="#" data-type="subpage" data-subpage="admin-ajax.php?action=' . $go_to . '" title="' . $label . '" class="' . $css_class . '">' . $label . '</button>';
+        $umm_button = '<button href="#" data-type="subpage" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=' . $go_to . '" title="' . $label . '" class="' . $css_class . '">' . $label . '</button>';
     }
     return $umm_button;
 }
@@ -238,9 +239,9 @@ function umm_delete_backup_files(){
     endif;
     update_option('umm_backup_files', array());
     
-    $output = '<p class="umm-message">' . __('All backup files successfully deleted.', 'user-meta-manager') . ' <a href="#" data-subpage="admin-ajax.php?action=umm_backup_page" class="umm-subpage">' . __('Back', 'user-meta-manager') . '</a></p>';
+    $output = '<p class="umm-message">' . __('All backup files successfully deleted.', 'user-meta-manager') . ' <a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page" class="umm-subpage">' . __('Back', 'user-meta-manager') . '</a></p>';
     else:
-    $output = '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', 'user-meta-manager') . '</strong><br /><a href="#" data-subpage="admin-ajax.php?action=umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', 'user-meta-manager') . '</a> <a href="#" data-subpage="admin-ajax.php?action=umm_backup_page" class="umm-subpage">' . __('Cancel', 'user-meta-manager') . '</a></p>';
+    $output = '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', 'user-meta-manager') . '</strong><br /><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', 'user-meta-manager') . '</a> <a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page" class="umm-subpage">' . __('Cancel', 'user-meta-manager') . '</a></p>';
     endif;
     print $output;
     exit;
@@ -277,7 +278,7 @@ function umm_delete_custom_meta(){
        endforeach; 
     endif;   
 
-    $output .= '</select> <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary button-delete" type="submit" value="'.__('Submit', 'user-meta-manager').'" /><input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_delete_custom_meta&u=0" />
+    $output .= '</select> <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary button-delete" type="submit" value="'.__('Submit', 'user-meta-manager').'" /><input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_custom_meta&u=0" />
     </form>  
     ';
     else:
@@ -288,12 +289,29 @@ function umm_delete_custom_meta(){
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary button-delete" type="submit" value="'.__('Yes', 'user-meta-manager').'" /> ';
     $output .= umm_button("umm_delete_custom_meta&u=0", __('Cancel', 'user-meta-manager'));
     $output .= '<input name="meta_key" type="hidden" value="' . $delete_key . '" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_delete_custom_meta&u=0" /></p>
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_custom_meta&u=0" /></p>
     </form>';   
     endif;
     else: // !empty($data)
     $output = __('No custom meta to delete.', 'user-meta-manager');
     endif; // !empty($data)
+    print $output;
+    exit;
+}
+
+function umm_delete_single_key($key){
+    global $wpdb;
+    $profile_fields = get_option('umm_profile_fields');
+    $umm_data = get_option('user_meta_manager_data');    
+    unset($profile_fields[$key]);
+    unset($umm_data[$key]);    
+    update_option('umm_profile_fields', $profile_fields);
+    update_option('user_meta_manager_data', $umm_data);
+    $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
+    foreach($data as $user):
+      update_user_meta($user->ID, $meta_key, $meta_value, false);
+    endforeach;
+    $output = "<p>" . __("Meta data successfully deleted.", "user-meta-manager") . "</p>";
     print $output;
     exit;
 }
@@ -325,7 +343,7 @@ function umm_delete_user_meta(){
 	<option value="true">'.__('Yes', 'user-meta-manager').'</option>
 </select><br />
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary button-delete" type="submit" value="'.__('Submit', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_delete_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_user_meta&u=' . $user_id . '" />
     </form>  
     ';
     else:
@@ -336,7 +354,7 @@ function umm_delete_user_meta(){
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary button-delete" type="submit" value="'.__('Yes', 'user-meta-manager').'" /> ';
     $output .= umm_button("umm_delete_user_meta&u=" . $user_id, __('Cancel', 'user-meta-manager'));
     $output .= '<input name="meta_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_delete_user_meta&u=' . $user_id . '" /></p>
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_user_meta&u=' . $user_id . '" /></p>
     </form>';
     endif;
     print $output;
@@ -366,7 +384,7 @@ function umm_edit_columns(){
   }
    $output .= '</table>
    <input id="umm_update_user_meta_submit" data-form="umm_manage_columns_form" data-subpage="umm_update_columns" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Remove Selected Column', 'user-meta-manager').'" />
-   <input name="mode" type="hidden" value="remove_columns" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_columns" />
+   <input name="mode" type="hidden" value="remove_columns" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_columns" />
    </form>
    <form id="umm_add_columns_form" method="post">
    <h3>'.__('Add A New Column', 'user-meta-manager').'</h3>
@@ -377,7 +395,7 @@ function umm_edit_columns(){
    $output .= '</select><br>
    <strong>'.__('Label', 'user-meta-manager').':</strong> <input name="umm_column_label" type="text" value="" placeholder="'.__('Enter a label', 'user-meta-manager').'" title="'.__('Enter a label which will appear in the top row of the results table.', 'user-meta-manager').'" /><br />';   
    $output .= '<input id="umm_update_user_meta_submit" data-form="umm_add_columns_form" data-subpage="umm_update_columns" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Add Column', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="add_columns" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_columns" />
+    <input name="mode" type="hidden" value="add_columns" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_columns" />
     </form>  
     ';
     print $output;
@@ -401,7 +419,7 @@ function umm_edit_custom_meta(){
         endforeach;    
             $output .= '</select> 
     <input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Submit', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_custom_meta" /> 
+    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_custom_meta" /> 
     </form> 
     ';
         
@@ -428,7 +446,7 @@ function umm_edit_custom_meta(){
     $output .= '<strong>' . __('Update Value For All Current Users', 'user-meta-manager') . ':</strong><br /><input type="checkbox" name="all_users" value="1" title="' . __('Check the box to update the value for all current users. Leave blank to update the value for future registrations only.', 'user-meta-manager') . '" /> ' . __('Yes', 'user-meta-manager') . ''; 
     $output .= umm_profile_field_editor($edit_key);
     $output .= '<input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Update', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_custom_meta" />
+    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_custom_meta" />
     </form>  
     ';
     endif; // edit_key
@@ -442,7 +460,7 @@ function umm_edit_user_meta(){
     $user_id = $_REQUEST['u'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Editing Meta Data For %s', 'user-meta-manager'));
-    $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="admin-ajax.php?action=umm_edit_custom_meta&u=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', 'user-meta-manager').'</p>');
+    $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_custom_meta&u=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', 'user-meta-manager').'</p>');
     $edit_key = $_REQUEST['umm_edit_key'];
     if($edit_key == ""):
         $output .= "<form id=\"umm_update_user_meta_form\" method=\"post\">
@@ -453,7 +471,7 @@ function umm_edit_user_meta(){
         endforeach;    
             $output .= '</select> 
     <input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Submit', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_user_meta&u=' . $user_id . '" />
     </form> 
     ';
         
@@ -480,7 +498,7 @@ function umm_edit_user_meta(){
 
     $output .= '</table>
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', 'user-meta-manager').'" class="button-primary" type="submit" value="'.__('Update', 'user-meta-manager').'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_edit_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_user_meta&u=' . $user_id . '" />
     </form>  
     ';
     endif;
@@ -499,6 +517,7 @@ function umm_get_columns(){
 }
 
 function umm_install(){
+//TODO:Create backup file on install    
    add_option('umm_backup', umm_usermeta_data());
    add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
    add_option('user_meta_manager_data', '');
@@ -506,13 +525,11 @@ function umm_install(){
    add_option('umm_users_columns', array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')));
    add_option('umm_usermeta_columns', array());
    add_option('umm_backup_files', array());
-   add_option('umm_settings', array('retain_data' => 'yes'));
+   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes'));
 }
 
 function umm_load_scripts($hook) {
     if($hook && $hook == "users_page_user-meta-manager"):
-    //update_option('umm_profile_fields', array());
-    //update_option('user_meta_manager_data', array());
        wp_enqueue_script('jquery');
        wp_register_script('umm_jquery_ui', plugins_url('/js/jquery-ui-1.9.0.min.js?version='.rand(100,1000), __FILE__));
        wp_enqueue_script('umm_jquery_ui');
@@ -541,6 +558,7 @@ function umm_profile_field_editor($umm_edit_key=null){
           $attrs = stripslashes(htmlspecialchars_decode($profile_fields[$umm_edit_key]['attrs']));
           $after = stripslashes(htmlspecialchars_decode($profile_fields[$umm_edit_key]['after']));
           $required = $profile_fields[$umm_edit_key]['required'];
+          $add_to_profile = $profile_fields[$umm_edit_key]['add_to_profile'];
           $options = (!is_array($profile_fields[$umm_edit_key]['options'])) ? array() : $profile_fields[$umm_edit_key]['options'];
           
           $x = 1;          
@@ -566,7 +584,7 @@ function umm_profile_field_editor($umm_edit_key=null){
     endif;
     
     $output = '<div class="umm-profile-field-editor">
-    <strong>Profile Field <a title="'.__('W3Schools HTML5 Input Types Reference Page', 'user-meta-manager').'" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">'.__('Type', 'user-meta-manager').'</a>:</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
+    <strong>Field <a title="'.__('W3Schools HTML5 Input Types Reference Page', 'user-meta-manager').'" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">'.__('Type', 'user-meta-manager').'</a>:</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
     <option value="" title="'.__('Do not add to user profile.', 'user-meta-manager').'"';
     if($type == '') $output .= ' selected="selected"';
     $output .= '>'.__('None', 'user-meta-manager').'</option>
@@ -650,6 +668,14 @@ function umm_profile_field_editor($umm_edit_key=null){
     if($required == 'yes') $output .= ' selected="selected"';
     $output .= '>Yes</option>
     </select><br />
+    <strong>'.__('Add To Profile', 'user-meta-manager').':</strong> <select size="1" name="umm_add_to_profile">
+	<option value="yes"';
+    if($add_to_profile == 'yes' || $add_to_profile == '') $output .= ' selected="selected"';
+    $output .= '>Yes</option>
+    <option value="no"';
+    if($add_to_profile == 'no') $output .= ' selected="selected"';
+    $output .= '>No</option>	
+    </select>
     </div>';
     
     $hidden = ($type == 'select' || $type == 'radio') ? '' : ' hidden';
@@ -728,6 +754,24 @@ function umm_random_str($number_of_digits = 1, $type = 3){
     return $num;
 }
 
+function umm_reset(){
+    global $wpdb;
+    $profile_fields = get_option('umm_profile_fields');
+    $umm_data = get_option('user_meta_manager_data');       
+    foreach($umm_data as $meta_key):
+       $user_data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
+       foreach($user_data as $user):
+          delete_user_meta($user->ID, $meta_key);
+       endforeach;
+    endforeach;
+    update_option('umm_profile_fields', array());
+    update_option('user_meta_manager_data', array());
+    $output = "<p>" . __("User Meta Manager data successfully reset.", "user-meta-manager") . "</p>";
+    print $output;
+    exit;
+}
+
+
 function umm_restore(){
     global $wpdb;
     $data = get_option('umm_backup');
@@ -750,21 +794,31 @@ function umm_restore_confirm(){
     if($budate == ""): 
       $output = __("No backup data to restore!", "user-meta-manager");
     else:  
-      $output = "<p>" . __("Are you sure you want to restore all user meta data to the backup version?", "user-meta-manager") . " <a href=\"#\" data-subpage=\"admin-ajax.php?action=umm_restore&u=1\" title=\"" . __('Restore', 'user-meta-manager') . "\" class=\"umm-subpage\">".__('Yes', 'user-meta-manager')."</a></p>";
+      $output = "<p>" . __("Are you sure you want to restore all user meta data to the backup version?", "user-meta-manager") . " <a href=\"#\" data-subpage=\"admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_restore&u=1\" title=\"" . __('Restore', 'user-meta-manager') . "\" class=\"umm-subpage\">".__('Yes', 'user-meta-manager')."</a></p>";
     endif;
     print $output;
     exit;
 }
 
-function umm_show_profile_fields($echo=true, $debug=false){
+function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
    global $current_user;
+    $umm_data = get_option('user_meta_manager_data');
     $profile_fields = get_option('umm_profile_fields');
+    $show_fields = ($fields) ?  explode(",", str_replace(", ", ",", $fields)) : false;
     if($debug) print_r($profile_fields);
     if(!empty($profile_fields)):
-    $output = "<table class=\"form-table\">
-<tbody>\n";
+    $output = "";
+
+    if($show_fields):
+      $new_array = array();
+      foreach($show_fields as $profile_field_name):
+       $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
+      endforeach;
+      $profile_fields = $new_array;   
+    endif;
 
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
+    if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $user_value = stripslashes(htmlspecialchars_decode(get_user_meta($current_user->ID, $profile_field_name, true)));
       
@@ -806,7 +860,9 @@ function umm_show_profile_fields($echo=true, $debug=false){
             break;
             
             case 'checkbox':
+ //TODO:Support for checkbox groups                      
             $output .= "<input type=\"checkbox\" name=\"" . $profile_field_name;
+            //if(count($profile_field_settings['options']) > 1) $output .= '[]';
             $output .= "\" value=\"" . $value . "\" class=\"" . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . "\"";
             if($profile_field_settings['required'] == 'yes')
               $output .= ' required="required"';
@@ -821,7 +877,7 @@ function umm_show_profile_fields($echo=true, $debug=false){
             foreach($profile_field_settings['options'] as $option => $option_settings):
               if(!empty($option_settings['label'])):
               $output .= "<input type=\"" . $profile_field_settings['type'] . "\" name=\"" . $profile_field_name;
-              if(count($profile_field_settings['options']) > 1) $output .= '[]';
+              
               $output .= "\" value=\"" . $option_settings['value'] . "\" class=\"" . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . "\"";
               if($profile_field_settings['required'] == 'yes')
               $output .= ' required="required"';
@@ -866,14 +922,20 @@ function umm_show_profile_fields($echo=true, $debug=false){
     
     $output .= "</td>
 </tr>";
-    endforeach;
-    $output .= "</tbody>\n</table>\n";
+    endif; // $show_fields
+    endforeach; 
     endif; // !empty($profile_fields)
+    
+    if($output != ""):
+    $output = "<table class=\"form-table\">
+<tbody>\n" . $output . "</tbody>\n</table>\n";
     if($echo):
     echo  $output;
     else:
     return $output;
     endif;
+    endif;
+    
 }
 
 function umm_sort($a, $b){
@@ -898,6 +960,74 @@ function umm_subpage_title($user_id, $text){
     $nickname = get_user_meta($user_id, 'nickname', true);
     $output = '<h3 class="umm-subpage-title">' . sprintf($text, "<a href=\"" . admin_url("user-edit.php?user_id=" . $user_id) . "\" target=\"_blank\"><em>" . $nickname .  "</em></a>") . '</h3>';
     return $output;
+}
+
+function umm_switch_action(){
+    switch($_REQUEST['sub_action']){ 
+	   case "umm_edit_user_meta":
+       umm_edit_user_meta();
+	   break;
+
+	   case "umm_add_user_meta":
+       umm_add_user_meta();
+	   break;
+
+	   case "umm_delete_user_meta":
+       umm_delete_user_meta();
+	   break;
+       
+       case "umm_edit_custom_meta":
+       umm_edit_custom_meta();
+	   break;
+       
+       case "umm_add_custom_meta":
+       umm_add_custom_meta();
+	   break;
+       
+       case "umm_delete_custom_meta":
+       umm_delete_custom_meta();
+	   break;
+       
+       case "umm_update_user_meta":
+       umm_update_user_meta();
+	   break;
+       
+       case "umm_edit_columns":
+       umm_edit_columns();
+	   break;
+       
+       case "umm_update_columns":
+       umm_update_columns();
+	   break;
+       
+       case "umm_backup_page":
+       umm_backup_page();
+	   break;
+       
+       case "umm_backup":
+       umm_backup();
+	   break;
+       
+       case "umm_delete_backup_files":
+       umm_delete_backup_files();
+	   break;
+       
+       case "umm_restore":
+       umm_restore();
+	   break;
+       
+       case "umm_restore_confirm":
+       umm_restore_confirm();
+	   break;
+       
+       case "umm_update_settings":
+       umm_update_settings();
+	   break;
+       
+       case "umm_reset":
+       umm_reset();
+	   break;
+    }
 }
 
 function umm_ui(){
@@ -1035,6 +1165,7 @@ function umm_update_user_meta(){
                                           'attrs' => htmlspecialchars($_POST['umm_profile_field_attrs']),
                                           'after' => htmlspecialchars($_POST['umm_profile_field_after']) ,
                                           'required' => $_POST['umm_profile_field_required'],
+                                          'add_to_profile' => $_POST['umm_add_to_profile'],
                                           'options' => $options);                   
         endif;
         
@@ -1050,11 +1181,11 @@ function umm_update_user_meta(){
          endif;   
          
          if((!array_key_exists($meta_key, $saved_profile_fields) || array_key_exists($meta_key, $saved_profile_fields)) && !empty($_POST['umm_profile_field_type'])):
-           // add or update profile field
+           // add or update field
            $saved_profile_fields[$meta_key] = $new_profile_field_data;
            update_option('umm_profile_fields', $saved_profile_fields);
          elseif(array_key_exists($meta_key, $saved_profile_fields) && (!isset($_POST['umm_profile_field_type']) || empty($_POST['umm_profile_field_type']))):
-           // remove profile field
+           // remove field
            unset($saved_profile_fields[$meta_key]);
            update_option('umm_profile_fields', $saved_profile_fields);
          endif; // !array_key_exists                
@@ -1093,7 +1224,7 @@ function umm_update_user_meta(){
             unset($umm_data[$meta_key]);
             update_option('user_meta_manager_data', $umm_data);
             if(array_key_exists($meta_key, $saved_profile_fields)):
-            // remove profile field
+            // remove field
             unset($saved_profile_fields[$meta_key]);
             update_option('umm_profile_fields', $saved_profile_fields);
             // remove custom column
@@ -1196,13 +1327,62 @@ function umm_usermeta_keys_menu($select=true,$optgroup=false,$include_used=false
 
 function umm_usermeta_shortcode($atts, $content) {
     global $current_user;
-    $key = $atts['key'];
-    $user = ($atts['user']) ? $atts['user'] : $current_user->ID;
     
-    if($key):
+    if(isset($atts['key']) && !empty($atts['key'])):
+    $key = $atts['key'];
+    $user = !empty(($atts['user'])) ? $atts['user'] : $current_user->ID;
     $content = get_user_meta($user, $key, true);
+    endif;
+    
+    if(isset($atts['fields']) && $current_user->ID != 0 && !empty($atts['fields'])):   
+    $umm_data = get_option('user_meta_manager_data');
+    $class = (!empty($atts['class'])) ? $atts['class'] : 'umm-usermeta-update-form';
+    $submit = (!empty($atts['submit'])) ? $atts['submit'] : __('Submit', 'user-meta-manager');
+    $success = (!empty($atts['success'])) ? $atts['success'] : __('Update successful!', 'user-meta-manager');
+    $error = (!empty($atts['error'])) ? $atts['error'] : __('Authorization required!', 'user-meta-manager');
+    $email_to = (!empty($atts['email_to'])) ? $atts['email_to'] : false;
+    $email_from = (!empty($atts['email_from'])) ? $atts['email_from'] : __('do-not-reply', 'user-meta-manager') . '@' . $_SERVER["HTTP_HOST"];
+    $subject = (!empty($atts['subject'])) ? $atts['subject'] : false;
+    $message = (!empty($atts['message'])) ? $atts['message'] : false;
+    $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
+    $content = '<form action="#" method="post" class="' . $class .  '">';
+    $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
+    $umm_user = md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
+    
+    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST['umm_forbots'] == ''):
+    if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
+    $content .= '<div class="umm-success-message">';
+    $output = "";
+      foreach($show_fields as $field => $field_name):
+        if(isset($_POST[$field_name]) && array_key_exists($field_name, $umm_data)):
+        $val = sprintf("%s", $_POST[$field_name]);
+        $output .= $field_name . " = " . $val . "\n";
+        update_user_meta($current_user->ID, $field_name, $val);       
+        endif;
+      endforeach;
+      if($email_to):
+        $email_message = sprintf($message, $output);
+        mail($email_to, $subject, $email_message, "From: " . $email_from . "\n" . "X-Mailer: PHP/" . phpversion());
+      endif;
+      $content .= '<div class="umm-success-message">' . $success . '</div>' . "\n";
+    else:
+      $content .= '<div class="umm-error-message">' . $error . '</div>' . "\n";
+    endif;
+    endif;
+    $umm_nonce = wp_nonce_field('umm_wp_nonce', 'umm_nonce');
+    $content .= umm_show_profile_fields(false, $atts['fields']) . '
+    <button type="submit">' . $submit .  '</button>' . "\n" . $umm_nonce . "\n";
+ 
+    foreach($vars as $var):
+      $v = split('=', $var);
+      if(!empty($v[0]))
+      $content .=  '<input type="hidden" name="' . $v[0] . '" value="' . $v[1] . '" />' . "\n";  
+    endforeach;
+    $content .=  '<input type="hidden" name="umm_update_usermeta" value="' . $umm_user . '" />
+    <input type="hidden" name="umm_forbots" value="" /></form>' . "\n";
+    endif;
+    
     return $content; 
-    endif;         
 }
 
 function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false){
@@ -1236,30 +1416,17 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
 add_action('admin_menu', 'umm_admin_menu');
 add_action('admin_init', 'umm_admin_init');
 add_action('user_register', 'umm_default_keys');
+//TODO:Add fields to the top or to the bottom of the profile editor
 //add_action('profile_personal_options', 'umm_show_profile_fields');
 add_action('edit_user_profile', 'umm_show_profile_fields');
 add_action('profile_update', 'umm_update_profile_fields');
 add_action('show_user_profile', 'umm_show_profile_fields');
 
-add_action('wp_ajax_umm_edit_user_meta','umm_edit_user_meta');
-add_action('wp_ajax_umm_add_user_meta','umm_add_user_meta');
-add_action('wp_ajax_umm_delete_user_meta','umm_delete_user_meta');
-add_action('wp_ajax_umm_edit_custom_meta','umm_edit_custom_meta');
-add_action('wp_ajax_umm_add_custom_meta','umm_add_custom_meta');
-add_action('wp_ajax_umm_delete_custom_meta','umm_delete_custom_meta');
-add_action('wp_ajax_umm_update_user_meta','umm_update_user_meta');
-add_action('wp_ajax_umm_edit_columns','umm_edit_columns');
-add_action('wp_ajax_umm_update_columns','umm_update_columns');
-add_action('wp_ajax_umm_backup_page','umm_backup_page');
-add_action('wp_ajax_umm_backup','umm_backup');
-add_action('wp_ajax_umm_delete_backup_files','umm_delete_backup_files');
-add_action('wp_ajax_umm_restore','umm_restore');
-add_action('wp_ajax_umm_restore_confirm','umm_restore_confirm');
-add_action('wp_ajax_umm_update_settings','umm_update_settings');
+// All ajax admin-ajax calls pipe through umm_switch_action()
+add_action('wp_ajax_umm_switch_action','umm_switch_action');
 
 add_shortcode('usermeta', 'umm_usermeta_shortcode');
 add_shortcode('useraccess', 'umm_useraccess_shortcode');
-
 
 add_filter('contextual_help', 'umm_help', 10, 3);
 

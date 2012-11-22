@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.0 beta-dev 1.3
+Stable tag: 2.0.0 beta-dev 1.4
 Tested up to: 3.4.2
 
 == Description ==
@@ -13,16 +13,7 @@ THIS IS THE BETA-DEV VERSION OF THIS PLUGIN; BUGS ARE POSSIBLE AND SUPPORT IS LI
 For the current stable release, go to http://wordpress.org/extend/plugins/user-meta-manager/
 
 <p>User Meta Manager allows administrators to add, edit, or delete user meta data.</p> 
-<p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content.</p>
-<p><strong>To display data for a particular user:</strong><br /><pre>[usermeta key="meta key" user="user id"]</pre></p>
-<p><strong>To display data for the current user:</strong><br /><pre>[usermeta key="meta key"]</pre></p>
-<p>An additional short code is available for restricting user access based on a meta key and value or user ID.</p>
-<p><strong>To restrict access based on meta key and value:</strong><br /><pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
-Allowed users will have a matching meta value.</p>
-<p><strong>To restrict access based on multiple meta keys and values:</strong><br /><pre>[useraccess json='{"access_level":"gold","sub_level":"silver"}' message="You do not have permission to view this content."]Restricted content goes here.[/useraccess]</pre>
-The <em>json</em> attribute is used to define a list of meta keys and values. The list must be JSON encoded, as seen in the example above. Users with matching meta keys and values will be granted access to restricted content.</p>
-<p><strong>To restrict access based on user ID:</strong><br /><pre>[useraccess users="1 22 301" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
-Allowed user IDs are listed in the users attribute.</p>
+<p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content, and adding forms to Posts or Pages.</p>
 <p>If you find this plugin useful, please rate it up. If for some reason you think this plugin is broken or has a bug, be helpful and contact me at http://jasonlau.biz/home/contact-me.</p>
 
 == Installation ==

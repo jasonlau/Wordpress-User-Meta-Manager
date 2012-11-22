@@ -1,6 +1,6 @@
 .umm-wrapper{
     position: relative;
-    margin: 10px 20px 10px 0px;
+    margin: 10px 15px 10px 5px;
     padding: 20px;
     border: 1px solid #808080;  
     box-shadow: 5px 5px 5px #DFDFDF;
@@ -49,10 +49,19 @@ pre{
      overflow-y: auto;
      border: 1px solid #C0C0C0;
      -moz-border-radius: 8px;
-    -khtml-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
+     -khtml-border-radius: 8px;
+     -webkit-border-radius: 8px;
+     border-radius: 8px;
      
+}
+
+input:focus, textarea:focus, button:hover, input[type=submit]:hover{
+    box-shadow: 5px 5px 5px #DFDFDF;
+}
+
+#contextual-help-wrap{
+    left: 0px !important;
+    box-shadow: 5px 5px 5px #DFDFDF;
 }
 
 .umm-secondary-wrapper{
