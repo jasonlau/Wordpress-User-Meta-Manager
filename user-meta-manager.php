@@ -521,8 +521,7 @@ function umm_get_columns(){
     return array_merge($users_columns, $usermeta_columns);
 }
 
-function umm_install(){
-   umm_backup('php', 'yes', false);    
+function umm_install(){    
    add_option('umm_backup', umm_usermeta_data());
    add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));   
    add_option('user_meta_manager_data', array());
@@ -531,6 +530,7 @@ function umm_install(){
    add_option('umm_usermeta_columns', array());
    add_option('umm_backup_files', array());
    add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes'));
+   umm_backup('php', 'yes', false); 
 }
 
 function umm_key_exists($key=false){
