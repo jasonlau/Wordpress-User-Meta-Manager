@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.6
+ * Version: 2.0.0 beta-dev 1.7
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0 beta-dev 1.6');
+define('UMM_VERSION', '2.0.0 beta-dev 1.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -90,7 +90,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user;
     $backup_files = get_option('umm_backup_files');
     $mode = (empty($backup_mode)) ? $_REQUEST['mode'] : $backup_mode;
-    $tofile = (empty($tofile)) ? $_REQUEST['to_file'] : $tofile;
+    $tofile = (empty($tofile)) ? $_REQUEST['tofile'] : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
     $back_button = umm_button("umm_backup_page&u=1", null, "umm-back-button");
     switch($mode){
@@ -146,19 +146,24 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
         
         if($tofile == "yes"):
           $rs = umm_random_str(10);
+          $temp_file = WP_PLUGIN_DIR . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . ".php";
           $file = WP_PLUGIN_DIR . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
           $link = WP_PLUGIN_URL . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
           array_push($backup_files, $file);
           update_option('umm_backup_files', $backup_files);
-          if($fp = fopen($file, "w+")){
-            chmod($file, 0755);
+          
+          if($fp = @fopen($temp_file, "w+")):
+            @chmod($temp_file, 0755);
             fwrite($fp, trim($output));
             fclose($fp);
-            chmod($file, 0755);
+            // Some servers need permissions set
+            @chmod($temp_file, 0755);
+            @rename($temp_file, $file);
+            
             $output = '<p class="umm-message">' . __("Backup php file was successfully generated at ", "user-meta-manager") . " <a href=\"" . $link . "\" target=\"_blank\">" . $link . "</a></p><p>" . __("Run the file in your browser to begin the restoration process.", "user-meta-manager") . "</p>";
-          } else {
+          else:
             $output = '<p class="umm-warning">' . __("Error: Backup php file could not be generated at ", "user-meta-manager") . " " . WP_PLUGIN_DIR . "/user-meta-manager/backups" . "</p><p>" . __("Please be sure the directory exists and is owner-writable.", "user-meta-manager") . "</p>";
-          }          
+          endif;          
         else:
         $output = '<p class="umm-message">' . __("Below is the php needed to restore the usermeta table. Save this code as a php file to the root WordPress folder, then run it in your browser.", "user-meta-manager") . "</p><strong>" . __("Backup from", "user-meta-manager") . " " . $budate . "</strong><br />\n<textarea onclick=\"this.focus();this.select();\" cols=\"65\" rows=\"15\">" . $output . "</textarea>";
         endif;
@@ -995,72 +1000,6 @@ function umm_subpage_title($user_id, $text){
 function umm_switch_action(){
     if(function_exists($_REQUEST['sub_action']))
        call_user_func($_REQUEST['sub_action']);
-    
-    /*switch($_REQUEST['sub_action']){ 
-	   case "umm_edit_user_meta":
-       umm_edit_user_meta();
-	   break;
-
-	   case "umm_add_user_meta":
-       umm_add_user_meta();
-	   break;
-
-	   case "umm_delete_user_meta":
-       umm_delete_user_meta();
-	   break;
-       
-       case "umm_edit_custom_meta":
-       umm_edit_custom_meta();
-	   break;
-       
-       case "umm_add_custom_meta":
-       umm_add_custom_meta();
-	   break;
-       
-       case "umm_delete_custom_meta":
-       umm_delete_custom_meta();
-	   break;
-       
-       case "umm_update_user_meta":
-       umm_update_user_meta();
-	   break;
-       
-       case "umm_edit_columns":
-       umm_edit_columns();
-	   break;
-       
-       case "umm_update_columns":
-       umm_update_columns();
-	   break;
-       
-       case "umm_backup_page":
-       umm_backup_page();
-	   break;
-       
-       case "umm_backup":
-       umm_backup();
-	   break;
-       
-       case "umm_delete_backup_files":
-       umm_delete_backup_files();
-	   break;
-       
-       case "umm_restore":
-       umm_restore();
-	   break;
-       
-       case "umm_restore_confirm":
-       umm_restore_confirm();
-	   break;
-       
-       case "umm_update_settings":
-       umm_update_settings();
-	   break;
-       
-       case "umm_reset":
-       umm_reset();
-	   break;
-    }*/
 }
 
 function umm_ui(){

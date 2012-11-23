@@ -146,9 +146,6 @@ class UMM_UI extends WP_List_Table {
         $settings['first_run'] = 'no';
         update_option('umm_settings', $settings);
       endif;
-      umm_backup('php', 'yes', false);
-      // Brute force delete
-      // umm_delete_single_key('test');
     ?>
 <div class="umm-wrapper" data-help_text="<?php _e('User Meta Manager Help', 'user-meta-manager') ?>" data-umm_loading_image="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" data-first_run="<?php echo $first_run ?>" data-no_spaces="<?php _e('No Spaces', 'user-meta-manager') ?>" data-invalid_chars_warning="<?php _e('Letters, numbers, and underscores only.', 'user-meta-manager') ?>" data-key_exists="<?php _e('<strong>Error:</strong> That key already exists. Choose a different name.', 'user-meta-manager') ?>">
 <div id="icon-users" class="icon32"><br/></div><!-- #icon-users .icon32 -->
