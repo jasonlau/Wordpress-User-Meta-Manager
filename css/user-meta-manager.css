@@ -37,7 +37,7 @@
 .umm-message,
 .umm-warning,
 .umm-update-settings-result{
-    padding: 4px 4px 4px 4px;
+    padding: 10px;
     box-shadow: 5px 5px 5px #DFDFDF;
     -moz-border-radius: 8px;
     -khtml-border-radius: 8px;

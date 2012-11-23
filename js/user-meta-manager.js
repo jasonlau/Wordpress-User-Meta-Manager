@@ -238,7 +238,8 @@
         });
     }
     
-    $("input[name='meta_key']").live('keyup change', function(){
+    $("input[name='meta_key']").live('keyup change', function(event){
+       $("input#umm_update_user_meta_submit").prop("disabled","disabled"); 
        var obj = $(this),
         original_value = obj.val(),
         new_value = original_value.replace(' ', '_').replace(/\W/g, ''),
@@ -254,6 +255,33 @@
             obj.val(new_value);
         }
         
+        var current_val = obj.val(),
+        check_if_exists = function(){
+            //if(event.type == 'change'){
+            console.log(event.type);
+            var request = $.ajax({
+                url: 'admin-ajax.php?action=umm_switch_action&sub_action=umm_key_exists&meta_key=' + current_val,
+                type: "POST",
+                dataType: "json"
+            });
+            request.done(function(data){
+                console.log(data.key_exists);
+                if(data.key_exists){
+            if(!$(".key-exists-warning").html()){
+                $("input#umm_update_user_meta_submit").prop("disabled","disabled");
+            obj.after('<div class="umm-warning key-exists-warning hidden">' + page_data.key_exists + '</div>');
+            $(".key-exists-warning").show('slow');
+            }
+        } else {
+            if($(".key-exists-warning").html()){
+                $(".key-exists-warning").hide('slow').remove();
+            }
+            $("input#umm_update_user_meta_submit").prop("disabled","");
+        }
+            });
+        //} 
+        };
+        
         if(invalidChars.test(new_value)){
             if(!$(".invalid-chars-warning").html()){
             obj.after('<div class="umm-warning invalid-chars-warning hidden">' + page_data.invalid_chars_warning + '</div>');
@@ -263,6 +291,8 @@
             if($(".invalid-chars-warning").html()){
                 $(".invalid-chars-warning").hide('slow').remove();
             }
+        check_if_exists();
+           
         }        
     });
     

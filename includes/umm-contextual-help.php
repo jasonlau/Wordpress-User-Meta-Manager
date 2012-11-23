@@ -56,7 +56,6 @@ function umm_help($contextual_help, $screen_id, $screen) {
         '<h2>' . __( 'The <em>Home</em> Screen', 'user-meta-manager') . '</h2><p>' . __( 'The User Meta Manager <em>Home</em> screen displays a list of your website\'s users from which you may select a single user to edit.', 'user-meta-manager') . '</p>
         <p>' . __( 'Locate from the list which User you wish to work with, place your mouse over that item, and the following links will appear as your mouse moves over each user -', 'user-meta-manager') . '</p>
         <ol start="1">
-    <li>' . __('<strong>Add Meta:</strong> Add new, custom meta data for a single user. It\'s wise to only use letters, numbers, and underscores while adding and naming new meta keys. Meta values can consist of any characters. Once meta-data is added here, it can only be managed here. Use the <em>Add Custom Meta</em> button to add custom meta for all users.', 'user-meta-manager') . '</li>
     <li>' . __('<strong>Edit Meta:</strong> Edit existing meta-data values for each member.', 'user-meta-manager') . '</li>   
     <li>' . __('<strong>Delete Meta:</strong> Delete individual meta keys for a single user or for <em>All Users</em>. You can select which meta data to delete from the drop menu.', 'user-meta-manager') . '</li>
     </ol>'

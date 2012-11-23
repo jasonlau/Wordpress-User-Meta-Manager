@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.5
+ * Version: 2.0.0 beta-dev 1.6
  * Author: Jason Lau
  * Author URI: http://websitedev.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0 beta-dev 1.4');
+define('UMM_VERSION', '2.0.0 beta-dev 1.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -86,12 +86,14 @@ function umm_admin_menu(){
   add_action('admin_enqueue_scripts', 'umm_load_scripts');
 }
 
-function umm_backup(){
+function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user;
     $backup_files = get_option('umm_backup_files');
+    $mode = (empty($backup_mode)) ? $_REQUEST['mode'] : $backup_mode;
+    $tofile = (empty($tofile)) ? $_REQUEST['to_file'] : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
     $back_button = umm_button("umm_backup_page&u=1", null, "umm-back-button");
-    switch($_REQUEST['mode']){
+    switch($mode){
         case "sql":
         $data = get_option('umm_backup');
         $budate = get_option('umm_backup_date');
@@ -112,7 +114,7 @@ function umm_backup(){
           $sql .= "),\n";
         endforeach;
         $sql = trim($sql,",\n") . ";";
-        $output = "<p>" . __("Below is the sql needed to restore the usermeta table.", "user-meta-manager") . "</p><strong>" . __("Backup from", "user-meta-manager") . " " . $budate . "</strong><br />\n<textarea onclick=\"this.focus();this.select();\" cols=\"65\" rows=\"15\">" . $sql . "</textarea>";
+        $output = '<p class="umm-message">' . __("Below is the sql needed to restore the usermeta table.", "user-meta-manager") . "</p><strong>" . __("Backup from", "user-meta-manager") . " " . $budate . "</strong><br />\n<textarea onclick=\"this.focus();this.select();\" cols=\"65\" rows=\"15\">" . $sql . "</textarea>";
         break;
         
         case "php":
@@ -142,7 +144,7 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
         endforeach;
         $output .= "print('" . __("Restore complete.", "user-meta-manager") . "');\nelse:\nprint('<form action=\"#\" method=\"post\"><p>" . __("Are you sure you want to restore all user meta data to the backup version?", "user-meta-manager") . "</p><button type=\"submit\">" . __("Yes", "user-meta-manager") . "</button><input type=\"hidden\" name=\"umm_confirm_restore\" value=\"1\" /></form>');\nendif;\n?>";
         
-        if($_REQUEST['tofile'] == "yes"):
+        if($tofile == "yes"):
           $rs = umm_random_str(10);
           $file = WP_PLUGIN_DIR . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
           $link = WP_PLUGIN_URL . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
@@ -153,27 +155,30 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
             fwrite($fp, trim($output));
             fclose($fp);
             chmod($file, 0755);
-            $output = "<p>" . __("Backup php file was successfully generated at ", "user-meta-manager") . " <a href=\"" . $link . "\" target=\"_blank\">" . $link . "</a></p><p>" . __("Run the file in your browser to begin the restoration process.", "user-meta-manager") . "</p>";
+            $output = '<p class="umm-message">' . __("Backup php file was successfully generated at ", "user-meta-manager") . " <a href=\"" . $link . "\" target=\"_blank\">" . $link . "</a></p><p>" . __("Run the file in your browser to begin the restoration process.", "user-meta-manager") . "</p>";
           } else {
-            $output = "<p>" . __("Error: Backup php file could not be generated at ", "user-meta-manager") . " " . WP_PLUGIN_DIR . "/user-meta-manager/backups" . "</p><p>" . __("Please be sure the directory exists and is owner-writable.", "user-meta-manager") . "</p>";
+            $output = '<p class="umm-warning">' . __("Error: Backup php file could not be generated at ", "user-meta-manager") . " " . WP_PLUGIN_DIR . "/user-meta-manager/backups" . "</p><p>" . __("Please be sure the directory exists and is owner-writable.", "user-meta-manager") . "</p>";
           }          
         else:
-        $output = "<p>" . __("Below is the php needed to restore the usermeta table. Save this code as a php file to the root WordPress folder, then run it in your browser.", "user-meta-manager") . "</p><strong>" . __("Backup from", "user-meta-manager") . " " . $budate . "</strong><br />\n<textarea onclick=\"this.focus();this.select();\" cols=\"65\" rows=\"15\">" . $output . "</textarea>";
+        $output = '<p class="umm-message">' . __("Below is the php needed to restore the usermeta table. Save this code as a php file to the root WordPress folder, then run it in your browser.", "user-meta-manager") . "</p><strong>" . __("Backup from", "user-meta-manager") . " " . $budate . "</strong><br />\n<textarea onclick=\"this.focus();this.select();\" cols=\"65\" rows=\"15\">" . $output . "</textarea>";
         endif;
         break;
         
         default:
         update_option('umm_backup', umm_usermeta_data());
         update_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
-        $output = "<p>" . __("User meta data backup was successful.", "user-meta-manager") . "</p>";
+        $output = '<p class="umm-message">' . __("User meta data backup was successful.", "user-meta-manager") . "</p>";
         break;
-    }   
-    print $back_button . $output;
-    exit;
+    } 
+    
+    if($print):
+      print '<div class="umm-backup-page-container">' . $back_button . $output . '</div>';
+      exit;  
+    endif;  
+    
 }
 
-function umm_backup_page(){
-//TODO:Style dialogues    
+function umm_backup_page(){   
     global $wpdb;
     $budate = get_option('umm_backup_date');
     if($budate == "") $budate = __("No backup", "user-meta-manager");
@@ -238,10 +243,10 @@ function umm_delete_backup_files(){
     endforeach;
     endif;
     update_option('umm_backup_files', array());
-    
-    $output = '<p class="umm-message">' . __('All backup files successfully deleted.', 'user-meta-manager') . ' <a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page" class="umm-subpage">' . __('Back', 'user-meta-manager') . '</a></p>';
+    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', 'user-meta-manager'), "umm-back-button");
+    $output = $back_button . '<p class="umm-message">' . __('All backup files successfully deleted.', 'user-meta-manager') . '</p>';
     else:
-    $output = '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', 'user-meta-manager') . '</strong><br /><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', 'user-meta-manager') . '</a> <a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page" class="umm-subpage">' . __('Cancel', 'user-meta-manager') . '</a></p>';
+    $output = $back_button . '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', 'user-meta-manager') . '</strong><br /><a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', 'user-meta-manager') . '</a> <a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page" class="umm-subpage">' . __('Cancel', 'user-meta-manager') . '</a></p>';
     endif;
     print $output;
     exit;
@@ -517,15 +522,30 @@ function umm_get_columns(){
 }
 
 function umm_install(){
-//TODO:Create backup file on install    
+   umm_backup('php', 'yes', false);    
    add_option('umm_backup', umm_usermeta_data());
-   add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
-   add_option('user_meta_manager_data', '');
+   add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));   
+   add_option('user_meta_manager_data', array());
    add_option('umm_profile_fields', array());
    add_option('umm_users_columns', array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')));
    add_option('umm_usermeta_columns', array());
    add_option('umm_backup_files', array());
    add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes'));
+}
+
+function umm_key_exists($key=false){
+    global $wpdb;
+    $k = (empty($key)) ? $_REQUEST['meta_key'] : $key;
+    $umm_data = get_option('user_meta_manager_data');
+    $data = $wpdb->get_results("SELECT * FROM " . $wpdb->usermeta . " WHERE meta_key='" . $k . "'");
+    if(!empty($data)):
+       $output = '{"key_exists":true}';
+       print $output;
+    else:
+       $output = '{"key_exists":false}';
+       print $output;
+    endif;
+    exit;
 }
 
 function umm_load_scripts($hook) {
@@ -557,7 +577,8 @@ function umm_profile_field_editor($umm_edit_key=null){
           $class = $profile_fields[$umm_edit_key]['class'];
           $attrs = stripslashes(htmlspecialchars_decode($profile_fields[$umm_edit_key]['attrs']));
           $after = stripslashes(htmlspecialchars_decode($profile_fields[$umm_edit_key]['after']));
-          $required = $profile_fields[$umm_edit_key]['required'];
+          $required = $profile_fields[$umm_edit_key]['required'];          
+          $allow_tags = $profile_fields[$umm_edit_key]['allow_tags'];
           $add_to_profile = $profile_fields[$umm_edit_key]['add_to_profile'];
           $options = (!is_array($profile_fields[$umm_edit_key]['options'])) ? array() : $profile_fields[$umm_edit_key]['options'];
           
@@ -668,6 +689,14 @@ function umm_profile_field_editor($umm_edit_key=null){
     if($required == 'yes') $output .= ' selected="selected"';
     $output .= '>Yes</option>
     </select><br />
+    <strong>'.__('Allow Tags', 'user-meta-manager').':</strong> <select size="1" name="umm_allow_tags">
+	<option value="no"';
+    if($add_to_profile == 'no' || $add_to_profile == '') $output .= ' selected="selected"';
+    $output .= '>No</option>
+    <option value="yes"';
+    if($add_to_profile == 'yes') $output .= ' selected="selected"';
+    $output .= '>Yes</option> 	
+    </select><br />
     <strong>'.__('Add To Profile', 'user-meta-manager').':</strong> <select size="1" name="umm_add_to_profile">
 	<option value="yes"';
     if($add_to_profile == 'yes' || $add_to_profile == '') $output .= ' selected="selected"';
@@ -771,7 +800,6 @@ function umm_reset(){
     exit;
 }
 
-
 function umm_restore(){
     global $wpdb;
     $data = get_option('umm_backup');
@@ -784,7 +812,8 @@ function umm_restore(){
     $wpdb->insert($wpdb->usermeta, $cols); 
     $cols = array();       
     endforeach;
-    $output = "<p>" . __("User meta data successfully restored.", "user-meta-manager") . "</p>";
+    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', 'user-meta-manager'), "umm-back-button");
+    $output = $back_button . '<p class="umm-message">' . __("User meta data successfully restored.", "user-meta-manager") . "</p>";
     print $output;
     exit;
 }
@@ -793,8 +822,9 @@ function umm_restore_confirm(){
     $budate = get_option('umm_backup_date');
     if($budate == ""): 
       $output = __("No backup data to restore!", "user-meta-manager");
-    else:  
-      $output = "<p>" . __("Are you sure you want to restore all user meta data to the backup version?", "user-meta-manager") . " <a href=\"#\" data-subpage=\"admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_restore&u=1\" title=\"" . __('Restore', 'user-meta-manager') . "\" class=\"umm-subpage\">".__('Yes', 'user-meta-manager')."</a></p>";
+    else:
+      $back_button = umm_button("umm_backup_page&u=1", __('<< Back', 'user-meta-manager'), "umm-back-button");
+      $output = $back_button . '<p class="umm-warning"><strong>' . __("Restore all user meta data to the backup version?", "user-meta-manager") . "</strong><br /><a href=\"#\" data-subpage=\"admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_restore&u=1\" title=\"" . __('Restore', 'user-meta-manager') . "\" class=\"umm-subpage\">".__('Yes', 'user-meta-manager')."</a> <a href=\"#\" data-subpage=\"admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page&u=1\" title=\"" . __('Cancel', 'user-meta-manager') . "\" class=\"umm-subpage\">".__('Cancel', 'user-meta-manager')."</a></p>";
     endif;
     print $output;
     exit;
@@ -963,7 +993,10 @@ function umm_subpage_title($user_id, $text){
 }
 
 function umm_switch_action(){
-    switch($_REQUEST['sub_action']){ 
+    if(function_exists($_REQUEST['sub_action']))
+       call_user_func($_REQUEST['sub_action']);
+    
+    /*switch($_REQUEST['sub_action']){ 
 	   case "umm_edit_user_meta":
        umm_edit_user_meta();
 	   break;
@@ -1027,7 +1060,7 @@ function umm_switch_action(){
        case "umm_reset":
        umm_reset();
 	   break;
-    }
+    }*/
 }
 
 function umm_ui(){
@@ -1117,7 +1150,7 @@ function umm_update_user_meta(){
     $all_users = (!empty($_POST['all_users'])) ? true : false;
     $umm_data = get_option('user_meta_manager_data');
     $meta_key = (!empty($_POST['meta_key'])) ? $_POST['meta_key'] : '';
-    $meta_value = $_POST['meta_value'];     
+    $meta_value = ($_POST['umm_allow_tags'] == 'yes') ? $_POST['meta_value'] : wp_strip_all_tags($_POST['meta_value']);     
     if($meta_key != ""):
     
     if(array_key_exists($meta_key, $umm_data) && $_POST['mode'] == 'add'):
@@ -1165,6 +1198,7 @@ function umm_update_user_meta(){
                                           'attrs' => htmlspecialchars($_POST['umm_profile_field_attrs']),
                                           'after' => htmlspecialchars($_POST['umm_profile_field_after']) ,
                                           'required' => $_POST['umm_profile_field_required'],
+                                          'allow_tags' => $_POST['umm_allow_tags'],
                                           'add_to_profile' => $_POST['umm_add_to_profile'],
                                           'options' => $options);                   
         endif;
