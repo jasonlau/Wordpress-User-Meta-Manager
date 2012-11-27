@@ -4,15 +4,15 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0 beta-dev 1.7
+ * Version: 2.0.0
  * Author: Jason Lau
- * Author URI: http://websitedev.biz
+ * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
  * Disclaimer: Use at your own risk. No warranty expressed or implied.
  * 
  * Always backup your database before making changes.
  * 
- * Copyright 2012 http://websitedev.biz http://jasonlau.biz
+ * Copyright 2012 http://jasonlau.biz http://websitedev.biz
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0 beta-dev 1.7');
+define('UMM_VERSION', '2.0.0');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -528,8 +528,19 @@ function umm_get_columns(){
 
 function umm_install(){    
    add_option('umm_backup', umm_usermeta_data());
-   add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));   
-   add_option('user_meta_manager_data', array());
+   add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
+   $umm_data = get_option('user_meta_manager_data');
+   if(!empty($umm_data) && !is_array($umm_data)):
+   // Backwards compatibility
+   $new_array = array();
+     $d = explode(",", $umm_data);
+     foreach($d as $k):
+       array_push($new_array, trim(stripslashes($k)));
+     endforeach;
+     update_option('user_meta_manager_data', $new_array);
+   else:
+     add_option('user_meta_manager_data', array());
+   endif;     
    add_option('umm_profile_fields', array());
    add_option('umm_users_columns', array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')));
    add_option('umm_usermeta_columns', array());

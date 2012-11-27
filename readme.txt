@@ -4,13 +4,10 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.0 beta-dev 1.7
+Stable tag: 2.0.0
 Tested up to: 3.4.2
 
 == Description ==
-
-THIS IS THE BETA-DEV VERSION OF THIS PLUGIN; BUGS ARE POSSIBLE AND SUPPORT IS LIMITED.
-For the current stable release, go to http://wordpress.org/extend/plugins/user-meta-manager/
 
 <p>User Meta Manager allows administrators to add, edit, or delete user meta data.</p> 
 <p>User Meta Manager also provides <em>short codes</em> for inserting user meta data into posts or pages, or restricting user-access to content, and adding forms to Posts or Pages.</p>
@@ -81,7 +78,10 @@ This update adds features which allow you to edit which columns are displayed in
 Fixed a bug which caused meta values containing apostrophes to not display correctly in the editor.
 
 = 1.5.7 =
-Fixed a bug which caused meta values to not display correctly in the editor. 
+Fixed a bug which caused meta values to not display correctly in the editor.
+
+ = 2.0.0 =
+ This is a near complete overhaul with too many changes to list. 
 
 == Upgrade Notice ==
 
@@ -126,3 +126,6 @@ Fixed a bug which caused meta values containing apostrophes to not display corre
 
 = 1.5.7 =
 Fixed a bug which caused meta values to not display correctly in the editor.
+
+ = 2.0.0 =
+ This is a near complete overhaul with too many changes to list.

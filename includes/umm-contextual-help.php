@@ -9,8 +9,7 @@
 if(!defined("UMM_PATH")) die();
 
 function umm_help($contextual_help, $screen_id, $screen) {
-	$screen = get_current_screen();
-    if($screen->id != "users_page_user-meta-manager")
+    if($screen->id != 'users_page_user-meta-manager')
     return;
     $umm_settings = get_option('umm_settings');
     $retain_data = $umm_settings['retain_data'];
@@ -119,8 +118,21 @@ function umm_help($contextual_help, $screen_id, $screen) {
     Additionally, you could repeat the same meta key multiple times.
     <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre><br /><br />
     <strong>Display a form in a Post or Page:</strong><br />
-    Display a form which allows members to update meta data. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. 
+    Display a form which allows members to update meta data. The updated data is saved and optionally emailed to a set address. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. 
     <pre>[usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;two=2&amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
+    <strong>Form Short Code Attributes</strong><br />
+    <ul>
+	<li><strong>class:</strong> (Optional) A CSS class to add to the form.</li>
+    <li><strong>submit:</strong> (Optional) A label for the submit button.</li>
+    <li><strong>success:</strong> (Optional) A message to display if the form submission is successful.</li>
+    <li><strong>error:</strong> (Optional)) A message to display if the form submission fails.</li>
+    <li><strong>fields:</strong> (Optional) A comma delimited list of meta keys to display. Each meta key will be displayed as it\'s set <em>Field Type</em> in the order in which you list them.</li>
+    <li><strong>vars:</strong> (Optional) A URL encoded string of extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.</li>
+    <li><strong>email_to:</strong> (Optional) An email address to send the results of the form submission to. Leave this empty or remove it altogether to disable this feature. If you use this feature, also use all of the following attributes.</li>
+    <li><strong>email_from:</strong> (Used with email_to) An email address as the sender.</li>
+    <li><strong>subject:</strong> (Used with email_to) An email subject.</li>
+    <li><strong>message:</strong> (Required with email_to) A message to send in the email. <strong>\n</strong> = line break. <strong>%s</strong> = contents of the form submission. <strong>Important:</strong> You must add <strong>%s</strong> where you want the form submission results displayed in the message.</li>
+</ul>
     </p>', 'user-meta-manager')
     ),
     
