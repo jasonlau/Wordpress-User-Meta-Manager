@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.0
+ * Version: 2.0.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.0');
+define('UMM_VERSION', '2.0.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 
 include(UMM_PATH . 'includes/umm-table.php');
@@ -87,7 +87,7 @@ function umm_admin_menu(){
 }
 
 function umm_backup($backup_mode=false, $tofile=false, $print=true){
-    global $wpdb, $current_user;
+    global $wpdb, $current_user, $table_prefix;
     $backup_files = get_option('umm_backup_files');
     $mode = (empty($backup_mode)) ? $_REQUEST['mode'] : $backup_mode;
     $tofile = (empty($tofile)) ? $_REQUEST['tofile'] : $tofile;
@@ -95,7 +95,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     $back_button = umm_button("umm_backup_page&u=1", null, "umm-back-button");
     switch($mode){
         case "sql":
-        $data = get_option('umm_backup');
+        $data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
         $budate = get_option('umm_backup_date');
         $sql = "DELETE FROM `" . $wpdb->usermeta . "`;\n";
         $sql .= "INSERT INTO `" . $wpdb->usermeta . "` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES\n";      
@@ -118,7 +118,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
         break;
         
         case "php":
-        $data = get_option('umm_backup');
+        $data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
         $budate = get_option('umm_backup_date');
         $output = '<?php
 ';
@@ -170,7 +170,9 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
         break;
         
         default:
-        update_option('umm_backup', umm_usermeta_data());
+        $wpdb->query("DROP TABLE IF EXISTS  " . $table_prefix . "umm_usermeta_backup");
+        $wpdb->query("CREATE  TABLE  " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
+        $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
         update_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
         $output = '<p class="umm-message">' . __("User meta data backup was successful.", "user-meta-manager") . "</p>";
         break;
@@ -222,18 +224,19 @@ function umm_column_exists($key){
 }
 
 function umm_deactivate(){
+    global $wpdb, $table_prefix;    
     $umm_settings = get_option('umm_settings');
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     if($umm_settings['retain_data'] == 'no'):
      delete_option('user_meta_manager_data');
      delete_option('umm_users_columns');
      delete_option('umm_usermeta_columns');
-     delete_option('umm_backup');
      delete_option('umm_backup_date');
      delete_option('umm_backup_files');
      delete_option('umm_profile_fields');
      delete_option('umm_settings');
-    endif;
+     $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
+    endif;   
 }
 
 function umm_delete_backup_files(){
@@ -526,9 +529,15 @@ function umm_get_columns(){
     return array_merge($users_columns, $usermeta_columns);
 }
 
-function umm_install(){    
-   add_option('umm_backup', umm_usermeta_data());
-   add_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
+function umm_install(){
+    global $wpdb, $table_prefix;
+    $wpdb->query("DROP TABLE IF EXISTS  " . $table_prefix . "umm_usermeta_backup");
+    $wpdb->query("CREATE  TABLE  " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
+    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);   
+    $bu_data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
+   update_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
+   add_option('umm_backup_files', array());
+   umm_backup('php', 'yes', false);
    $umm_data = get_option('user_meta_manager_data');
    if(!empty($umm_data) && !is_array($umm_data)):
    // Backwards compatibility
@@ -543,10 +552,9 @@ function umm_install(){
    endif;     
    add_option('umm_profile_fields', array());
    add_option('umm_users_columns', array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')));
-   add_option('umm_usermeta_columns', array());
-   add_option('umm_backup_files', array());
+   add_option('umm_usermeta_columns', array());  
    add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes'));
-   umm_backup('php', 'yes', false); 
+    
 }
 
 function umm_key_exists($key=false){
@@ -817,17 +825,9 @@ function umm_reset(){
 }
 
 function umm_restore(){
-    global $wpdb;
-    $data = get_option('umm_backup');
+    global $wpdb, $table_prefix;
     $wpdb->query("DELETE FROM " . $wpdb->usermeta);
-    $cols = array();
-    foreach($data as $d):
-      foreach($d as $key => $value):
-        $cols[$key] = $value;   
-      endforeach;
-    $wpdb->insert($wpdb->usermeta, $cols); 
-    $cols = array();       
-    endforeach;
+    $wpdb->query("INSERT INTO " . $wpdb->usermeta . "  SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
     $back_button = umm_button("umm_backup_page&u=1", __('<< Back', 'user-meta-manager'), "umm-back-button");
     $output = $back_button . '<p class="umm-message">' . __("User meta data successfully restored.", "user-meta-manager") . "</p>";
     print $output;

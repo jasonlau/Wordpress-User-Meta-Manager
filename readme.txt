@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.0
+Stable tag: 2.0.2
 Tested up to: 3.4.2
 
 == Description ==
@@ -82,6 +82,12 @@ Fixed a bug which caused meta values to not display correctly in the editor.
 
  = 2.0.0 =
  This is a near complete overhaul with too many changes to list. 
+ 
+ = 2.0.1 =
+ Fixed a potential bug in the activation process. 
+ 
+ = 2.0.2 =
+ Changes to the backup and restore process.
 
 == Upgrade Notice ==
 
@@ -128,4 +134,10 @@ Fixed a bug which caused meta values containing apostrophes to not display corre
 Fixed a bug which caused meta values to not display correctly in the editor.
 
  = 2.0.0 =
- This is a near complete overhaul with too many changes to list.
+ This is a near complete overhaul with too many changes to list. 
+ 
+ = 2.0.1 =
+ Fixed a potential bug in the activation process. 
+ 
+  = 2.0.2 =
+ Changes to the backup and restore process.
