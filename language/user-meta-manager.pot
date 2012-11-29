@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the User Meta Manager package.
 msgid ""
 msgstr ""
-"Project-Id-Version: User Meta Manager 1.4.1\n"
+"Project-Id-Version: User Meta Manager 2.0.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/user-meta-manager\n"
-"POT-Creation-Date: 2012-06-30 16:29:34+00:00\n"
+"POT-Creation-Date: 2012-11-29 03:19:32+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,301 +12,1008 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: user-meta-manager.php:44
-msgid "user"
-msgstr ""
-
-#: user-meta-manager.php:45
-msgid "users"
-msgstr ""
-
-#: user-meta-manager.php:71
-msgid "Edit User Meta"
-msgstr ""
-
-#: user-meta-manager.php:71
-msgid "Edit Meta Data"
-msgstr ""
-
-#: user-meta-manager.php:72
-msgid "Add User Meta"
-msgstr ""
-
-#: user-meta-manager.php:72
-msgid "Add Meta Data"
-msgstr ""
-
-#: user-meta-manager.php:73
-msgid "Delete User Meta"
-msgstr ""
-
-#: user-meta-manager.php:73
-msgid "Delete Meta Data"
-msgstr ""
-
-#: user-meta-manager.php:83 user-meta-manager.php:172
-msgid "ID"
-msgstr ""
-
-#: user-meta-manager.php:84 user-meta-manager.php:172
-msgid "User Login"
-msgstr ""
-
-#: user-meta-manager.php:85 user-meta-manager.php:172
-msgid "Nice Name"
-msgstr ""
-
-#: user-meta-manager.php:86 user-meta-manager.php:172
-msgid "Display Name"
-msgstr ""
-
-#: user-meta-manager.php:87 user-meta-manager.php:172
-msgid "Date Registered"
-msgstr ""
-
-#: user-meta-manager.php:112 user-meta-manager.php:119
-#: user-meta-manager.php:153
-msgid "Close"
-msgstr ""
-
-#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
-#. Plugin Name of the plugin/theme
-#: user-meta-manager.php:150
-msgid "User Meta Manager"
-msgstr ""
-
-#: user-meta-manager.php:151
-msgid "Manage User Meta Data"
-msgstr ""
-
-#: user-meta-manager.php:154
+#: includes/umm-contextual-help.php:28
 msgid ""
-"What is <em>User Meta</em>? <em>User Meta</em> is user-specific data which "
-"is stored in the <em>wp_usermeta</em> database table. This data is stored by "
-"WordPress and various and sundry plugins, and can consist of anything from "
-"profile information to membership levels."
+"<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making "
+"changes to your website."
 msgstr ""
 
-#: user-meta-manager.php:155
+#: includes/umm-contextual-help.php:30
+msgid "Introduction"
+msgstr ""
+
+#: includes/umm-contextual-help.php:32
+msgid "What is <em>User Meta</em>?"
+msgstr ""
+
+#: includes/umm-contextual-help.php:33
 msgid ""
-"This plugin gives you the tools to manage the data which is stored for each "
-"user. Not only can you manage existing meta data, but you can also create "
-"new custom meta data for each user or for all users."
+"<em>User Meta</em> is user-specific data which is stored in the "
+"<em>wp_usermeta</em> database table. This data is stored by WordPress and "
+"various and sundry plugins, and can consist of anything from profile "
+"information to membership levels."
 msgstr ""
 
-#: user-meta-manager.php:156
-msgid "Follow the steps below to manage user meta data."
+#: includes/umm-contextual-help.php:37
+msgid "Plugin Settings"
 msgstr ""
 
-#: user-meta-manager.php:158
-msgid "Always backup your data before making changes to your website."
+#: includes/umm-contextual-help.php:38
+msgid "User Meta Manager Settings"
 msgstr ""
 
-#: user-meta-manager.php:159
-msgid ""
-"Locate from the list which User you want to work with and place your mouse "
-"on that item. Action links will appear as your mouse moves over each user."
+#: includes/umm-contextual-help.php:41
+msgid "Retain Saved Data On Uninstall"
 msgstr ""
 
-#: user-meta-manager.php:161
-msgid ""
-"<strong>Edit Meta Data:</strong> Edit existing meta data for each member."
+#: includes/umm-contextual-help.php:43
+msgid "yes"
 msgstr ""
 
-#: user-meta-manager.php:162
-msgid ""
-"<strong>Add Meta Data:</strong> Add new, custom meta data for each user, or "
-"for <em>All Users</em>. If the meta data is added to <em>All Users</em>, new "
-"registrations will automatically receive the meta key and default value."
-msgstr ""
-
-#: user-meta-manager.php:163
-msgid ""
-"<strong>Delete Meta Data:</strong> Delete individual meta keys for a single "
-"user or for <em>All Users</em>. You can select which meta data to delete "
-"from the drop menu."
-msgstr ""
-
-#: user-meta-manager.php:166
-msgid ""
-"<strong>Shorttags:</strong><p>Shorttags can be inserted into Posts or Pages "
-"to display user meta data or control access to content.</p><strong>Display "
-"data for a particular user:</strong> <br /><code>[usermeta key=\"meta key\" "
-"user=\"user id\"]</code> <br /><br /><strong>Display data for the current "
-"user:</strong> <br /><code>[usermeta key=\"meta key\"]</code> <br /><br /"
-"><strong>Restrict access based on meta key and value:</strong> <br /><code>"
-"[useraccess key=\"meta key\" value=\"meta value\" message=\"You do not have "
-"permission to view this content.\"]Restricted content.[/useraccess]</code> "
-"<br />Allowed users will have a matching meta value. <br /><br /"
-"><strong>Restrict access based on user ID:</strong> <br /><code>[useraccess "
-"users=\"1 22 301\" message=\"You do not have permission to view this content."
-"\"]Restricted content.[/useraccess]</code> <br />Allowed user IDs are listed "
-"in the <em>users</em> attribute."
-msgstr ""
-
-#: user-meta-manager.php:171
-msgid "Items Per Page"
-msgstr ""
-
-#: user-meta-manager.php:171
-msgid "Go"
-msgstr ""
-
-#: user-meta-manager.php:183
-msgid "Search"
-msgstr ""
-
-#: user-meta-manager.php:227 user-meta-manager.php:253
-#: user-meta-manager.php:306 user-meta-manager.php:336
-msgid "Key"
-msgstr ""
-
-#: user-meta-manager.php:228 user-meta-manager.php:307
-msgid "Value"
-msgstr ""
-
-#: user-meta-manager.php:237 user-meta-manager.php:264
-#: user-meta-manager.php:290 user-meta-manager.php:320
-#: user-meta-manager.php:344 user-meta-manager.php:367
-msgid "Wait..."
-msgstr ""
-
-#: user-meta-manager.php:237 user-meta-manager.php:264
-#: user-meta-manager.php:320 user-meta-manager.php:344
-msgid "Update"
-msgstr ""
-
-#: user-meta-manager.php:241 user-meta-manager.php:268
-#: user-meta-manager.php:294 user-meta-manager.php:324
-#: user-meta-manager.php:348 user-meta-manager.php:371
-msgid "FYI"
-msgstr ""
-
-#: user-meta-manager.php:241
-msgid ""
-"Be careful when editing items. Editing an item here will only edit the item "
-"for the selected user and not for all users. Not all users share the same "
-"meta keys.<br /><a href=\"admin-ajax.php?action=editcustommeta&amp;"
-"width=600&amp;height=500&amp;u=1\" title=\"Edit Custom Meta\" class="
-"\"thickbox\">Edit Custom Meta Data For All Users</a>"
-msgstr ""
-
-#: user-meta-manager.php:254 user-meta-manager.php:337
-msgid "Default Value"
-msgstr ""
-
-#: user-meta-manager.php:257 user-meta-manager.php:278
-#: user-meta-manager.php:340 user-meta-manager.php:357
-msgid "Meta Key"
-msgstr ""
-
-#: user-meta-manager.php:257 user-meta-manager.php:340
-msgid "Meta Default Value"
-msgstr ""
-
-#: user-meta-manager.php:258 user-meta-manager.php:285
-msgid "All Users"
-msgstr ""
-
-#: user-meta-manager.php:259 user-meta-manager.php:286
-msgid "No"
-msgstr ""
-
-#: user-meta-manager.php:260 user-meta-manager.php:287
+#: includes/umm-contextual-help.php:43 user-meta-manager.php:147
+#: user-meta-manager.php:260 user-meta-manager.php:305
+#: user-meta-manager.php:359 user-meta-manager.php:370
+#: user-meta-manager.php:464 user-meta-manager.php:850
 msgid "Yes"
 msgstr ""
 
-#: user-meta-manager.php:268
-msgid ""
-"Insert a meta key and default value and press <em>Update</em>. Select "
-"<em>All Users</em> to add the meta key and default value to all users. New "
-"registrations will receive the meta key and default value."
+#: includes/umm-contextual-help.php:44
+msgid "no"
 msgstr ""
 
-#: user-meta-manager.php:279 user-meta-manager.php:358
+#: includes/umm-contextual-help.php:44 user-meta-manager.php:358
+msgid "No"
+msgstr ""
+
+#: includes/umm-contextual-help.php:46 user-meta-manager.php:54
+#: user-meta-manager.php:73 user-meta-manager.php:297
+#: user-meta-manager.php:305 user-meta-manager.php:361
+#: user-meta-manager.php:370 user-meta-manager.php:402
+#: user-meta-manager.php:413 user-meta-manager.php:439
+#: user-meta-manager.php:466 user-meta-manager.php:493
+#: user-meta-manager.php:520
+msgid "Wait..."
+msgstr ""
+
+#: includes/umm-contextual-help.php:46
+msgid "Update Settings"
+msgstr ""
+
+#: includes/umm-contextual-help.php:53 includes/umm-table.php:157
+msgid "Home"
+msgstr ""
+
+#: includes/umm-contextual-help.php:55
+msgid "The <em>Home</em> Screen"
+msgstr ""
+
+#: includes/umm-contextual-help.php:55
+msgid ""
+"The User Meta Manager <em>Home</em> screen displays a list of your website's "
+"users from which you may select a single user to edit."
+msgstr ""
+
+#: includes/umm-contextual-help.php:56
+msgid ""
+"Locate from the list which User you wish to work with, place your mouse over "
+"that item, and the following links will appear as your mouse moves over each "
+"user -"
+msgstr ""
+
+#: includes/umm-contextual-help.php:58
+msgid ""
+"<strong>Edit Meta:</strong> Edit existing meta-data values for each member."
+msgstr ""
+
+#: includes/umm-contextual-help.php:59
+msgid ""
+"<strong>Delete Meta:</strong> Delete individual meta keys for a single user "
+"or for <em>All Users</em>. You can select which meta data to delete from the "
+"drop menu."
+msgstr ""
+
+#: includes/umm-contextual-help.php:64 includes/umm-table.php:158
+msgid "Add Custom Meta"
+msgstr ""
+
+#: includes/umm-contextual-help.php:66
+msgid "Custom Meta-Data For All Users"
+msgstr ""
+
+#: includes/umm-contextual-help.php:66
+msgid ""
+"Adding custom meta-data will add the  <strong><em>Key</em></strong> and "
+"<strong><em>Default Value</em></strong> to all existing users. The "
+"<strong><em>Default Value</em></strong> you set will become the default "
+"value for all users, and all future registrations. Optionally, select a "
+"<strong><em>Field Type</em></strong> to view more options for adding this "
+"field to the WordPress user profile editor, a Post, or a Page."
+msgstr ""
+
+#: includes/umm-contextual-help.php:70 includes/umm-table.php:159
+msgid "Edit Custom Meta"
+msgstr ""
+
+#: includes/umm-contextual-help.php:72
+msgid "Edit Custom Meta-Data For All Users"
+msgstr ""
+
+#: includes/umm-contextual-help.php:72
+msgid ""
+"Editing custom meta-data will edit the <strong><em>Key</em></strong> and "
+"default <strong><em>Value</em></strong> for future registrations. Selecting "
+"<em>Yes</em> for <strong><em>Update Value For All Current Users</em></"
+"strong> will update the current value for all existing members, overwriting "
+"any existing value. Optionally, select a <strong><em>Field Type</em></"
+"strong> to view more options for adding this field to the WordPress user "
+"profile editor, a Post, or a Page. Select <em>None</em> from the "
+"<strong><em>Field Type</em></strong> menu to remove an existing custom field."
+msgstr ""
+
+#: includes/umm-contextual-help.php:76 includes/umm-table.php:160
+msgid "Delete Custom Meta"
+msgstr ""
+
+#: includes/umm-contextual-help.php:78
+msgid "Delete Custom Meta-Data For All Users"
+msgstr ""
+
+#: includes/umm-contextual-help.php:78
+msgid ""
+"Deleting custom meta-data will delete the Key and data for ALL existing "
+"members AND future registrations."
+msgstr ""
+
+#: includes/umm-contextual-help.php:82
+msgid "Field Types And Field Settings"
+msgstr ""
+
+#: includes/umm-contextual-help.php:83
+msgid "Field Types &amp; Field Settings"
+msgstr ""
+
+#: includes/umm-contextual-help.php:83
+msgid ""
+"The <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens each "
+"contain a <strong><em>Field Type</em></strong> menu. The <em>Field Type</em> "
+"menu controls which type of form field, if any, the meta field will be "
+"represented as. The form field can be displayed in the user profile editor, "
+"or by using a short code, it can also be displayed in a Post or Page."
+msgstr ""
+
+#: includes/umm-contextual-help.php:84
+msgid ""
+"When a <em>Field Type</em> is selected from the menu, additional settings "
+"for the field will appear. These settings are somewhat generic and may "
+"require that you add some additional attributes. For example, if you select "
+"the <em>Field Type</em>, \"<em>Range</em>\", you would need to specify the "
+"Range attributes in the <strong><em>Additional Attributes</em></strong> "
+"field."
+msgstr ""
+
+#: includes/umm-contextual-help.php:135 includes/umm-table.php:161
+msgid "Edit Columns"
+msgstr ""
+
+#: includes/umm-contextual-help.php:136
+msgid "Editing Home Screen List Columns"
+msgstr ""
+
+#: includes/umm-contextual-help.php:136
+msgid ""
+"This screen controls which columns are displayed in the <em>Home</em> screen "
+"list.<br /><br />The list on top displays the columns which are currently in "
+"use. By selecting an item from the list, and pressing the <strong><em>Remove "
+"Selected Column</em></strong> button, columns can be removed from the "
+"results table, except the <strong><em>ID</em></strong> and <strong><em>User "
+"Login</em></strong> columns, which are required.<br /><br />Columns can be "
+"added to the results table using the bottom form. To add a column, select a "
+"<strong><em>Key</em></strong> from the menu, enter a <strong><em>Label</em></"
+"strong> for the column, and press the <strong><em>Add Column</em></strong> "
+"button. The new column will then be added to the results table, and will "
+"become searchable. The <em>Label</em> is displayed at the top of the column "
+"for identification purposes."
+msgstr ""
+
+#: includes/umm-contextual-help.php:140 includes/umm-table.php:162
+msgid "Backup &amp; Restore"
+msgstr ""
+
+#: includes/umm-contextual-help.php:141
+msgid "Backup &amp; Restore User Meta Data"
+msgstr ""
+
+#: includes/umm-contextual-help.php:141
+msgid ""
+"There are several options available for backing-up and restoring the "
+"wp_usermeta database. This plugin creates the first backup automatically "
+"when first installed."
+msgstr ""
+
+#: includes/umm-contextual-help.php:142
+msgid ""
+"<strong>Backup:</strong> Create a backup, which is stored in the database, "
+"and can only be run by this plugin."
+msgstr ""
+
+#: includes/umm-contextual-help.php:143
+msgid ""
+"<strong>Restore:</strong> Restore a backup which was generated using the "
+"above method."
+msgstr ""
+
+#: includes/umm-contextual-help.php:144
+msgid ""
+"<strong>Generate SQL:</strong> Generates the SQL needed for restoring "
+"usermeta data from a database manager, such as phpMyAdmin. Produces a code "
+"which can be copied and pasted."
+msgstr ""
+
+#: includes/umm-contextual-help.php:145
+msgid ""
+"<strong>Generate PHP:</strong> Generates the PHP code needed for restoring "
+"usermeta data from a PHP file. Copy and paste the code to a PHP file, save "
+"it in the root WordPress directory, and run via a Browser."
+msgstr ""
+
+#: includes/umm-contextual-help.php:146
+msgid ""
+"<strong>Generate PHP Restoration File:</strong> Generates a PHP-formatted "
+"restoration file on the server in the wp-content/user-meta-manager/backups "
+"folder. The generated file can be run from the browser. You will be prompted "
+"before restoration will commence."
+msgstr ""
+
+#: includes/umm-contextual-help.php:147
+msgid ""
+"<strong>Delete Backup Files:</strong> Delete ALL existing backup files from "
+"the server."
+msgstr ""
+
+#: includes/umm-contextual-help.php:152 includes/umm-contextual-help.php:153
+msgid "Short Codes"
+msgstr ""
+
+#: includes/umm-contextual-help.php:153
+msgid ""
+"A <em>Short Code</em> is a non-HTML code snippet, which can be added to "
+"Posts or Pages. The purpose for using a <em>short code</em> is to extend "
+"certain plugin features to the Post or Page in which it is inserted."
+msgstr ""
+
+#: includes/umm-contextual-help.php:154
+msgid ""
+"Following is a list of the <em>short codes</em> for the User Meta Manager "
+"plugin, and their uses.<br />    <strong>Display data for a particular user:"
+"</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\" user=\"user id\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Display data for the current user:</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Restrict access based on meta key and value:</strong>\r\n"
+"    <pre>[useraccess key=\"meta key\" value=\"meta value\" message=\"You do "
+"not have permission to view this content.\"]Restricted content.[/useraccess]"
+"</pre>\r\n"
+"    Allowed users will have a matching meta value.<br /><br /><br />\r\n"
+"    <strong>Restrict access based on user ID:</strong>\r\n"
+"    <pre>[useraccess users=\"1 22 301\" message=\"You do not have permission "
+"to view this content.\"]Restricted content.[/useraccess]</pre>\r\n"
+"    Allowed user IDs are listed in the <em>users</em> attribute.<br /><br /"
+"><br />\r\n"
+"    <strong>Restrict access based on multiple meta keys and values:</strong>"
+"\r\n"
+"    <pre>[useraccess json='{\"access_level\":\"gold\",\"sub_level\":\"silver"
+"\"}' message=\"You need permission to view this content.\"]Restricted "
+"content.[/useraccess]</pre>\r\n"
+"    The <em>json</em> attribute is used to define a list of meta keys and "
+"values. The list must be JSON encoded, as seen in the example above. Users "
+"with matching meta keys and values will be granted access to restricted "
+"content.<br/><br/>\r\n"
+"    JSON formatting -\r\n"
+"    <pre>{\"meta_key\":\"meta_value\", \"meta_key\":\"meta_value\", "
+"\"meta_key\":\"meta_value\"}</pre>\r\n"
+"    Additionally, you could repeat the same meta key multiple times.\r\n"
+"    <pre>json='{\"access_level\":\"gold\", \"sub_level\":\"silver\", "
+"\"sub_level\":\"bronze\", \"sub_level\":\"aluminum-foil\"}'</pre><br /><br />"
+"\r\n"
+"    <strong>Display a form in a Post or Page:</strong><br />\r\n"
+"    Display a form which allows members to update meta data. The updated "
+"data is saved and optionally emailed to a set address. Any Custom Meta keys "
+"can be added to the form. Only Custom Meta keys which were made using this "
+"plugin will work. Additionally, you must also set a Field Type for the field "
+"you wish to display. \r\n"
+"    <pre>[usermeta class=\"my-form-css-class\" submit=\"Submit\" success="
+"\"Update successful!\" error=\"An error occurred!\" fields=\"test1, test2\" "
+"vars=\"one=1&amp;amp;two=2&amp;amp;three=3\" email_to=\"\" email_from=\"\" "
+"subject=\"Your email subject\" message=\"A brief introduction.\\n\\n%s\\n"
+"\\nBest regards,\\nWebsite Administrator\"]</pre>\r\n"
+"    <strong>Form Short Code Attributes</strong><br />\r\n"
+"    <ul>\r\n"
+"\t<li><strong>class:</strong> (Optional) A CSS class to add to the form.</li>"
+"\r\n"
+"    <li><strong>submit:</strong> (Optional) A label for the submit button.</"
+"li>\r\n"
+"    <li><strong>success:</strong> (Optional) A message to display if the "
+"form submission is successful.</li>\r\n"
+"    <li><strong>error:</strong> (Optional)) A message to display if the form "
+"submission fails.</li>\r\n"
+"    <li><strong>fields:</strong> (Required) A comma delimited list of meta "
+"keys to display. Each meta key will be displayed as it's set <em>Field Type</"
+"em> in the order in which you list them.</li>\r\n"
+"    <li><strong>vars:</strong> (Optional) A URL encoded string of extra "
+"variable/value pairs you wish to pass with the form submission. Each pair "
+"will be converted to a hidden form field, and will be added to the form.</li>"
+"\r\n"
+"    <li><strong>email_to:</strong> (Optional) An email address to send the "
+"results of the form submission to. Leave this empty or remove it altogether "
+"to disable this feature. If you use this feature, also use all of the "
+"following attributes.</li>\r\n"
+"    <li><strong>email_from:</strong> (Used with email_to) An email address "
+"as the sender.</li>\r\n"
+"    <li><strong>subject:</strong> (Used with email_to) An email subject.</li>"
+"\r\n"
+"    <li><strong>message:</strong> (Required with email_to) A message to send "
+"in the email. <strong>\\n</strong> = line break. <strong>%s</strong> = "
+"contents of the form submission. <strong>Important:</strong> You must add "
+"<strong>%s</strong> where you want the form submission results displayed in "
+"the message.</li>\r\n"
+"</ul>\r\n"
+"    </p>"
+msgstr ""
+
+#: includes/umm-contextual-help.php:193
+msgid "License"
+msgstr ""
+
+#: includes/umm-contextual-help.php:194
+msgid ""
+"<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty "
+"expressed or implied. Always backup your database before making changes.</p>"
+"\r\n"
+"        <p><strong>License:</strong><br/>&copy;2012 <a href=\"http://"
+"websitedev.biz\" target=\"_blank\">http://websitedev.biz</a> <a href="
+"\"http://jasonlau.biz\" target=\"_blank\">http://jasonlau.biz</a></p>\r\n"
+"        <p>This program is free software; you can redistribute it and/or "
+"modify it under the terms of the GNU General Public License as published by "
+"the Free Software Foundation; either version 3 of the License, or (at your "
+"option) any later version.</p>\r\n"
+"        <p>This program is distributed in the hope that it will be useful, "
+"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>\r\n"
+"        <p>See the GNU General Public License for more details.<br /><a href="
+"\"http://www.gnu.org/licenses/gpl.html\" target=\"_blank\">http://www.gnu."
+"org/licenses/gpl.html</a></p>"
+msgstr ""
+
+#: includes/umm-contextual-help.php:202
+msgid "Contribute Code"
+msgstr ""
+
+#: includes/umm-contextual-help.php:203
+msgid ""
+"<h2>You Can Help Make This Plugin Perfect!</h2><p>If you are a talented "
+"WordPress developer, who would like to contribute to the developement of "
+"this plugin, go to <a href=\"https://github.com/jasonlau/Wordpress-User-Meta-"
+"Manager\" target=\"_blank\">https://github.com/jasonlau/Wordpress-User-Meta-"
+"Manager</a>. There you will find the development package and <a href="
+"\"https://github.com/\" target=\"_blank\">GitHub</a> repository.</p>\r\n"
+"        <p>Additionally, you can contact me at <a href=\"http://jasonlau.biz/"
+"home/contact-me\" target=\"_blank\">http://jasonlau.biz/home/contact-me</a>."
+"</p>"
+msgstr ""
+
+#: includes/umm-contextual-help.php:208
+msgid "Donate"
+msgstr ""
+
+#: includes/umm-contextual-help.php:209
+msgid ""
+"<h2>Every Little-Bit Helps!</h2><p>Developing this plugin takes a lot of "
+"time, and as we all know, time equals money.</p>\r\n"
+"        <p>I've given a lot to you, and perhaps you would like to return the "
+"favor with a modest donation?</p>\r\n"
+"        <p>Use the following PayPal button to make a donation. Your "
+"donations help pay for past and future development of this plugin.</p>\r\n"
+"        <p>Thanks in advance!</p>\r\n"
+"        <form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post"
+"\">\r\n"
+"<input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\">\r\n"
+"<input type=\"hidden\" name=\"hosted_button_id\" value=\"X5Y2R65973XZ6\">\r\n"
+"<input type=\"image\" src=\"https://www.paypalobjects.com/en_US/i/btn/"
+"btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - The safer, "
+"easier way to pay online!\">\r\n"
+"<img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/"
+"pixel.gif\" width=\"1\" height=\"1\">\r\n"
+"</form>"
+msgstr ""
+
+#: includes/umm-table.php:20
+msgid "umm-user"
+msgstr ""
+
+#: includes/umm-table.php:21
+msgid "umm-users"
+msgstr ""
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "ID"
+msgstr ""
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "User Login"
+msgstr ""
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "Date Registered"
+msgstr ""
+
+#: includes/umm-table.php:39
+msgid "Edit User Meta"
+msgstr ""
+
+#: includes/umm-table.php:39
+msgid "Edit Meta"
+msgstr ""
+
+#: includes/umm-table.php:40
+msgid "Delete User Meta"
+msgstr ""
+
+#: includes/umm-table.php:40
+msgid "Delete Meta"
+msgstr ""
+
+#: includes/umm-table.php:86 includes/umm-table.php:93
+msgid "Close"
+msgstr ""
+
+#: includes/umm-table.php:150
+msgid "User Meta Manager Help"
+msgstr ""
+
+#: includes/umm-table.php:150
+msgid "No Spaces"
+msgstr ""
+
+#: includes/umm-table.php:150
+msgid "Letters, numbers, and underscores only."
+msgstr ""
+
+#: includes/umm-table.php:150
+msgid ""
+"<strong>Error:</strong> That key already exists. Choose a different name."
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (User Meta Manager 2.0.3)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: includes/umm-table.php:152
+msgid "User Meta Manager"
+msgstr ""
+
+#: includes/umm-table.php:153
+msgid "Manage User Meta Data"
+msgstr ""
+
+#: includes/umm-table.php:169
+msgid "Items Per Page"
+msgstr ""
+
+#: includes/umm-table.php:169
+msgid "Go"
+msgstr ""
+
+#: includes/umm-table.php:177 user-meta-manager.php:672
+msgid "Search"
+msgstr ""
+
+#: includes/umm-table.php:186
+msgid "Your bridge to a strong Internet presence.&trade;"
+msgstr ""
+
+#: includes/umm-table.php:186
+msgid "Help make this plugin perfect by contributing your code on GitHub"
+msgstr ""
+
+#: user-meta-manager.php:45
+msgid "Insert a key and default value in the fields below."
+msgstr ""
+
+#: user-meta-manager.php:47 user-meta-manager.php:68 user-meta-manager.php:389
+#: user-meta-manager.php:407 user-meta-manager.php:505
+msgid "Key"
+msgstr ""
+
+#: user-meta-manager.php:48 user-meta-manager.php:69
+msgid "Letters, numbers, and underscores only"
+msgstr ""
+
+#: user-meta-manager.php:48 user-meta-manager.php:69 user-meta-manager.php:287
+#: user-meta-manager.php:348
+msgid "Meta Key"
+msgstr ""
+
+#: user-meta-manager.php:49 user-meta-manager.php:71
+msgid "Default Value"
+msgstr ""
+
+#: user-meta-manager.php:54 user-meta-manager.php:73 user-meta-manager.php:297
+#: user-meta-manager.php:361 user-meta-manager.php:439
+#: user-meta-manager.php:493 user-meta-manager.php:1335
+msgid "Submit"
+msgstr ""
+
+#: user-meta-manager.php:65
+msgid "Adding Meta Data For %s"
+msgstr ""
+
+#: user-meta-manager.php:66
+msgid ""
+"Insert a meta key and default value and press <em>Submit</em>. The new meta-"
+"data will be applied to this user only, and can only be managed via the "
+"table actions, and not via the <em>Custom Meta</em> actions."
+msgstr ""
+
+#: user-meta-manager.php:70 user-meta-manager.php:460
+#: user-meta-manager.php:506 user-meta-manager.php:599
+#: user-meta-manager.php:622 user-meta-manager.php:758
+msgid "Value"
+msgstr ""
+
+#: user-meta-manager.php:119
+msgid "Below is the sql needed to restore the usermeta table."
+msgstr ""
+
+#: user-meta-manager.php:119 user-meta-manager.php:170
+msgid "Backup from"
+msgstr ""
+
+#: user-meta-manager.php:128 user-meta-manager.php:1337
+msgid "Authorization required!"
+msgstr ""
+
+#: user-meta-manager.php:147
+msgid "Restore complete."
+msgstr ""
+
+#: user-meta-manager.php:147
+msgid ""
+"Are you sure you want to restore all user meta data to the backup version?"
+msgstr ""
+
+#: user-meta-manager.php:165
+msgid "Backup php file was successfully generated at "
+msgstr ""
+
+#: user-meta-manager.php:165
+msgid "Run the file in your browser to begin the restoration process."
+msgstr ""
+
+#: user-meta-manager.php:167
+msgid "Error: Backup php file could not be generated at "
+msgstr ""
+
+#: user-meta-manager.php:167
+msgid "Please be sure the directory exists and is owner-writable."
+msgstr ""
+
+#: user-meta-manager.php:170
+msgid ""
+"Below is the php needed to restore the usermeta table. Save this code as a "
+"php file to the root WordPress folder, then run it in your browser."
+msgstr ""
+
+#: user-meta-manager.php:180
+msgid "User meta data backup was successful."
+msgstr ""
+
+#: user-meta-manager.php:194
+msgid "No backup"
+msgstr ""
+
+#: user-meta-manager.php:196
+msgid "Use the following links to backup and restore user meta data."
+msgstr ""
+
+#: user-meta-manager.php:198
+msgid "Backup"
+msgstr ""
+
+#: user-meta-manager.php:198
+msgid "Last Backup:"
+msgstr ""
+
+#: user-meta-manager.php:199 user-meta-manager.php:850
+msgid "Restore"
+msgstr ""
+
+#: user-meta-manager.php:200
+msgid "Generate SQL"
+msgstr ""
+
+#: user-meta-manager.php:201
+msgid "Generate PHP"
+msgstr ""
+
+#: user-meta-manager.php:202
+msgid "Generate PHP Restoration File"
+msgstr ""
+
+#: user-meta-manager.php:203
+msgid "Delete All Backup Files"
+msgstr ""
+
+#: user-meta-manager.php:211 user-meta-manager.php:257
+#: user-meta-manager.php:838 user-meta-manager.php:849
+msgid "<< Back"
+msgstr ""
+
+#: user-meta-manager.php:258
+msgid "All backup files successfully deleted."
+msgstr ""
+
+#: user-meta-manager.php:260
+msgid "Are you sure you want to delete all backup files?"
+msgstr ""
+
+#: user-meta-manager.php:260 user-meta-manager.php:306
+#: user-meta-manager.php:371 user-meta-manager.php:850
+msgid "Cancel"
+msgstr ""
+
+#: user-meta-manager.php:285
+msgid "Select from the menu a meta key to delete."
+msgstr ""
+
+#: user-meta-manager.php:288 user-meta-manager.php:349
 msgid "Select A Meta Key"
 msgstr ""
 
-#: user-meta-manager.php:290 user-meta-manager.php:367
-msgid "Delete"
+#: user-meta-manager.php:302 user-meta-manager.php:367
+msgid "Deleting"
 msgstr ""
 
-#: user-meta-manager.php:294
-msgid ""
-"Be careful when selecting items to delete. This cannot be undone. Select "
-"<em>All Users</em> to delete the selected item from all users."
+#: user-meta-manager.php:304 user-meta-manager.php:369
+msgid "Are you sure you want to delete that item?"
 msgstr ""
 
 #: user-meta-manager.php:312
-msgid "No custom meta to display."
+msgid "No custom meta to delete."
 msgstr ""
 
-#: user-meta-manager.php:324
-msgid ""
-"Editing custom meta data here will edit the value for all existing users. "
-"The value you set will become the default value for all users. New "
-"registrations will receive the custom meta key and default value."
-msgstr ""
-
-#: user-meta-manager.php:348
-msgid ""
-"Adding custom meta data will add the meta key and value to all existing "
-"users. The value you set will become the default value for all users. New "
-"registrations will receive the custom meta key and default value."
-msgstr ""
-
-#: user-meta-manager.php:371
-msgid ""
-"Deleting custom meta data here will delete the meta key and value for all "
-"existing users. New registrations will no longer receive the custom meta key "
-"and default value."
-msgstr ""
-
-#: user-meta-manager.php:392
-msgid "Meta data successfully added."
-msgstr ""
-
-#: user-meta-manager.php:418
-msgid "Meta data successfully updated."
-msgstr ""
-
-#: user-meta-manager.php:437
+#: user-meta-manager.php:330 user-meta-manager.php:1239
 msgid "Meta data successfully deleted."
 msgstr ""
 
-#: user-meta-manager.php:446
+#: user-meta-manager.php:339
+msgid "Deleting Meta Data For %s"
+msgstr ""
+
+#: user-meta-manager.php:346
+msgid ""
+"Select a <em>Meta Key</em> to delete, then press the <em>Submit</em> button. "
+"Select <em>All Users</em> to delete the selected item from all users."
+msgstr ""
+
+#: user-meta-manager.php:357
+msgid "All Users"
+msgstr ""
+
+#: user-meta-manager.php:382
+msgid "Use the forms below to edit which table columns are displayed."
+msgstr ""
+
+#: user-meta-manager.php:384
+msgid "Display Columns"
+msgstr ""
+
+#: user-meta-manager.php:390 user-meta-manager.php:412
+#: user-meta-manager.php:598 user-meta-manager.php:621
+#: user-meta-manager.php:703 user-meta-manager.php:757
+msgid "Label"
+msgstr ""
+
+#: user-meta-manager.php:402
+msgid "Remove Selected Column"
+msgstr ""
+
+#: user-meta-manager.php:406
+msgid "Add A New Column"
+msgstr ""
+
+#: user-meta-manager.php:408
+msgid "Keys"
+msgstr ""
+
+#: user-meta-manager.php:412
+msgid "Enter a label"
+msgstr ""
+
+#: user-meta-manager.php:412
+msgid "Enter a label which will appear in the top row of the results table."
+msgstr ""
+
+#: user-meta-manager.php:413
+msgid "Add Column"
+msgstr ""
+
+#: user-meta-manager.php:425
+msgid "No custom meta to edit."
+msgstr ""
+
+#: user-meta-manager.php:429
+msgid "Select from the menu a meta key to edit."
+msgstr ""
+
+#: user-meta-manager.php:431 user-meta-manager.php:485
+msgid "Select a meta key to edit."
+msgstr ""
+
+#: user-meta-manager.php:432 user-meta-manager.php:486
+msgid "Select A Key To Edit"
+msgstr ""
+
+#: user-meta-manager.php:447 user-meta-manager.php:500
+msgid "Now Editing"
+msgstr ""
+
+#: user-meta-manager.php:448
+msgid ""
+"Editing custom meta data here will edit the value for all new users. The "
+"value you set will become the default value for all users. New registrations "
+"will receive the custom meta key and default value."
+msgstr ""
+
+#: user-meta-manager.php:455
+msgid "No custom meta to display."
+msgstr ""
+
+#: user-meta-manager.php:464
+msgid "Update Value For All Current Users"
+msgstr ""
+
+#: user-meta-manager.php:464
+msgid ""
+"Check the box to update the value for all current users. Leave blank to "
+"update the value for future registrations only."
+msgstr ""
+
+#: user-meta-manager.php:466 user-meta-manager.php:520
+msgid "Update"
+msgstr ""
+
+#: user-meta-manager.php:480
+msgid "Editing Meta Data For %s"
+msgstr ""
+
+#: user-meta-manager.php:639
+msgid "W3Schools HTML5 Input Types Reference Page"
+msgstr ""
+
+#: user-meta-manager.php:639
+msgid "Type"
+msgstr ""
+
+#: user-meta-manager.php:640
+msgid "Do not add to user profile."
+msgstr ""
+
+#: user-meta-manager.php:642
+msgid "None"
+msgstr ""
+
+#: user-meta-manager.php:645
+msgid "Text"
+msgstr ""
+
+#: user-meta-manager.php:648
+msgid "Color"
+msgstr ""
+
+#: user-meta-manager.php:651
+msgid "Date"
+msgstr ""
+
+#: user-meta-manager.php:654
+msgid "Date-Time"
+msgstr ""
+
+#: user-meta-manager.php:657
+msgid "Date-Time-Local"
+msgstr ""
+
+#: user-meta-manager.php:660
+msgid "Email"
+msgstr ""
+
+#: user-meta-manager.php:663
+msgid "Month"
+msgstr ""
+
+#: user-meta-manager.php:666
+msgid "Number"
+msgstr ""
+
+#: user-meta-manager.php:669
+msgid "Range"
+msgstr ""
+
+#: user-meta-manager.php:675
+msgid "Telephone"
+msgstr ""
+
+#: user-meta-manager.php:678
+msgid "Time"
+msgstr ""
+
+#: user-meta-manager.php:681
+msgid "URL"
+msgstr ""
+
+#: user-meta-manager.php:684
+msgid "Week"
+msgstr ""
+
+#: user-meta-manager.php:687
+msgid "Textarea"
+msgstr ""
+
+#: user-meta-manager.php:690
+msgid "Checkbox"
+msgstr ""
+
+#: user-meta-manager.php:693
+msgid "Radio Button Group"
+msgstr ""
+
+#: user-meta-manager.php:696
+msgid "Select Menu"
+msgstr ""
+
+#: user-meta-manager.php:702
+msgid "Settings"
+msgstr ""
+
+#: user-meta-manager.php:706
+msgid "Classes"
+msgstr ""
+
+#: user-meta-manager.php:709
+msgid "Additional Attributes"
+msgstr ""
+
+#: user-meta-manager.php:710
+msgid "Example"
+msgstr ""
+
+#: user-meta-manager.php:710
+msgid "My Title"
+msgstr ""
+
+#: user-meta-manager.php:710
+msgid "My Text"
+msgstr ""
+
+#: user-meta-manager.php:712
+msgid "HTML After"
+msgstr ""
+
+#: user-meta-manager.php:715
+msgid "Required"
+msgstr ""
+
+#: user-meta-manager.php:723
+msgid "Allow Tags"
+msgstr ""
+
+#: user-meta-manager.php:731
+msgid "Add To Profile"
+msgstr ""
+
+#: user-meta-manager.php:745
+msgid "Options"
+msgstr ""
+
+#: user-meta-manager.php:829
+msgid "User Meta Manager data successfully reset."
+msgstr ""
+
+#: user-meta-manager.php:839
+msgid "User meta data successfully restored."
+msgstr ""
+
+#: user-meta-manager.php:847
+msgid "No backup data to restore!"
+msgstr ""
+
+#: user-meta-manager.php:850
+msgid "Restore all user meta data to the backup version?"
+msgstr ""
+
+#: user-meta-manager.php:1029
 msgid "You do not have the appropriate permission to view this content."
 msgstr ""
 
-#: user-meta-manager.php:488
+#: user-meta-manager.php:1045
+msgid "Key and label are both required. Try again."
+msgstr ""
+
+#: user-meta-manager.php:1048
+msgid "Column already exists."
+msgstr ""
+
+#: user-meta-manager.php:1064
+msgid "Column successfully added."
+msgstr ""
+
+#: user-meta-manager.php:1071
+msgid "No key was selected. Select a key to remove from the table."
+msgstr ""
+
+#: user-meta-manager.php:1082
+msgid "Column successfully removed."
+msgstr ""
+
+#: user-meta-manager.php:1103
+msgid "Settings successfully saved."
+msgstr ""
+
+#: user-meta-manager.php:1119
+msgid "Error: Meta key already existed. Choose a different name."
+msgstr ""
+
+#: user-meta-manager.php:1191
+msgid "Meta data successfully added."
+msgstr ""
+
+#: user-meta-manager.php:1195
+msgid "Meta data successfully updated."
+msgstr ""
+
+#: user-meta-manager.php:1201
+msgid "Error: No meta key entered."
+msgstr ""
+
+#: user-meta-manager.php:1205
+msgid "Error: No meta key selected."
+msgstr ""
+
+#: user-meta-manager.php:1245
+msgid "Meta Key is required!"
+msgstr ""
+
+#: user-meta-manager.php:1288
 msgid "You do not have sufficient permissions to access this content."
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
+#: user-meta-manager.php:1336
+msgid "Update successful!"
+msgstr ""
+
+#: user-meta-manager.php:1339
+msgid "do-not-reply"
+msgstr ""
+
 #. Plugin URI of the plugin/theme
-#. #-#-#-#-#  plugin.pot (User Meta Manager 1.4.1)  #-#-#-#-#
-#. Author URI of the plugin/theme
 msgid "http://websitedev.biz"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"User Meta Manager allows administrators to add, edit, or delete user meta "
-"data. User   Meta Manager also provides a shorttag for inserting user meta "
-"data into posts or pages. <strong>To display data for a particular user:</"
-"strong> <code>[usermeta key=\"meta key\" user=\"user id\"]</code> <strong>To "
-"display data for the current user:</strong> <code>[usermeta key=\"meta key\"]"
-"</code> An additional shorttag is available for restricting user access "
-"based on a meta key and value or user ID. <strong>To restrict access based "
-"on meta key and value:</strong> <code>[useraccess key=\"meta key\" value="
-"\"meta value\" message=\"You do not have permission to view this content.\"]"
-"Restricted content.[/useraccess]</code> Allowed users will have a matching "
-"meta value. <strong>To restrict access based on user ID:</strong> <code>"
-"[useraccess users=\"1 22 301\" message=\"You do not have permission to view "
-"this content.\"]Restricted content.[/useraccess]</code> Allowed user IDs are "
-"listed in the users attribute."
+"Add, edit, or delete user meta data with this handy plugin. Easily restrict "
+"access or insert user meta data into posts or pages."
 msgstr ""
 
 #. Author of the plugin/theme
 msgid "Jason Lau"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://jasonlau.biz"
 msgstr ""
