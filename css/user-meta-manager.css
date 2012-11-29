@@ -205,3 +205,16 @@ code,
     -webkit-border-radius: 8px;
     border-radius: 8px;
 }
+
+.umm-help-field-types-table{
+    -moz-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    
+}
+
+.umm-help-field-types-table th{
+    vertical-align: top;
+    text-align: left;
+}
