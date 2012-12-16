@@ -24,6 +24,18 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $retain_no = '';
     }
     
+    $shortcut_editing = $umm_settings['shortcut_editing'];
+    switch($shortcut_editing){
+        case 'yes':
+        $shortcut_editing_yes = ' selected="selected"';
+        $shortcut_editing_no = '';
+        break;
+        
+        default:
+        $shortcut_editing_yes = '';
+        $shortcut_editing_no = ' selected="selected"';
+    }
+    
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $tabs = array(array(
@@ -43,7 +55,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('yes', UMM_SLUG) . '"' . $retain_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $retain_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br />
-        <input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
+<strong>' . __('Meta Editor Shortcut', UMM_SLUG) . ':</strong><br />
+        <select size="1" name="shortcut_editing">
+	<option value="' . __('yes', UMM_SLUG) . '"' . $shortcut_editing_yes . '>' . __('Yes', UMM_SLUG) . '</option>
+	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
+</select> <small>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</small>
+<br />
+<input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
         </form>'
@@ -55,6 +73,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         '<h2>' . __( 'The <em>Home</em> Screen', UMM_SLUG) . '</h2><p>' . __( 'The User Meta Manager <em>Home</em> screen displays a list of your website\'s users from which you may select a single user to edit.', UMM_SLUG) . '</p>
         <p>' . __( 'Locate from the list which User you wish to work with, place your mouse over that item, and the following links will appear as your mouse moves over each user -', UMM_SLUG) . '</p>
         <ol start="1">
+         <li>' . __('<strong>Add Meta:</strong> Add meta data for a single user. Insert a meta key and default value and press <em>Submit</em>. The new meta-data will be applied to this user only, and can only be managed via the <em>Home</em> table actions, and not via the Custom Meta actions.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Edit Meta:</strong> Edit existing meta-data values for each member.', UMM_SLUG) . '</li>   
     <li>' . __('<strong>Delete Meta:</strong> Delete individual meta keys for a single user or for <em>All Users</em>. You can select which meta data to delete from the drop menu.', UMM_SLUG) . '</li>
     </ol>'

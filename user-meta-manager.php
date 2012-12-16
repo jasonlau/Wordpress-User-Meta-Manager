@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.3
+ * Version: 2.0.5
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.3');
+define('UMM_VERSION', '2.0.5');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
@@ -63,7 +63,7 @@ function umm_add_user_meta(){
     global $wpdb;
     $user_id = $_REQUEST['u'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Adding Meta Data For %s', UMM_SLUG));
-    $output .= umm_fyi('<p>'.__('Insert a meta key and default value and press <em>Submit</em>. The new meta-data will be applied to this user only, and can only be managed via the table actions, and not via the <em>Custom Meta</em> actions.', UMM_SLUG).'</p>');
+    $output .= umm_fyi('<p>'.__('Insert a meta key and default value and press <em>Submit</em>.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
     <input name="meta_key" title="'.__('Letters, numbers, and underscores only', UMM_SLUG).'" type="text" value="" placeholder="'.__('Meta Key', UMM_SLUG).'" /><br />
@@ -231,6 +231,21 @@ function umm_deactivate(){
     $umm_settings = get_option('umm_settings');
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     if($umm_settings['retain_data'] == 'no'):
+     // Delete all saved data
+     $umm_data = get_option('user_meta_manager_data');
+     if(empty($umm_data)) $umm_data = array();
+     $umm_singles_data = get_option('umm_singles_data');
+     if(empty($umm_singles_data)) $umm_singles_data = array();
+     $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
+     foreach($data as $user):
+        foreach($umm_data as $meta_key => $value):
+           delete_user_meta($user->ID, $meta_key);
+        endforeach;
+        foreach($umm_singles_data as $meta_key):
+           delete_user_meta($user->ID, $meta_key);
+        endforeach;
+     endforeach;
+     delete_option('umm_singles_data');
      delete_option('user_meta_manager_data');
      delete_option('umm_users_columns');
      delete_option('umm_usermeta_columns');
@@ -477,10 +492,13 @@ function umm_edit_user_meta(){
     global $wpdb;
     $user_id = $_REQUEST['u'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
+    sort($data);
+    $umm_settings = get_option('umm_settings');
+    $shortcut_editing = empty($umm_settings['shortcut_editing']) ? 'no' : $umm_settings['shortcut_editing'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Editing Meta Data For %s', UMM_SLUG));
     $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_edit_custom_meta&u=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', UMM_SLUG).'</p>');
     $edit_key = $_REQUEST['umm_edit_key'];
-    if($edit_key == ""):
+    if($edit_key == "" && $shortcut_editing == 'no'):
         $output .= '<form id="umm_update_user_meta_form" method="post">
         <strong>Edit Key:</strong> <select id="umm_edit_key" name="umm_edit_key" title="' . __('Select a meta key to edit.', UMM_SLUG) . '">
         <option value="">' . __('Select A Key To Edit', UMM_SLUG) . '</option>
@@ -496,9 +514,11 @@ function umm_edit_user_meta(){
     ';
         
     else:
+    if($shortcut_editing == 'no'):
+       $output .= '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> ' . $_REQUEST['umm_edit_key'];
+    endif;
     
-    $output .= '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> ' . $_REQUEST['umm_edit_key'] . '
-<form id="umm_update_user_meta_form" method="post">
+    $output .= '<form id="umm_update_user_meta_form" method="post">
     <table class="umm_edit_table wp-list-table widefat">
     <thead>
     <tr>
@@ -510,8 +530,8 @@ function umm_edit_user_meta(){
     $x = 1;
     foreach($data as $d):
     $class = ($x%2) ? ' class="alternate"' : '';
-    if($d->meta_key == $edit_key):
-        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="meta_key" type="hidden" value="' . $d->meta_key . '" /><input name="meta_value" type="text" value="' . htmlspecialchars($d->meta_value) . '" size="40" /></td></tr>';
+    if($d->meta_key == $edit_key || $shortcut_editing == 'yes'):
+        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="meta_key[]" type="hidden" value="' . $d->meta_key . '" /><input name="meta_value[]" type="text" value="' . htmlspecialchars($d->meta_value) . '" size="40" /></td></tr>';
         $x++;
     endif;         
     endforeach;
@@ -556,11 +576,12 @@ function umm_install(){
      update_option('user_meta_manager_data', $new_array);
    else:
      add_option('user_meta_manager_data', array());
-   endif;     
+   endif;
+   add_option('umm_singles_data', array());     
    add_option('umm_profile_fields', array());
    add_option('umm_users_columns', array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)));
    add_option('umm_usermeta_columns', array());  
-   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes'));
+   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no'));
     
 }
 
@@ -1110,11 +1131,26 @@ function umm_update_user_meta(){
     $mode = $_POST['mode'];
     $all_users = (!empty($_POST['all_users'])) ? true : false;
     $umm_data = get_option('user_meta_manager_data');
+    $umm_singles_data = get_option('user_singles_data');
+    $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data;
     $meta_key = (!empty($_POST['meta_key'])) ? $_POST['meta_key'] : '';
-    $meta_value = ($_POST['umm_allow_tags'] == 'yes') ? $_POST['meta_value'] : wp_strip_all_tags($_POST['meta_value']);     
-    if($meta_key != ""):
-    
-    if(array_key_exists($meta_key, $umm_data) && $_POST['mode'] == 'add'):
+    $meta_value = ($_POST['umm_allow_tags'] == 'yes') ? $_POST['meta_value'] : wp_strip_all_tags($_POST['meta_value']);
+    $meta_key_exists = false;
+    if(!empty($meta_key)):
+    if(is_array($meta_key)):
+        foreach($meta_key as $key):
+           $data = umm_usermeta_data('WHERE meta_key="' . $key . '"');
+           if(count($data) > 0):
+              $meta_key_exists = true;
+           endif;     
+        endforeach;
+    else:
+      $data = umm_usermeta_data('WHERE meta_key="' . $meta_key . '"');
+      if(count($data) > 0):
+         $meta_key_exists = true;
+      endif;
+    endif;     
+    if($meta_key_exists && $_POST['mode'] == 'add'):
     // meta_key already exists
     $output = '<span class="umm-error-message">' . __('Error: Meta key already existed. Choose a different name.', UMM_SLUG) . '</span>';
     else: 
@@ -1126,12 +1162,26 @@ function umm_update_user_meta(){
         if($all_users):
             $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
             foreach($data as $user):
-                update_user_meta($user->ID, $meta_key, $meta_value, false);
+                update_user_meta($user->ID, $meta_key, maybe_unserialize(trim(stripslashes($meta_value))), false);
             endforeach;
             $umm_data[$meta_key] = $_POST['meta_value'];
             update_option('user_meta_manager_data', $umm_data);
         else:
-            update_user_meta($_POST['u'], $meta_key, $meta_value, false);
+           $x = 0;
+           foreach($_POST['meta_key']  as $meta_key):
+            
+            if(empty($umm_singles_data)):
+               $umm_singles_data = array($meta_key);
+            else:
+               if(!in_array($meta_key, $umm_singles_data)):
+                  array_push($umm_singles_data, $meta_key);
+               endif;
+            endif;
+            update_option('umm_singles_data', $umm_singles_data);
+            update_user_meta($_POST['u'], $meta_key, maybe_unserialize(trim(stripslashes($_POST['meta_value'][$x]))), false);
+            $x++;
+           endforeach;
+            
         endif;
         
         $saved_profile_fields = get_option('umm_profile_fields');
@@ -1141,11 +1191,11 @@ function umm_update_user_meta(){
         $options = array();
         if(!empty($_POST['umm_profile_field_type'])):        
           if(!empty($_POST['umm_profile_select_label']) && ($_POST['umm_profile_field_type'] == 'select' || $_POST['umm_profile_field_type'] == 'radio')):
-          $x = 0;
+           $x = 0;
           foreach($_POST['umm_profile_select_label'] as $option_label):
             if($option_label != ''):
-            $options[$x] = array('label' => $option_label, 'value' => $_POST['umm_profile_select_value'][$x]);
-            $x++;
+               $options[$x] = array('label' => $option_label, 'value' => $_POST['umm_profile_select_value'][$x]);
+               $x++;
             endif; 
           endforeach;
           else:
@@ -1166,15 +1216,8 @@ function umm_update_user_meta(){
         
         if(!empty($meta_key)):
         
-        $umm_data[$meta_key] = $meta_value;
-        
-        if($_POST['u'] == 'all'):
-            $data = $wpdb->get_results("SELECT * FROM $wpdb->users");
-            foreach($data as $user):
-               update_user_meta($user->ID, $meta_key, maybe_unserialize(trim(stripslashes($meta_value))));
-            endforeach;
-         endif;   
-         
+        if($all_users):
+         $umm_data[$meta_key] = $meta_value;        
          if((!array_key_exists($meta_key, $saved_profile_fields) || array_key_exists($meta_key, $saved_profile_fields)) && !empty($_POST['umm_profile_field_type'])):
            // add or update field
            $saved_profile_fields[$meta_key] = $new_profile_field_data;
@@ -1185,7 +1228,8 @@ function umm_update_user_meta(){
            update_option('umm_profile_fields', $saved_profile_fields);
          endif; // !array_key_exists                
          update_option('user_meta_manager_data', $umm_data);
-         update_user_meta($_POST['u'], $meta_key, maybe_unserialize(trim(stripslashes($meta_value))));
+         endif; // all_users
+         
          switch($mode){
             case 'add':
             $output = __('Meta data successfully added.', UMM_SLUG);

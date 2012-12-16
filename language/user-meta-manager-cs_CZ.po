@@ -1,0 +1,1231 @@
+# Copyright (C) 2012 User Meta Manager
+# This file is distributed under the same license as the User Meta Manager package.
+msgid ""
+msgstr ""
+"Project-Id-Version: User Meta Manager 2.0.3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/user-meta-manager\n"
+"POT-Creation-Date: 2012-11-29 03:19:32+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-12-10 09:25+0100\n"
+"Last-Translator: Atelier Gadjukin <atelier@gadjukin.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: includes/umm-contextual-help.php:28
+msgid ""
+"<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making "
+"changes to your website."
+msgstr ""
+"<strong>DŮLEŽITÉ:</strong> <ins>Vždy</ins> zálohujte data, než začnete dělat "
+"na webu změny."
+
+#: includes/umm-contextual-help.php:30
+msgid "Introduction"
+msgstr "Úvod"
+
+#: includes/umm-contextual-help.php:32
+msgid "What is <em>User Meta</em>?"
+msgstr "Co je <em>User Meta</em>?"
+
+#: includes/umm-contextual-help.php:33
+msgid ""
+"<em>User Meta</em> is user-specific data which is stored in the "
+"<em>wp_usermeta</em> database table. This data is stored by WordPress and "
+"various and sundry plugins, and can consist of anything from profile "
+"information to membership levels."
+msgstr ""
+"<em>User Meta</em> jsou specifická uživatelská data uložená v databázové "
+"tabulce <em>wp_usermeta</em>. Tato data jsou uchována ve WordPressu a mohou "
+"obsahovat jakékoliv údaje o profilu a jeho úrovni."
+
+#: includes/umm-contextual-help.php:37
+msgid "Plugin Settings"
+msgstr "Nastavení pluginu"
+
+#: includes/umm-contextual-help.php:38
+msgid "User Meta Manager Settings"
+msgstr "Nastavení UM Manageru"
+
+#: includes/umm-contextual-help.php:41
+msgid "Retain Saved Data On Uninstall"
+msgstr "Zachovat uložená data při odinstalaci"
+
+#: includes/umm-contextual-help.php:43
+msgid "yes"
+msgstr "ano"
+
+#: includes/umm-contextual-help.php:43 user-meta-manager.php:147
+#: user-meta-manager.php:260 user-meta-manager.php:305
+#: user-meta-manager.php:359 user-meta-manager.php:370
+#: user-meta-manager.php:464 user-meta-manager.php:850
+msgid "Yes"
+msgstr "Ano"
+
+#: includes/umm-contextual-help.php:44
+msgid "no"
+msgstr "ne"
+
+#: includes/umm-contextual-help.php:44 user-meta-manager.php:358
+msgid "No"
+msgstr "Ne"
+
+#: includes/umm-contextual-help.php:46 user-meta-manager.php:54
+#: user-meta-manager.php:73 user-meta-manager.php:297
+#: user-meta-manager.php:305 user-meta-manager.php:361
+#: user-meta-manager.php:370 user-meta-manager.php:402
+#: user-meta-manager.php:413 user-meta-manager.php:439
+#: user-meta-manager.php:466 user-meta-manager.php:493
+#: user-meta-manager.php:520
+msgid "Wait..."
+msgstr "Čekejte..."
+
+#: includes/umm-contextual-help.php:46
+msgid "Update Settings"
+msgstr "Aktualizovat nastavení"
+
+#: includes/umm-contextual-help.php:53 includes/umm-table.php:157
+msgid "Home"
+msgstr "Hlavní"
+
+#: includes/umm-contextual-help.php:55
+msgid "The <em>Home</em> Screen"
+msgstr "Na <em>Hlavní</em> stránku"
+
+#: includes/umm-contextual-help.php:55
+msgid ""
+"The User Meta Manager <em>Home</em> screen displays a list of your website's "
+"users from which you may select a single user to edit."
+msgstr ""
+"UM Manager záložka <em>Hlavní</em> zobrazuje seznam uživatelů vašich "
+"stránek, kde můžete vybrat jednoho pro úpravy."
+
+#: includes/umm-contextual-help.php:56
+msgid ""
+"Locate from the list which User you wish to work with, place your mouse over "
+"that item, and the following links will appear as your mouse moves over each "
+"user -"
+msgstr ""
+"Vyberte v seznamu uživatele se kterým chcete pracovat, postavte se na něj "
+"myší a zobrazí se odkazy, které umožní akci -"
+
+#: includes/umm-contextual-help.php:58
+msgid ""
+"<strong>Edit Meta:</strong> Edit existing meta-data values for each member."
+msgstr ""
+"<strong>Upravit pole:</strong> Upraví existující meta-data pro každého "
+"uživatele."
+
+#: includes/umm-contextual-help.php:59
+msgid ""
+"<strong>Delete Meta:</strong> Delete individual meta keys for a single user "
+"or for <em>All Users</em>. You can select which meta data to delete from the "
+"drop menu."
+msgstr ""
+"<strong>Smazat pole:</strong> Smaže individuální klíče pro jednotlivého "
+"uživatele, nebo pro <em>Všechny</em>. Která meta-data chcete vymazat můžete "
+"vybrat pomocí rozbalovacího menu."
+
+#: includes/umm-contextual-help.php:64 includes/umm-table.php:158
+msgid "Add Custom Meta"
+msgstr "Přidat vlastní pole"
+
+#: includes/umm-contextual-help.php:66
+msgid "Custom Meta-Data For All Users"
+msgstr "Vlastní meta-data pro všechny uživatele"
+
+#: includes/umm-contextual-help.php:66
+msgid ""
+"Adding custom meta-data will add the  <strong><em>Key</em></strong> and "
+"<strong><em>Default Value</em></strong> to all existing users. The "
+"<strong><em>Default Value</em></strong> you set will become the default "
+"value for all users, and all future registrations. Optionally, select a "
+"<strong><em>Field Type</em></strong> to view more options for adding this "
+"field to the WordPress user profile editor, a Post, or a Page."
+msgstr ""
+"Přidáním vlastních meta-dat přidáte  <strong><em>Klíč</em></strong> a "
+"<strong><em>Výchozí hodnotu</em></strong> všem existujícím uživatelům. "
+"<strong><em>Výchozí hodnota</em></strong>, kterou nastavíte bude platná pro "
+"všechny stávající uživatele a pro nové registrace v budoucnosti. Volitelně "
+"můžete vybrat <strong><em>Field Type</em></strong> pro zobrazení více "
+"možností vložení pole do uživatelského profilu, příspěvku nebo stránky."
+
+#: includes/umm-contextual-help.php:70 includes/umm-table.php:159
+msgid "Edit Custom Meta"
+msgstr "Upravit vlastní pole"
+
+#: includes/umm-contextual-help.php:72
+msgid "Edit Custom Meta-Data For All Users"
+msgstr "Upravit vlastní meta-data pro všechny uživatele"
+
+#: includes/umm-contextual-help.php:72
+msgid ""
+"Editing custom meta-data will edit the <strong><em>Key</em></strong> and "
+"default <strong><em>Value</em></strong> for future registrations. Selecting "
+"<em>Yes</em> for <strong><em>Update Value For All Current Users</em></"
+"strong> will update the current value for all existing members, overwriting "
+"any existing value. Optionally, select a <strong><em>Field Type</em></"
+"strong> to view more options for adding this field to the WordPress user "
+"profile editor, a Post, or a Page. Select <em>None</em> from the "
+"<strong><em>Field Type</em></strong> menu to remove an existing custom field."
+msgstr ""
+"Úpravou vlastních meta-dat upravíte <strong><em>Klíč</em></strong> a "
+"<strong><em>Výchozí hodnotu</em></strong> pro budoucí registrace. Výběrem "
+"<em>Ano</em> pro <strong><em>Aktualizovat hodnotu pro všechny stávající "
+"uživatele</em></strong> aktualizujete stávající hodnotu pro všechny "
+"uživatele a přepíšete hodnotu stávající. Volitelně můžete vybrat "
+"<strong><em>Field Type</em></strong> pro zobrazení více možností vložení "
+"pole do uživatelského profilu, příspěvku nebo stránky. Výběrem <em>Nic</em> "
+"z menu <strong><em>Field Typ</em></strong> odstraníte existující pole."
+
+#: includes/umm-contextual-help.php:76 includes/umm-table.php:160
+msgid "Delete Custom Meta"
+msgstr "Smazat vlastní pole"
+
+#: includes/umm-contextual-help.php:78
+msgid "Delete Custom Meta-Data For All Users"
+msgstr "Smazat vlastní meta-data pro všechny uživatele"
+
+#: includes/umm-contextual-help.php:78
+msgid ""
+"Deleting custom meta-data will delete the Key and data for ALL existing "
+"members AND future registrations."
+msgstr ""
+"Smazáním vlastních meta-dat smažete Klíč a data pro všechny existující  "
+"uživatele a budoucí registrace."
+
+#: includes/umm-contextual-help.php:82
+msgid "Field Types And Field Settings"
+msgstr "Typy pole a nastavení pole"
+
+#: includes/umm-contextual-help.php:83
+msgid "Field Types &amp; Field Settings"
+msgstr "Typy pole &amp; nastavení pole"
+
+#: includes/umm-contextual-help.php:83
+msgid ""
+"The <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens each "
+"contain a <strong><em>Field Type</em></strong> menu. The <em>Field Type</em> "
+"menu controls which type of form field, if any, the meta field will be "
+"represented as. The form field can be displayed in the user profile editor, "
+"or by using a short code, it can also be displayed in a Post or Page."
+msgstr ""
+"Záložky <em>Přidat vlastní pole</em> a <em>Upravit vlastní pole</em> "
+"obsahují menu<strong><em>Field Type</em></strong>. Menu <em>Field Type</em> "
+"umožňuje vybrat jakého typu bude pole a jaká budou příslušná data. Pole "
+"formuláře bude zobrazeno v editoru uživatelů, nebo pomocí zkratky také v "
+"příspěvku nebo stránce."
+
+#: includes/umm-contextual-help.php:84
+msgid ""
+"When a <em>Field Type</em> is selected from the menu, additional settings "
+"for the field will appear. These settings are somewhat generic and may "
+"require that you add some additional attributes. For example, if you select "
+"the <em>Field Type</em>, \"<em>Range</em>\", you would need to specify the "
+"Range attributes in the <strong><em>Additional Attributes</em></strong> "
+"field."
+msgstr ""
+"Pokud je vybráno z  menu<em>Field Type</em>, zobrazí se rozšiřující "
+"nastavení. Tato nastavení jsou poněkud obecné a může vyžadovat, abyste "
+"přidali některé další atributy. Například, pokud vyberete <em>Field Type</"
+"em>, \"<em>Rozsah</em>\", bude nutné specifikovat Rozsah v poli "
+"<strong><em>Rozšiřující atributy</em></strong>."
+
+#: includes/umm-contextual-help.php:135 includes/umm-table.php:161
+msgid "Edit Columns"
+msgstr "Upravit sloupce"
+
+#: includes/umm-contextual-help.php:136
+msgid "Editing Home Screen List Columns"
+msgstr "Upraví zobrazení sloupců na stránce Hlavní"
+
+#: includes/umm-contextual-help.php:136
+msgid ""
+"This screen controls which columns are displayed in the <em>Home</em> screen "
+"list.<br /><br />The list on top displays the columns which are currently in "
+"use. By selecting an item from the list, and pressing the <strong><em>Remove "
+"Selected Column</em></strong> button, columns can be removed from the "
+"results table, except the <strong><em>ID</em></strong> and <strong><em>User "
+"Login</em></strong> columns, which are required.<br /><br />Columns can be "
+"added to the results table using the bottom form. To add a column, select a "
+"<strong><em>Key</em></strong> from the menu, enter a <strong><em>Label</em></"
+"strong> for the column, and press the <strong><em>Add Column</em></strong> "
+"button. The new column will then be added to the results table, and will "
+"become searchable. The <em>Label</em> is displayed at the top of the column "
+"for identification purposes."
+msgstr ""
+"Tato záložka umožňuje spravovat sloupce, které budou zobrazeny na záložce "
+"<em>Hlavní</em>.<br /><br />Seznam nahoře zobrazí právě používané sloupce. "
+"Výběrem ze seznamu a stiskem tlačítka <strong><em>Odebrat vybraný sloupec</"
+"em></strong> bude vybraný sloupec odstraněn ze seznamu s výjimkou sloupců "
+"<strong><em>ID</em></strong> a <strong><em>User Login</em></strong>, které "
+"jsou vyžadovány.<br /><br />Sloupce můžete do tabulky přidávat pomocí "
+"tlačítka níže. Pro přidání sloupce vyberte položku z menu <strong><em>Klíč</"
+"em></strong> a zadejte váš vlastní<strong><em>Název</em></strong> pro tento "
+"sloupec. Stiskem tlačítka <strong><em>Přidat sloupec</em></strong> vložíte "
+"nový. Nový sloupec bude přidán do tabulky, bude v něm možné vyhledávat. "
+"<em>Název</em> bude zobrazen v záhlaví sloupce pro identifikaci."
+
+#: includes/umm-contextual-help.php:140 includes/umm-table.php:162
+msgid "Backup &amp; Restore"
+msgstr "Záloha &amp; Obnova"
+
+#: includes/umm-contextual-help.php:141
+msgid "Backup &amp; Restore User Meta Data"
+msgstr "Zálohuje &amp; Obnovuje uživatelská meta-data"
+
+#: includes/umm-contextual-help.php:141
+msgid ""
+"There are several options available for backing-up and restoring the "
+"wp_usermeta database. This plugin creates the first backup automatically "
+"when first installed."
+msgstr ""
+"Existuje několik možností pro zálohování a obnovení databáze wp_usermeta. "
+"Tento plugin vytvoří první zálohu automaticky při první instalaci."
+
+#: includes/umm-contextual-help.php:142
+msgid ""
+"<strong>Backup:</strong> Create a backup, which is stored in the database, "
+"and can only be run by this plugin."
+msgstr ""
+"<strong>Záloha:</strong> Vytvoří zálohu, která je uložena v databázi a může "
+"být použita pouze s tímto pluginem."
+
+#: includes/umm-contextual-help.php:143
+msgid ""
+"<strong>Restore:</strong> Restore a backup which was generated using the "
+"above method."
+msgstr ""
+"<strong>Obnova:</strong> Obnoví zálohu, která byla vytvořena pomocí "
+"předchozí metody."
+
+#: includes/umm-contextual-help.php:144
+msgid ""
+"<strong>Generate SQL:</strong> Generates the SQL needed for restoring "
+"usermeta data from a database manager, such as phpMyAdmin. Produces a code "
+"which can be copied and pasted."
+msgstr ""
+"<strong>Generovat SQL:</strong> Generuje SQL kód potřebný pro obnovení "
+"usermeta data ze správce databáze, jako například phpMyAdmin. Vytváří kód, "
+"který lze zkopírovat a vložit."
+
+#: includes/umm-contextual-help.php:145
+msgid ""
+"<strong>Generate PHP:</strong> Generates the PHP code needed for restoring "
+"usermeta data from a PHP file. Copy and paste the code to a PHP file, save "
+"it in the root WordPress directory, and run via a Browser."
+msgstr ""
+"<strong>Generovat PHP:</strong> Generuje PHP kód potřebný pro obnovu "
+"usermeta data ze souboru PHP. Kopírovat a vložit do souboru PHP, ten uložit "
+"do root adresáře WordPressu a spustit pomocí prohlížeče."
+
+#: includes/umm-contextual-help.php:146
+msgid ""
+"<strong>Generate PHP Restoration File:</strong> Generates a PHP-formatted "
+"restoration file on the server in the wp-content/user-meta-manager/backups "
+"folder. The generated file can be run from the browser. You will be prompted "
+"before restoration will commence."
+msgstr ""
+"<strong>Vygenerovat soubor obnovy PHP:</strong> Generuje formátovaný soubor "
+"obnovy PHP na serveru v wp-content/user-meta-manager/backups folder. "
+"Vygenerovaný soubor lze spustit z prohlížeče. Budete vyzváni, než bude "
+"zahájena obnova."
+
+#: includes/umm-contextual-help.php:147
+msgid ""
+"<strong>Delete Backup Files:</strong> Delete ALL existing backup files from "
+"the server."
+msgstr ""
+"<strong>Smazat všechny soubory záloh:</strong>Vymaže VŠECHNY existující "
+"soubory záloh ze serveru."
+
+#: includes/umm-contextual-help.php:152 includes/umm-contextual-help.php:153
+msgid "Short Codes"
+msgstr "Zkratka"
+
+#: includes/umm-contextual-help.php:153
+msgid ""
+"A <em>Short Code</em> is a non-HTML code snippet, which can be added to "
+"Posts or Pages. The purpose for using a <em>short code</em> is to extend "
+"certain plugin features to the Post or Page in which it is inserted."
+msgstr ""
+"<em>Zkratka</em> je ne-HTML fragment kódu, který můžete přidat do stránky "
+"nebo příspěvku. Účelem je zobrazení nebo použití některých funkcí pluginu "
+"přímo ve stránce nebo příspěvku, kam je vložen."
+
+#: includes/umm-contextual-help.php:154
+msgid ""
+"Following is a list of the <em>short codes</em> for the User Meta Manager "
+"plugin, and their uses.<br />    <strong>Display data for a particular user:"
+"</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\" user=\"user id\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Display data for the current user:</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Restrict access based on meta key and value:</strong>\r\n"
+"    <pre>[useraccess key=\"meta key\" value=\"meta value\" message=\"You do "
+"not have permission to view this content.\"]Restricted content.[/useraccess]"
+"</pre>\r\n"
+"    Allowed users will have a matching meta value.<br /><br /><br />\r\n"
+"    <strong>Restrict access based on user ID:</strong>\r\n"
+"    <pre>[useraccess users=\"1 22 301\" message=\"You do not have permission "
+"to view this content.\"]Restricted content.[/useraccess]</pre>\r\n"
+"    Allowed user IDs are listed in the <em>users</em> attribute.<br /><br /"
+"><br />\r\n"
+"    <strong>Restrict access based on multiple meta keys and values:</strong>"
+"\r\n"
+"    <pre>[useraccess json='{\"access_level\":\"gold\",\"sub_level\":\"silver"
+"\"}' message=\"You need permission to view this content.\"]Restricted "
+"content.[/useraccess]</pre>\r\n"
+"    The <em>json</em> attribute is used to define a list of meta keys and "
+"values. The list must be JSON encoded, as seen in the example above. Users "
+"with matching meta keys and values will be granted access to restricted "
+"content.<br/><br/>\r\n"
+"    JSON formatting -\r\n"
+"    <pre>{\"meta_key\":\"meta_value\", \"meta_key\":\"meta_value\", "
+"\"meta_key\":\"meta_value\"}</pre>\r\n"
+"    Additionally, you could repeat the same meta key multiple times.\r\n"
+"    <pre>json='{\"access_level\":\"gold\", \"sub_level\":\"silver\", "
+"\"sub_level\":\"bronze\", \"sub_level\":\"aluminum-foil\"}'</pre><br /><br />"
+"\r\n"
+"    <strong>Display a form in a Post or Page:</strong><br />\r\n"
+"    Display a form which allows members to update meta data. The updated "
+"data is saved and optionally emailed to a set address. Any Custom Meta keys "
+"can be added to the form. Only Custom Meta keys which were made using this "
+"plugin will work. Additionally, you must also set a Field Type for the field "
+"you wish to display. \r\n"
+"    <pre>[usermeta class=\"my-form-css-class\" submit=\"Submit\" success="
+"\"Update successful!\" error=\"An error occurred!\" fields=\"test1, test2\" "
+"vars=\"one=1&amp;amp;two=2&amp;amp;three=3\" email_to=\"\" email_from=\"\" "
+"subject=\"Your email subject\" message=\"A brief introduction.\\n\\n%s\\n"
+"\\nBest regards,\\nWebsite Administrator\"]</pre>\r\n"
+"    <strong>Form Short Code Attributes</strong><br />\r\n"
+"    <ul>\r\n"
+"\t<li><strong>class:</strong> (Optional) A CSS class to add to the form.</li>"
+"\r\n"
+"    <li><strong>submit:</strong> (Optional) A label for the submit button.</"
+"li>\r\n"
+"    <li><strong>success:</strong> (Optional) A message to display if the "
+"form submission is successful.</li>\r\n"
+"    <li><strong>error:</strong> (Optional)) A message to display if the form "
+"submission fails.</li>\r\n"
+"    <li><strong>fields:</strong> (Required) A comma delimited list of meta "
+"keys to display. Each meta key will be displayed as it's set <em>Field Type</"
+"em> in the order in which you list them.</li>\r\n"
+"    <li><strong>vars:</strong> (Optional) A URL encoded string of extra "
+"variable/value pairs you wish to pass with the form submission. Each pair "
+"will be converted to a hidden form field, and will be added to the form.</li>"
+"\r\n"
+"    <li><strong>email_to:</strong> (Optional) An email address to send the "
+"results of the form submission to. Leave this empty or remove it altogether "
+"to disable this feature. If you use this feature, also use all of the "
+"following attributes.</li>\r\n"
+"    <li><strong>email_from:</strong> (Used with email_to) An email address "
+"as the sender.</li>\r\n"
+"    <li><strong>subject:</strong> (Used with email_to) An email subject.</li>"
+"\r\n"
+"    <li><strong>message:</strong> (Required with email_to) A message to send "
+"in the email. <strong>\\n</strong> = line break. <strong>%s</strong> = "
+"contents of the form submission. <strong>Important:</strong> You must add "
+"<strong>%s</strong> where you want the form submission results displayed in "
+"the message.</li>\r\n"
+"</ul>\r\n"
+"    </p>"
+msgstr ""
+"Následující seznam <em>zkratek</em> pro plugin UM Manager, ajejich použití."
+"<br />    <strong>Zobrazení dat pro konkrétního uživatele:</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\" user=\"user id\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Zobrazení dat pro aktuálního uživatele:</strong>\r\n"
+"    <pre>[usermeta key=\"meta key\"]</pre>\r\n"
+"    <br />\r\n"
+"    <strong>Omezení přístupu založené na meta klíči a hodnotě:</strong>\r\n"
+"    <pre>[useraccess key=\"meta key\" value=\"meta value\" message=\"Nemáte "
+"oprávnění k prohlížení obsahu.\"]Omezený přístup k obsahu.[/useraccess]</pre>"
+"\r\n"
+"   Povolení uživatelé se shodují s hodnotou meta..<br /><br /><br />\r\n"
+"    <strong>Omezení přístupu založené na uživatelském ID:</strong>\r\n"
+"    <pre>[useraccess users=\"1 22 301\" message=\"Nemáte oprávnění k "
+"prohlížení obsahu.\"]Omezený přístup k obsahu.[/useraccess]</pre>\r\n"
+"    Povolená uživatelská ID jsou v seznamu <em>uživatelských</em> atributů."
+"<br /><br /><br />\r\n"
+"    <strong>Omezení přístupu založené na vícenásobných klíčích a hodnotách:</"
+"strong>\r\n"
+"    <pre>[useraccess json='{\"access_level\":\"gold\",\"sub_level\":\"silver"
+"\"}' message=\"You need permission to view this content.\"]Restricted "
+"content.[/useraccess]</pre>\r\n"
+"    <em>Json</em> atributy jsou použity k definování seznamu meta klíčů a "
+"hodnot. Seznam musí být JSON kódován, jak je vidět v příkladu výše. "
+"Uživatelům s odpovídajícími metadaty klíčů a hodnot bude umožněn přístup k "
+"obsahu s omezeným přístupem.<br/><br/>\r\n"
+"    JSON formátování -\r\n"
+"    <pre>{\"meta_key\":\"meta_value\", \"meta_key\":\"meta_value\", "
+"\"meta_key\":\"meta_value\"}</pre>\r\n"
+"    Navíc, můžete zopakovat stejný meta klíč vícekrát..\r\n"
+"    <pre>json='{\"access_level\":\"gold\", \"sub_level\":\"silver\", "
+"\"sub_level\":\"bronze\", \"sub_level\":\"aluminum-foil\"}'</pre><br /><br />"
+"\r\n"
+"    <strong>Zobrazení formuláře ve stránce nebo příspěvku:</strong><br />\r\n"
+"    Zobrazení formuláře, který umožňuje uživatelům aktualizaci metadat. "
+"Aktualizované údaje se uloží a volitelně odešlou e-mailem na nastavenou "
+"adresu. Do formuláře mohou být přidány jakékoliv vlastní klíče. Ale pouze "
+"klíče, které byly vyrobeny za použití tohoto pluginu budou fungovat. Navíc, "
+"musíte také nastavit typ pole pro pole, které chcete zobrazit. \r\n"
+"    <pre>[usermeta class=\"my-form-css-class\" submit=\"Odeslat\" success="
+"\"Aktualizace provedena!\" error=\"Vyskytla se chyba!\" fields=\"test1, "
+"test2\" vars=\"one=1&amp;amp;two=2&amp;amp;three=3\" email_to=\"\" "
+"email_from=\"\" subject=\"Předmět vašeho emailu\" message=\"Stručný úvod.\\n"
+"\\n%s\\n\\nS pozdravem,\\nAdministrátor webu\"]</pre>\r\n"
+"    <strong>Atributy zkratek formuláře</strong><br />\r\n"
+"    <ul>\r\n"
+"\t<li><strong>class:</strong> (Volitelné) CSS třída pro formulář.</li>\r\n"
+"    <li><strong>submit:</strong> (Volitelné) Text pro tlačítko odeslání.</li>"
+"\r\n"
+"    <li><strong>success:</strong> (Volitelné) Zpráva, která se zobrazí při "
+"úspěšném odeslání.</li>\r\n"
+"    <li><strong>error:</strong> (Volitelné) Zpráva, která se zobrazí při "
+"selhání.</li>\r\n"
+"    <li><strong>fields:</strong> (Povinné) Seznam zobrazených meta klíčů "
+"oddělených čárkou. Každý meta klíč bude zobrazen tak, jak má nastaven "
+"<em>Typ pole</em> v pořádí, jak jste jej přidali do seznamu.</li>\r\n"
+"    <li><strong>vars:</strong> (Volitelné) URL kódovaný řetězec s hodnotou "
+"pomocné proměnné, kterou chcete předat spolu s formulářem. Každý pár bude "
+"konvertován do skrytého pole formuláře.</li>\r\n"
+"    <li><strong>email_to:</strong> (Volitelné) Emailová adresa, na kterou "
+"chcete poslat hodnoty formuláře. Pokud chcete funkci vypnout nechte prázdné "
+"nebo celek odstraňte. Pokud použijete tuto funkci, nezapomeňte použít i "
+"následující atributy.</li>\r\n"
+"    <li><strong>email_from:</strong> (Použít s email_to) Emailová adresa "
+"odesilatele.</li>\r\n"
+"    <li><strong>subject:</strong> (Použít s email_to) Předmět emailu.</li>"
+"\r\n"
+"    <li><strong>message:</strong> (Vyžadováno s email_to) Zpráva, která bude "
+"odeslána s emailem. <strong>\\n</strong> = nový řádek. <strong>%s</strong> = "
+"obsah odesílaného formuláře. <strong>Důležité:</strong> Musíte přidat "
+"<strong>%s</strong> tam, kde chcete obsah odesílaného formuláře zobrazit ve "
+"zprávě.</li>\r\n"
+"</ul>\r\n"
+"    </p>"
+
+#: includes/umm-contextual-help.php:193
+msgid "License"
+msgstr "Licence"
+
+#: includes/umm-contextual-help.php:194
+msgid ""
+"<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty "
+"expressed or implied. Always backup your database before making changes.</p>"
+"\r\n"
+"        <p><strong>License:</strong><br/>&copy;2012 <a href=\"http://"
+"websitedev.biz\" target=\"_blank\">http://websitedev.biz</a> <a href="
+"\"http://jasonlau.biz\" target=\"_blank\">http://jasonlau.biz</a></p>\r\n"
+"        <p>This program is free software; you can redistribute it and/or "
+"modify it under the terms of the GNU General Public License as published by "
+"the Free Software Foundation; either version 3 of the License, or (at your "
+"option) any later version.</p>\r\n"
+"        <p>This program is distributed in the hope that it will be useful, "
+"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>\r\n"
+"        <p>See the GNU General Public License for more details.<br /><a href="
+"\"http://www.gnu.org/licenses/gpl.html\" target=\"_blank\">http://www.gnu."
+"org/licenses/gpl.html</a></p>"
+msgstr ""
+"<p><strong>Ujednání:</strong><br/>Použití pluginu na vlastní nebezpečí. "
+"Žádné záruky vyjádřené nebo předpokládané. Vždy si zálohujte databázi před "
+"provedením změn.</p>\r\n"
+"        <p><strong>Licence:</strong><br/>&copy;2012 <a href=\"http://"
+"websitedev.biz\" target=\"_blank\">http://websitedev.biz</a> <a href="
+"\"http://jasonlau.biz\" target=\"_blank\">http://jasonlau.biz</a></p>\r\n"
+"        <p>Tento program je svobodný software; můžete jej šířit a / nebo "
+"upravovat podle podmínek GNU General Public License publikované Free "
+"Software Foundation; buď ve verzi 3 licence, nebo (podle vašeho uvážení) "
+"kterékoli pozdější verze.</p>\r\n"
+"        <p>Tento program je rozšiřován v naději, že bude užitečný, avšak BEZ "
+"JAKÉKOLI ZÁRUKY; dokonce i bez předpokládané záruky PRODEJNOSTI nebo "
+"VHODNOSTI PRO URČITÝ ÚČEL.</p>\r\n"
+"        <p>Přečtěte si GNU General Public License pro získání detailních "
+"podrobností.<br /><a href=\"http://www.gnu.org/licenses/gpl.html\" target="
+"\"_blank\">http://www.gnu.org/licenses/gpl.html</a></p>"
+
+#: includes/umm-contextual-help.php:202
+msgid "Contribute Code"
+msgstr "Příspět kódem"
+
+#: includes/umm-contextual-help.php:203
+msgid ""
+"<h2>You Can Help Make This Plugin Perfect!</h2><p>If you are a talented "
+"WordPress developer, who would like to contribute to the developement of "
+"this plugin, go to <a href=\"https://github.com/jasonlau/Wordpress-User-Meta-"
+"Manager\" target=\"_blank\">https://github.com/jasonlau/Wordpress-User-Meta-"
+"Manager</a>. There you will find the development package and <a href="
+"\"https://github.com/\" target=\"_blank\">GitHub</a> repository.</p>\r\n"
+"        <p>Additionally, you can contact me at <a href=\"http://jasonlau.biz/"
+"home/contact-me\" target=\"_blank\">http://jasonlau.biz/home/contact-me</a>."
+"</p>"
+msgstr ""
+"<h2>Pomožte mi udělat tento plugin perfektním!</h2><p>Pokud jste talentovaní "
+"WordPress vývojáři, kteří by chtěli přispět k rozvoji tohoto pluginu, jděte "
+"na <a href=\"https://github.com/jasonlau/Wordpress-User-Meta-Manager\" "
+"target=\"_blank\">https://github.com/jasonlau/Wordpress-User-Meta-Manager</"
+"a>. Najdete zde vývojářský balíček a <a href=\"https://github.com/\" target="
+"\"_blank\">GitHub</a> repository.</p>\r\n"
+"        <p>Navíc, můžete mě kontaktovat na <a href=\"http://jasonlau.biz/"
+"home/contact-me\" target=\"_blank\">http://jasonlau.biz/home/contact-me</a>."
+"</p>"
+
+#: includes/umm-contextual-help.php:208
+msgid "Donate"
+msgstr "Podarovat"
+
+#: includes/umm-contextual-help.php:209
+msgid ""
+"<h2>Every Little-Bit Helps!</h2><p>Developing this plugin takes a lot of "
+"time, and as we all know, time equals money.</p>\r\n"
+"        <p>I've given a lot to you, and perhaps you would like to return the "
+"favor with a modest donation?</p>\r\n"
+"        <p>Use the following PayPal button to make a donation. Your "
+"donations help pay for past and future development of this plugin.</p>\r\n"
+"        <p>Thanks in advance!</p>\r\n"
+"        <form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post"
+"\">\r\n"
+"<input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\">\r\n"
+"<input type=\"hidden\" name=\"hosted_button_id\" value=\"X5Y2R65973XZ6\">\r\n"
+"<input type=\"image\" src=\"https://www.paypalobjects.com/en_US/i/btn/"
+"btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - The safer, "
+"easier way to pay online!\">\r\n"
+"<img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/"
+"pixel.gif\" width=\"1\" height=\"1\">\r\n"
+"</form>"
+msgstr ""
+"<h2>Každá trocha pomůže!</h2><p>Rozvoj tohoto pluginu zabírá hodně času, a "
+"jak všichni víme, čas se rovná peníze.</p>\r\n"
+"        <p>Dal jsem vám toho docela dost, nechcete mi to oplatit drobným "
+"darem?</p>\r\n"
+"        <p>Použijte následující PayPal tlačítko k odeslání daru. vaše dary "
+"pohájí s minulými výdaji a zajišťují budoucí vývoj.</p>\r\n"
+"        <p>Předem díky!</p>\r\n"
+"        <form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post"
+"\">\r\n"
+"<input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\">\r\n"
+"<input type=\"hidden\" name=\"hosted_button_id\" value=\"X5Y2R65973XZ6\">\r\n"
+"<input type=\"image\" src=\"https://www.paypalobjects.com/en_US/i/btn/"
+"btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - The safer, "
+"easier way to pay online!\">\r\n"
+"<img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/"
+"pixel.gif\" width=\"1\" height=\"1\">\r\n"
+"</form>"
+
+#: includes/umm-table.php:20
+msgid "umm-user"
+msgstr "umm-user"
+
+#: includes/umm-table.php:21
+msgid "umm-users"
+msgstr "umm-users"
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "ID"
+msgstr "ID"
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "User Login"
+msgstr "Login uživatele"
+
+#: includes/umm-table.php:29 user-meta-manager.php:534
+#: user-meta-manager.php:561 user-meta-manager.php:1052
+#: user-meta-manager.php:1073 user-meta-manager.php:1226
+msgid "Date Registered"
+msgstr "Datum registrace"
+
+#: includes/umm-table.php:39
+msgid "Edit User Meta"
+msgstr "Upravit uživatelská pole"
+
+#: includes/umm-table.php:39
+msgid "Edit Meta"
+msgstr "Upravit pole"
+
+#: includes/umm-table.php:40
+msgid "Delete User Meta"
+msgstr "Smazat uživatelská pole"
+
+#: includes/umm-table.php:40
+msgid "Delete Meta"
+msgstr "Smazat pole"
+
+#: includes/umm-table.php:86 includes/umm-table.php:93
+msgid "Close"
+msgstr "Zavřít"
+
+#: includes/umm-table.php:150
+msgid "User Meta Manager Help"
+msgstr "Nápověda pro UM Manager "
+
+#: includes/umm-table.php:150
+msgid "No Spaces"
+msgstr "Žádné mezery"
+
+#: includes/umm-table.php:150
+msgid "Letters, numbers, and underscores only."
+msgstr "Pouze písmena, číslice a podtržítka."
+
+#: includes/umm-table.php:150
+msgid ""
+"<strong>Error:</strong> That key already exists. Choose a different name."
+msgstr "<strong>Chyba:</strong> Tento klíč existuej. Zvolte jiné jméno."
+
+#. #-#-#-#-#  plugin.pot (User Meta Manager 2.0.3)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: includes/umm-table.php:152
+msgid "User Meta Manager"
+msgstr "UM Manager"
+
+#: includes/umm-table.php:153
+msgid "Manage User Meta Data"
+msgstr "Spravujte uživatelská data"
+
+#: includes/umm-table.php:169
+msgid "Items Per Page"
+msgstr "Položek na stránku"
+
+#: includes/umm-table.php:169
+msgid "Go"
+msgstr "Použít"
+
+#: includes/umm-table.php:177 user-meta-manager.php:672
+msgid "Search"
+msgstr "Hledat"
+
+#: includes/umm-table.php:186
+msgid "Your bridge to a strong Internet presence.&trade;"
+msgstr "Vaše silné spojení s internetovou prezentací. &trade;"
+
+#: includes/umm-table.php:186
+msgid "Help make this plugin perfect by contributing your code on GitHub"
+msgstr ""
+"Pomožte přispěk k dokonalosti tohoto pluginu tím, že přispějete vašim kódem "
+"na GitHub"
+
+#: user-meta-manager.php:45
+msgid "Insert a key and default value in the fields below."
+msgstr "Zadejte klíč a výchozí hodnotu do pole níže."
+
+#: user-meta-manager.php:47 user-meta-manager.php:68 user-meta-manager.php:389
+#: user-meta-manager.php:407 user-meta-manager.php:505
+msgid "Key"
+msgstr "Klíč"
+
+#: user-meta-manager.php:48 user-meta-manager.php:69
+msgid "Letters, numbers, and underscores only"
+msgstr "Pouze písmena, číslice a podtržítka."
+
+#: user-meta-manager.php:48 user-meta-manager.php:69 user-meta-manager.php:287
+#: user-meta-manager.php:348
+msgid "Meta Key"
+msgstr "Klíč pole"
+
+#: user-meta-manager.php:49 user-meta-manager.php:71
+msgid "Default Value"
+msgstr "Výchozí hodnota"
+
+#: user-meta-manager.php:54 user-meta-manager.php:73 user-meta-manager.php:297
+#: user-meta-manager.php:361 user-meta-manager.php:439
+#: user-meta-manager.php:493 user-meta-manager.php:1335
+msgid "Submit"
+msgstr "Odeslat"
+
+#: user-meta-manager.php:65
+msgid "Adding Meta Data For %s"
+msgstr "Přidat meta-data pro %s"
+
+#: user-meta-manager.php:66
+msgid ""
+"Insert a meta key and default value and press <em>Submit</em>. The new meta-"
+"data will be applied to this user only, and can only be managed via the "
+"table actions, and not via the <em>Custom Meta</em> actions."
+msgstr ""
+"Vložte klíč pole a výchozí hodnotu a stiskněte <em>Odeslat</em> Nová meta-"
+"data budou použita pouze pro tohoto uživatele a mohou být spravována pouze "
+"skrz tabulku akcí a ne přes <em>Vlastní pole</em>."
+
+#: user-meta-manager.php:70 user-meta-manager.php:460
+#: user-meta-manager.php:506 user-meta-manager.php:599
+#: user-meta-manager.php:622 user-meta-manager.php:758
+msgid "Value"
+msgstr "Hodnota"
+
+#: user-meta-manager.php:119
+msgid "Below is the sql needed to restore the usermeta table."
+msgstr "Níže je SQL dotaz, který je třeba k obnovení tabulky UM."
+
+#: user-meta-manager.php:119 user-meta-manager.php:170
+msgid "Backup from"
+msgstr "Zálohovat z"
+
+#: user-meta-manager.php:128 user-meta-manager.php:1337
+msgid "Authorization required!"
+msgstr "Vyžadována autorizace!"
+
+#: user-meta-manager.php:147
+msgid "Restore complete."
+msgstr "Obnova kompletní"
+
+#: user-meta-manager.php:147
+msgid ""
+"Are you sure you want to restore all user meta data to the backup version?"
+msgstr ""
+"Opravdu jste si jistí, že chcete obnovit všechna meta-data ze záložní verze?"
+
+#: user-meta-manager.php:165
+msgid "Backup php file was successfully generated at "
+msgstr "PHP záloha byla vpořádku vytvořena"
+
+#: user-meta-manager.php:165
+msgid "Run the file in your browser to begin the restoration process."
+msgstr "Pro zahájení procesu obnovy spusťte soubor ve vašem prohlížeči."
+
+#: user-meta-manager.php:167
+msgid "Error: Backup php file could not be generated at "
+msgstr "Chyba: Soubor PHP zálohy nebyl vygenerován"
+
+#: user-meta-manager.php:167
+msgid "Please be sure the directory exists and is owner-writable."
+msgstr "Ujistěte se prosím, že adresář existuje a je do něj možné zapisovat."
+
+#: user-meta-manager.php:170
+msgid ""
+"Below is the php needed to restore the usermeta table. Save this code as a "
+"php file to the root WordPress folder, then run it in your browser."
+msgstr ""
+"Níže je uvede php kód, který je potřeba pro obnovu uživatelské meta tabulky. "
+"Uložte tento kód jako php soubor do kořenové složky WordPressu a spusťte jej "
+"ve svém prohlížeči."
+
+#: user-meta-manager.php:180
+msgid "User meta data backup was successful."
+msgstr "Uživatelská meta-data byla kompletně zálohována."
+
+#: user-meta-manager.php:194
+msgid "No backup"
+msgstr "Žádná záloha"
+
+#: user-meta-manager.php:196
+msgid "Use the following links to backup and restore user meta data."
+msgstr ""
+"Použijte následující odkaz k zálohování nebo obnově uživatelských meta-dat."
+
+#: user-meta-manager.php:198
+msgid "Backup"
+msgstr "Záloha"
+
+#: user-meta-manager.php:198
+msgid "Last Backup:"
+msgstr "Poslední záloha:"
+
+#: user-meta-manager.php:199 user-meta-manager.php:850
+msgid "Restore"
+msgstr "Obnovit"
+
+#: user-meta-manager.php:200
+msgid "Generate SQL"
+msgstr "Generovat SQL"
+
+#: user-meta-manager.php:201
+msgid "Generate PHP"
+msgstr "Generovat PHP"
+
+#: user-meta-manager.php:202
+msgid "Generate PHP Restoration File"
+msgstr "Vygenerovat soubor obnovy PHP"
+
+#: user-meta-manager.php:203
+msgid "Delete All Backup Files"
+msgstr "Smazat všechny soubory záloh"
+
+#: user-meta-manager.php:211 user-meta-manager.php:257
+#: user-meta-manager.php:838 user-meta-manager.php:849
+msgid "<< Back"
+msgstr "<< Zpět"
+
+#: user-meta-manager.php:258
+msgid "All backup files successfully deleted."
+msgstr "Všechny soubory zálohy byly vymazány."
+
+#: user-meta-manager.php:260
+msgid "Are you sure you want to delete all backup files?"
+msgstr "Jste si jisti, že chcete vymazat všechny soubory záloh?"
+
+#: user-meta-manager.php:260 user-meta-manager.php:306
+#: user-meta-manager.php:371 user-meta-manager.php:850
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: user-meta-manager.php:285
+msgid "Select from the menu a meta key to delete."
+msgstr "Vyberte z menu klíč pole, který chcete vymazat."
+
+#: user-meta-manager.php:288 user-meta-manager.php:349
+msgid "Select A Meta Key"
+msgstr "Vybrat klíč pole"
+
+#: user-meta-manager.php:302 user-meta-manager.php:367
+msgid "Deleting"
+msgstr "Mazání"
+
+#: user-meta-manager.php:304 user-meta-manager.php:369
+msgid "Are you sure you want to delete that item?"
+msgstr "Opravdu chcete vymata tuto položku?"
+
+#: user-meta-manager.php:312
+msgid "No custom meta to delete."
+msgstr "Žádná vlastní pole pro vymazání."
+
+#: user-meta-manager.php:330 user-meta-manager.php:1239
+msgid "Meta data successfully deleted."
+msgstr "Meta-data byla vymazána."
+
+#: user-meta-manager.php:339
+msgid "Deleting Meta Data For %s"
+msgstr "Smazat meta-data pro %s"
+
+#: user-meta-manager.php:346
+msgid ""
+"Select a <em>Meta Key</em> to delete, then press the <em>Submit</em> button. "
+"Select <em>All Users</em> to delete the selected item from all users."
+msgstr ""
+"Vyberte <em>Meta klíč</em>, který chcete odstranit a stiskněte tlačítko "
+"<em>Odeslat</em>. Vyberte <em>všichni uživatelé</em> pro smazání vybrané "
+"položky ze všech uživatelů."
+
+#: user-meta-manager.php:357
+msgid "All Users"
+msgstr "Všichni uživatelé"
+
+#: user-meta-manager.php:382
+msgid "Use the forms below to edit which table columns are displayed."
+msgstr ""
+"Použijte formulář níže a vyberte které sloupce tabulky budou zobrazeny."
+
+#: user-meta-manager.php:384
+msgid "Display Columns"
+msgstr "Zobrazit sloupce"
+
+#: user-meta-manager.php:390 user-meta-manager.php:412
+#: user-meta-manager.php:598 user-meta-manager.php:621
+#: user-meta-manager.php:703 user-meta-manager.php:757
+msgid "Label"
+msgstr "Název"
+
+#: user-meta-manager.php:402
+msgid "Remove Selected Column"
+msgstr "Odebrat vybraný sloupec"
+
+#: user-meta-manager.php:406
+msgid "Add A New Column"
+msgstr "Přidat nový sloupec"
+
+#: user-meta-manager.php:408
+msgid "Keys"
+msgstr "Klíče"
+
+#: user-meta-manager.php:412
+msgid "Enter a label"
+msgstr "Vložte označení"
+
+#: user-meta-manager.php:412
+msgid "Enter a label which will appear in the top row of the results table."
+msgstr "Zadejte titulek, který se bude zobrazovat v záhlaví tabulky výsledků."
+
+#: user-meta-manager.php:413
+msgid "Add Column"
+msgstr "Přidat sloupec"
+
+#: user-meta-manager.php:425
+msgid "No custom meta to edit."
+msgstr "Žádné vlastní pole k úpravám."
+
+#: user-meta-manager.php:429
+msgid "Select from the menu a meta key to edit."
+msgstr "Vyberte z menu klíč pole, který chcete upravit."
+
+#: user-meta-manager.php:431 user-meta-manager.php:485
+msgid "Select a meta key to edit."
+msgstr "Vyberte klíč, který chcete upravit."
+
+#: user-meta-manager.php:432 user-meta-manager.php:486
+msgid "Select A Key To Edit"
+msgstr "Vyberte klíč pro úpravy"
+
+#: user-meta-manager.php:447 user-meta-manager.php:500
+msgid "Now Editing"
+msgstr "Nyní upravujete"
+
+#: user-meta-manager.php:448
+msgid ""
+"Editing custom meta data here will edit the value for all new users. The "
+"value you set will become the default value for all users. New registrations "
+"will receive the custom meta key and default value."
+msgstr ""
+"Úpravou vlastních meta-dat upravíte hodnoty pro všechny nové uživatele. "
+"Hodnota, kterou nastavíte bude výchozí hodnota pro všechny uživatele. Nové "
+"registrace automaticky obdrží tento klíč a výchozí hodnotu."
+
+#: user-meta-manager.php:455
+msgid "No custom meta to display."
+msgstr "Žádné vlastní pole pro zobrazení."
+
+#: user-meta-manager.php:464
+msgid "Update Value For All Current Users"
+msgstr "Aktualizovat hodnotu pro všechny stávající uživatele"
+
+#: user-meta-manager.php:464
+msgid ""
+"Check the box to update the value for all current users. Leave blank to "
+"update the value for future registrations only."
+msgstr ""
+"Zaškrtněte, pokud chcete aktualizovat hodnotu pro všechny běžné uživatele. "
+"Nechte prázdné, pokud chcete aktualizovat hodnoty pouze pro budoucí "
+"registrace."
+
+#: user-meta-manager.php:466 user-meta-manager.php:520
+msgid "Update"
+msgstr "Aktualizovat"
+
+#: user-meta-manager.php:480
+msgid "Editing Meta Data For %s"
+msgstr "Upravovat meta-data pro %s"
+
+#: user-meta-manager.php:639
+msgid "W3Schools HTML5 Input Types Reference Page"
+msgstr "W3Schools HTML5 Input Types Reference Page"
+
+#: user-meta-manager.php:639
+msgid "Type"
+msgstr "Typ"
+
+#: user-meta-manager.php:640
+msgid "Do not add to user profile."
+msgstr "Neze přidat do profilu uživatele."
+
+#: user-meta-manager.php:642
+msgid "None"
+msgstr "Nic"
+
+#: user-meta-manager.php:645
+msgid "Text"
+msgstr "Text"
+
+#: user-meta-manager.php:648
+msgid "Color"
+msgstr "Barva"
+
+#: user-meta-manager.php:651
+msgid "Date"
+msgstr "Datum"
+
+#: user-meta-manager.php:654
+msgid "Date-Time"
+msgstr "Date-Time"
+
+#: user-meta-manager.php:657
+msgid "Date-Time-Local"
+msgstr "Date-Time-Local"
+
+#: user-meta-manager.php:660
+msgid "Email"
+msgstr "Email"
+
+#: user-meta-manager.php:663
+msgid "Month"
+msgstr "Měsíc"
+
+#: user-meta-manager.php:666
+msgid "Number"
+msgstr "Číslo"
+
+#: user-meta-manager.php:669
+msgid "Range"
+msgstr "Rozsah"
+
+#: user-meta-manager.php:675
+msgid "Telephone"
+msgstr "Telefon"
+
+#: user-meta-manager.php:678
+msgid "Time"
+msgstr "Čas"
+
+#: user-meta-manager.php:681
+msgid "URL"
+msgstr "URL"
+
+#: user-meta-manager.php:684
+msgid "Week"
+msgstr "Týden"
+
+#: user-meta-manager.php:687
+msgid "Textarea"
+msgstr "Textové pole"
+
+#: user-meta-manager.php:690
+msgid "Checkbox"
+msgstr "Checkbox"
+
+#: user-meta-manager.php:693
+msgid "Radio Button Group"
+msgstr "Přepínač"
+
+#: user-meta-manager.php:696
+msgid "Select Menu"
+msgstr "Rozbalovací menu"
+
+#: user-meta-manager.php:702
+msgid "Settings"
+msgstr "Nastavení"
+
+#: user-meta-manager.php:706
+msgid "Classes"
+msgstr "Třídy"
+
+#: user-meta-manager.php:709
+msgid "Additional Attributes"
+msgstr "Rozšiřující atributy"
+
+#: user-meta-manager.php:710
+msgid "Example"
+msgstr "Příklad"
+
+#: user-meta-manager.php:710
+msgid "My Title"
+msgstr "Můj název"
+
+#: user-meta-manager.php:710
+msgid "My Text"
+msgstr "Můj text"
+
+#: user-meta-manager.php:712
+msgid "HTML After"
+msgstr "HTML po"
+
+#: user-meta-manager.php:715
+msgid "Required"
+msgstr "vyžadováno"
+
+#: user-meta-manager.php:723
+msgid "Allow Tags"
+msgstr "Povolené tagy"
+
+#: user-meta-manager.php:731
+msgid "Add To Profile"
+msgstr "Přidat do profilu"
+
+#: user-meta-manager.php:745
+msgid "Options"
+msgstr "Možnosti"
+
+#: user-meta-manager.php:829
+msgid "User Meta Manager data successfully reset."
+msgstr "UM Manager byl resetován."
+
+#: user-meta-manager.php:839
+msgid "User meta data successfully restored."
+msgstr "UM Manager byl obnoven."
+
+#: user-meta-manager.php:847
+msgid "No backup data to restore!"
+msgstr "Není co obnovit!"
+
+#: user-meta-manager.php:850
+msgid "Restore all user meta data to the backup version?"
+msgstr "Obnovit všechna uživatelská meta-data ze zálohy?"
+
+#: user-meta-manager.php:1029
+msgid "You do not have the appropriate permission to view this content."
+msgstr "Nemusíte mít příslušné oprávnění k zobrazení tohoto obsahu."
+
+#: user-meta-manager.php:1045
+msgid "Key and label are both required. Try again."
+msgstr "Klíč a označení jsou vyžadovány. Zkuste to znovu."
+
+#: user-meta-manager.php:1048
+msgid "Column already exists."
+msgstr "Sloupec již existuje."
+
+#: user-meta-manager.php:1064
+msgid "Column successfully added."
+msgstr "Sloupec byl přidán."
+
+#: user-meta-manager.php:1071
+msgid "No key was selected. Select a key to remove from the table."
+msgstr "Žádný klíč nebyl vybrán. Vyberte klíč pro vyjmutí z tabulky."
+
+#: user-meta-manager.php:1082
+msgid "Column successfully removed."
+msgstr "Sloupec byl odebrán."
+
+#: user-meta-manager.php:1103
+msgid "Settings successfully saved."
+msgstr "Nastavení bylo uloženo."
+
+#: user-meta-manager.php:1119
+msgid "Error: Meta key already existed. Choose a different name."
+msgstr "Chyba: Klíč pole existuje. Zvolte jiné jméno."
+
+#: user-meta-manager.php:1191
+msgid "Meta data successfully added."
+msgstr "Meta-data byla přidána."
+
+#: user-meta-manager.php:1195
+msgid "Meta data successfully updated."
+msgstr "Meta-data byla aktualizována."
+
+#: user-meta-manager.php:1201
+msgid "Error: No meta key entered."
+msgstr "Chyba: Nebyl vložen klíč pole."
+
+#: user-meta-manager.php:1205
+msgid "Error: No meta key selected."
+msgstr "Chyba: Nebyl vybrán klíč pole."
+
+#: user-meta-manager.php:1245
+msgid "Meta Key is required!"
+msgstr "Klíč pole je vyžadován!"
+
+#: user-meta-manager.php:1288
+msgid "You do not have sufficient permissions to access this content."
+msgstr "Nemáte dostatečná oprávnění pro přístup k tomuto obsahu."
+
+#: user-meta-manager.php:1336
+msgid "Update successful!"
+msgstr "Aktualizace úspěšná!"
+
+#: user-meta-manager.php:1339
+msgid "do-not-reply"
+msgstr "neodpovídat"
+
+#. Plugin URI of the plugin/theme
+msgid "http://websitedev.biz"
+msgstr "http://websitedev.biz"
+
+#. Description of the plugin/theme
+msgid ""
+"Add, edit, or delete user meta data with this handy plugin. Easily restrict "
+"access or insert user meta data into posts or pages."
+msgstr ""
+"Přidávání, úprava nebo mazání meta-dat s tímto jednoduchým pluginem. Snadné "
+"omezení přístupu nebo zadávání uživatelských meta-dat na stránce nebo "
+"příspěvku."
+
+#. Author of the plugin/theme
+msgid "Jason Lau"
+msgstr "Jason Lau"
+
+#. Author URI of the plugin/theme
+msgid "http://jasonlau.biz"
+msgstr "http://jasonlau.biz"

@@ -36,6 +36,7 @@ class UMM_UI extends WP_List_Table {
     
     function column_user_login($item){
         $actions = array(
+        'add_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_add_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Add Meta', 'user-meta-manager') . '</a>',$item->ID),
             'edit_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Edit Meta', 'user-meta-manager') . '</a>',$item->ID),
             'delete_user_meta' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_user_meta&u=%s" title="'.__('Delete User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Delete Meta', 'user-meta-manager') . '</a>',$item->ID)
         );

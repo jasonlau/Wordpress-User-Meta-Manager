@@ -134,7 +134,7 @@ label{
 
 .umm-back-button{
     display: block;
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px !important;
 }
 
 div#contextual-help-link-wrap{
