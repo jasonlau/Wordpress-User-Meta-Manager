@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.5
+ * Version: 2.0.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.5');
+define('UMM_VERSION', '2.0.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
@@ -1160,16 +1160,17 @@ function umm_update_user_meta(){
         case "edit":
         
         if($all_users):
+           // Update default value and value for all users 
             $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
             foreach($data as $user):
                 update_user_meta($user->ID, $meta_key, maybe_unserialize(trim(stripslashes($meta_value))), false);
             endforeach;
             $umm_data[$meta_key] = $_POST['meta_value'];
             update_option('user_meta_manager_data', $umm_data);
-        else:
+        elseif(is_array($_POST['meta_key'])):
+           // Update values for single user  
            $x = 0;
-           foreach($_POST['meta_key']  as $meta_key):
-            
+           foreach($_POST['meta_key']  as $meta_key):          
             if(empty($umm_singles_data)):
                $umm_singles_data = array($meta_key);
             else:
@@ -1181,6 +1182,10 @@ function umm_update_user_meta(){
             update_user_meta($_POST['u'], $meta_key, maybe_unserialize(trim(stripslashes($_POST['meta_value'][$x]))), false);
             $x++;
            endforeach;
+        else:
+           // Update default value only
+           $umm_data[$meta_key] = $_POST['meta_value'];
+           update_option('user_meta_manager_data', $umm_data);
             
         endif;
         
