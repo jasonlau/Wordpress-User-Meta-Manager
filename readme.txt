@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 Tested up to: 3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 2.0.7 =
+Fixed a bug which produced an extra unclosed div.
 
 = 2.0.6 =
 Fixed a bug which threw an error while updating custom meta data.
@@ -177,3 +180,6 @@ Reimplemented the single-member "Add Meta" feature. Added an option to shortcut 
 
 = 2.0.6 =
 Fixed a bug which threw an error while updating custom meta data.
+
+= 2.0.7 =
+Fixed a bug which produced an extra unclosed div.
