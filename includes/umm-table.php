@@ -42,7 +42,7 @@ class UMM_UI extends WP_List_Table {
         );
 
         return sprintf('%1$s %2$s',
-            $item->user_login,
+            '<a title="' . __('Edit', 'user-meta-manager') . ' ' . $item->user_login . '" href="user-edit.php?user_id=' . $item->ID . '" target="_blank">' . $item->user_login . '</a>',
             $this->row_actions($actions)
         );
     }
@@ -53,11 +53,12 @@ class UMM_UI extends WP_List_Table {
     }
     
     function get_search_menu(){
+        $search_mode = (!isset($_REQUEST['umm_search_mode']) || empty($_REQUEST['umm_search_mode'])) ? 'ID' :  $_REQUEST['umm_search_mode'];     
         $columns = $this->get_columns();
         $menu = "<select class=\"umm-search-mode\" name=\"umm_search_mode\">\n";
         foreach($columns as $k => $v):
           $menu .= "<option value=\"$k\"";
-          if(((!$_REQUEST['umm_search_mode'] || $_REQUEST['umm_search_mode'] == 'ID') && $k == 'ID') || $_REQUEST['umm_search_mode'] == $k):
+          if(($search_mode == 'ID' && $k == 'ID') || $search_mode == $k):
           $menu .= " selected=\"selected\"";
           endif;
           $menu .= ">" . $v . "</option>\n"; 
@@ -66,7 +67,7 @@ class UMM_UI extends WP_List_Table {
         print($menu);
     }
 
-    function get_sortable_columns($extra_fields){
+    function get_sortable_columns(){
         $columns = array_merge($this->users_columns, $this->usermeta_columns);
         $sortable_columns = array();
         foreach($columns as $k => $v):
@@ -98,15 +99,15 @@ class UMM_UI extends WP_List_Table {
         global $wpdb;
         $usermeta_fields = $this->usermeta_columns;
         $this->process_bulk_action();
-        $per_page = (!$_REQUEST['per_page']) ? 10 : $_REQUEST['per_page'];
-        $columns = $this->get_columns($extra_fields);
+        $per_page = (!isset($_REQUEST['per_page']) || empty($_REQUEST['per_page'])) ? 10 : $_REQUEST['per_page'];
+        $columns = $this->get_columns();
         $hidden = array();
-        $sortable = $this->get_sortable_columns($extra_fields);
+        $sortable = $this->get_sortable_columns();
         $this->_column_headers = array($columns, $hidden, $sortable);
-        $orderby = (!$_REQUEST['orderby']) ? 'ID' : $_REQUEST['orderby'];
-        $order = (!$_REQUEST['order']) ? 'ASC' : $_REQUEST['order'];
-        $search = (!$_REQUEST['s']) ? false : $_REQUEST['s'];
-        $search_mode = (!$_REQUEST['umm_search_mode']) ? 'ID' : $_REQUEST['umm_search_mode'];
+        $orderby = (!isset($_REQUEST['orderby']) || empty($_REQUEST['orderby'])) ? 'ID' : $_REQUEST['orderby'];
+        $order = (!isset($_REQUEST['order']) || empty($_REQUEST['order'])) ? 'ASC' : $_REQUEST['order'];
+        $search = (!isset($_REQUEST['s']) || empty($_REQUEST['s'])) ? false : $_REQUEST['s'];
+        $search_mode = (!isset($_REQUEST['umm_search_mode']) || empty($_REQUEST['umm_search_mode'])) ? 'ID' : $_REQUEST['umm_search_mode'];
         define("UMM_ORDERBY", $orderby);
         define("UMM_ORDER", $order);
         $query = "SELECT * FROM $wpdb->users";       
@@ -125,7 +126,8 @@ class UMM_UI extends WP_List_Table {
         if($search):
             $search_results = array();
           foreach($data as $d):
-          if($d->$search_mode == trim($search) || eregi($search, $d->$search_mode)):
+          $checkit = stristr($d->$search_mode, $search);
+          if($d->$search_mode == trim($search) || !empty($checkit)):
             array_push($search_results, $d);
           endif;
           endforeach;

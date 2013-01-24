@@ -51,7 +51,7 @@ Yes I do. Check my website at JasonLau.biz.
 == Changelog ==
 
 = 2.0.7 =
-Fixed a bug which produced an extra unclosed div.
+Replaced depreciated eregi calls with other methods. Fixed some language bugs. Cleaned numerous PHP notices. Fixed a bug which caused custom user meta data to be unintentionally updated for all users. Added link to edit users in the User Login column.
 
 = 2.0.6 =
 Fixed a bug which threw an error while updating custom meta data.
@@ -182,4 +182,4 @@ Reimplemented the single-member "Add Meta" feature. Added an option to shortcut 
 Fixed a bug which threw an error while updating custom meta data.
 
 = 2.0.7 =
-Fixed a bug which produced an extra unclosed div.
+Replaced eregi calls with other methods. Fixed some language bugs.

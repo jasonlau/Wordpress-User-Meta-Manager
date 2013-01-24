@@ -35,7 +35,8 @@ define('UMM_VERSION', '2.0.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
-
+//error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
 
@@ -91,8 +92,10 @@ function umm_admin_menu(){
 function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user, $table_prefix;
     $backup_files = get_option('umm_backup_files');
-    $mode = (empty($backup_mode)) ? $_REQUEST['mode'] : $backup_mode;
-    $tofile = (empty($tofile)) ? $_REQUEST['tofile'] : $tofile;
+    $mode = (!isset($_REQUEST['mode']) || empty($_REQUEST['mode'])) ? '' : $_REQUEST['mode'];
+    $mode = (empty($backup_mode)) ? $mode : $backup_mode;
+    $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : $_REQUEST['tofile'];
+    $tofile = (empty($tofile)) ? $to_file : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
     $back_button = umm_button("umm_backup_page&u=1", null, "umm-back-button");
     switch($mode){
@@ -258,18 +261,18 @@ function umm_deactivate(){
 }
 
 function umm_delete_backup_files(){
+    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', UMM_SLUG), "umm-back-button");
     if(!empty($_REQUEST['umm_confirm_backups_delete'])):
-    $backups_folder = WP_PLUGIN_DIR . "/user-meta-manager/backups";
+    $backups_folder = WP_PLUGIN_DIR . "/user-meta-manager/backups";    
     chmod($backups_folder, 0755);
-    $backup_files = get_option('umm_backup_files', $backup_files);
+    $backup_files = get_option('umm_backup_files');
     
     if(is_array($backup_files) && !empty($backup_files)):
     foreach($backup_files as $backup_file):
       @unlink($backup_file);
     endforeach;
     endif;
-    update_option('umm_backup_files', array());
-    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', UMM_SLUG), "umm-back-button");
+    update_option('umm_backup_files', array());   
     $output = $back_button . '<p class="umm-message">' . __('All backup files successfully deleted.', UMM_SLUG) . '</p>';
     else:
     $output = $back_button . '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', UMM_SLUG) . '</strong><br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', UMM_SLUG) . '</a> <a href="#" data-subpage="' . UMM_AJAX . 'umm_backup_page" class="umm-subpage">' . __('Cancel', UMM_SLUG) . '</a></p>';
@@ -294,8 +297,7 @@ function umm_delete_custom_meta(){
     global $wpdb;
     $data = get_option('user_meta_manager_data');
     if(!empty($data)):    
-    $delete_key = $_REQUEST['umm_edit_key'];
-    
+    $delete_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
     if($delete_key == ""):
     $output = umm_fyi('<p>'.__('Select from the menu a meta key to delete.').'</p>');  
     $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -439,7 +441,7 @@ function umm_edit_custom_meta(){
     if(!$data):
        $output = __('No custom meta to edit.', UMM_SLUG); 
     else:
-    $edit_key = $_REQUEST['umm_edit_key'];
+    $edit_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
     if($edit_key == ""):
         $output = umm_fyi('<p>'.__('Select from the menu a meta key to edit.', UMM_SLUG).'</p>');
         $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -655,9 +657,15 @@ function umm_profile_field_editor($umm_edit_key=null){
         else:
         $options_output .= $select_option_row;
     endif;
-    
+    $type = (!isset($type) || empty($type)) ? '' : $type;
+    $label = (!isset($label) || empty($label)) ? '' : $label;
+    $attrs = (!isset($attrs) || empty($attrs)) ? '' : $attrs;
+    $after = (!isset($after) || empty($after)) ? '' : $after;
+    $required = (!isset($required) || empty($required)) ? '' : $required;
+    $add_to_profile = (!isset($add_to_profile) || empty($add_to_profile)) ? '' : $add_to_profile;
+    $class = (!isset($class) || empty($class)) ? '' : $class;
     $output = '<div class="umm-profile-field-editor">
-    <strong>Field <a title="'.__('W3Schools HTML5 Input Types Reference Page', UMM_SLUG).'" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">'.__('Type', UMM_SLUG).'</a>:</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
+    <strong>'.__('Field <a title="W3Schools HTML5 Input Types Reference Page" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">Type</a>', UMM_SLUG).' :</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
     <option value="" title="'.__('Do not add to user profile.', UMM_SLUG).'"';
     if($type == '') $output .= ' selected="selected"';
     $output .= '>'.__('None', UMM_SLUG).'</option>
@@ -736,26 +744,26 @@ function umm_profile_field_editor($umm_edit_key=null){
     <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required">
 	<option value="no"';
     if($required == 'no' || $required == '') $output .= ' selected="selected"';
-    $output .= '>No</option>
+    $output .= '>'.__('No', UMM_SLUG).'</option>
 	<option value="yes"';
     if($required == 'yes') $output .= ' selected="selected"';
-    $output .= '>Yes</option>
+    $output .= '>'.__('Yes', UMM_SLUG).'</option>
     </select><br />
     <strong>'.__('Allow Tags', UMM_SLUG).':</strong> <select size="1" name="umm_allow_tags">
 	<option value="no"';
     if($add_to_profile == 'no' || $add_to_profile == '') $output .= ' selected="selected"';
-    $output .= '>No</option>
+    $output .= '>'.__('No', UMM_SLUG).'</option>
     <option value="yes"';
     if($add_to_profile == 'yes') $output .= ' selected="selected"';
-    $output .= '>Yes</option> 	
+    $output .= '>'.__('Yes', UMM_SLUG).'</option> 	
     </select><br />
     <strong>'.__('Add To Profile', UMM_SLUG).':</strong> <select size="1" name="umm_add_to_profile">
 	<option value="yes"';
     if($add_to_profile == 'yes' || $add_to_profile == '') $output .= ' selected="selected"';
-    $output .= '>Yes</option>
+    $output .= '>'.__('Yes', UMM_SLUG).'</option>
     <option value="no"';
     if($add_to_profile == 'no') $output .= ' selected="selected"';
-    $output .= '>No</option>	
+    $output .= '>'.__('No', UMM_SLUG).'</option>	
     </select>
     </div>';
     
@@ -787,6 +795,8 @@ $output .= '</table>
 
 function umm_random_str($number_of_digits = 1, $type = 3){
     // $type: 1 - numeric, 2 - letters, 3 - mixed, 4 - all ascii chars.
+    $num = "";
+    $r = 0;
     for($x = 0; $x < $number_of_digits; $x++):
         while(substr($num, strlen($num) - 1, strlen($num)) == $r):
             switch ($type) {
@@ -886,6 +896,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     if($show_fields):
       $new_array = array();
       foreach($show_fields as $profile_field_name):
+      if(isset($profile_fields[$profile_field_name]))
        $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
       endforeach;
       $profile_fields = $new_array;   
@@ -894,7 +905,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
-      $user_value = stripslashes(htmlspecialchars_decode(get_user_meta($current_user->ID, $profile_field_name, true)));
+      $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
+      $user_value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
       
       $value = (empty($user_value)) ? $default_value : $user_value;
       
@@ -1115,7 +1127,8 @@ function umm_update_profile_fields(){
     foreach($saved_profile_fields as $field_name => $field_settings):
       $posted_value = (isset($_REQUEST[$field_name])) ? trim($_REQUEST[$field_name]) : '';
       $field_value = ($posted_value == '') ? $field_settings['value'] : addslashes(htmlspecialchars($posted_value));
-      update_user_meta($current_user->ID, $field_name, $field_value);
+      $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
+      update_user_meta($the_user, $field_name, $field_value);
     endforeach;
 }
 
@@ -1128,13 +1141,15 @@ function umm_update_settings(){
 
 function umm_update_user_meta(){
     global $wpdb;
+    $output = "";
     $mode = $_POST['mode'];
     $all_users = (!empty($_POST['all_users'])) ? true : false;
     $umm_data = get_option('user_meta_manager_data');
     $umm_singles_data = get_option('user_singles_data');
     $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data;
+    $posted_value = !isset($_POST['meta_value']) ? '' : $_POST['meta_value'];
     $meta_key = (!empty($_POST['meta_key'])) ? $_POST['meta_key'] : '';
-    $meta_value = ($_POST['umm_allow_tags'] == 'yes') ? $_POST['meta_value'] : wp_strip_all_tags($_POST['meta_value']);
+    $meta_value = (isset($_POST['umm_allow_tags']) && $_POST['umm_allow_tags'] == 'yes') ? $_POST['meta_value'] : wp_strip_all_tags($posted_value);
     $meta_key_exists = false;
     if(!empty($meta_key)):
     if(is_array($meta_key)):
@@ -1300,14 +1315,14 @@ function umm_update_user_meta(){
 function umm_useraccess_shortcode($atts, $content) {
     global $current_user;
     $access = true;
-    $key = $atts['key'];
-    $value = $atts['value'];
-    $users = ($atts['users']) ? explode(" ", $atts['users']) : false;
-    $message = $atts['message'];
-    
-    if($atts['json']):
+    $key = (!isset($atts['key'])) ? '' : $atts['key'];
+    $value = (!isset($atts['value'])) ? '' : $atts['value'];
+    $users = (isset($atts['users'])) ? explode(" ", $atts['users']) : false;
+    $message = (!isset($atts['message'])) ? '' : $atts['message'];
+    $json = (!isset($atts['json'])) ? false : $atts['json'];
+    if($json):
     $access = false;
-      $json = json_decode($atts['json']);
+      $json = json_decode($json);
       foreach($json as $k => $v):
         if($k && $v):
           $meta_value = get_user_meta($current_user->ID, $k, true);
