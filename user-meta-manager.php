@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.8
+ * Version: 2.0.9
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.8');
+define('UMM_VERSION', '2.0.9');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
@@ -905,9 +905,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
-      $user_value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
-      
-      $value = (empty($user_value)) ? $default_value : $user_value;
+      $value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
       
       $output .= '<tr>
 	<th><label for="' . $profile_field_name . '" class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . stripslashes(htmlspecialchars_decode($profile_field_settings['label'])) . '</label></th>
@@ -948,10 +946,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
  //TODO:Support for checkbox groups                      
             $output .= '<input type="checkbox" name="' . $profile_field_name;
             //if(count($profile_field_settings['options']) > 1) $output .= '[]';
-            $output .= '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $output .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
               $output .= ' required="required"';
-            if(!empty($value))
+            if($value != "")
               $output .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
@@ -1123,10 +1121,9 @@ function umm_update_columns(){
 function umm_update_profile_fields(){
     global $current_user;
     $saved_profile_fields = (!get_option('umm_profile_fields')) ? array() : get_option('umm_profile_fields');
+    $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
     foreach($saved_profile_fields as $field_name => $field_settings):
-      $posted_value = (isset($_REQUEST[$field_name])) ? trim($_REQUEST[$field_name]) : '';
-      $field_value = ($posted_value == '') ? $field_settings['value'] : addslashes(htmlspecialchars($posted_value));
-      $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
+      $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';       
       update_user_meta($the_user, $field_name, $field_value);
     endforeach;
 }
@@ -1413,7 +1410,8 @@ function umm_usermeta_shortcode($atts, $content) {
     $output = "";
       foreach($show_fields as $field => $field_name):
         if(isset($_POST[$field_name]) && array_key_exists($field_name, $umm_data)):
-        $val = sprintf("%s", $_POST[$field_name]);
+        $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
+        $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
         $output .= $field_name . " = " . $val . "\n";
         update_user_meta($current_user->ID, $field_name, $val);       
         endif;
