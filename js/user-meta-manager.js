@@ -86,28 +86,47 @@
             $("div.umm-subpage").show('slow'); 
             if(d.message){
                 $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
-            }        
+            }
+            if($("table#umm_edit_key tbody").html()){
+               $("table#umm_edit_key tbody").sortable({
+                stop: function(event, ui){
+                    $("table#umm_edit_key").before("<div class='umm-order-updated hidden' style='padding: 10px;margin: 10px auto 10px auto;background-color: #FFFFC1;border: 1px solid #B3B300;color: #000000;-moz-border-radius: 8px;-khtml-border-radius: 8px;-webkit-border-radius: 8px;border-radius: 8px;'></div>");
+                    $.post('admin-ajax.php?action=umm_switch_action&sub_action=umm_update_custom_meta_order', $("form#umm_update_user_meta_form").serialize(), function(data){
+                        $('.umm-order-updated').html(data).show('slow').delay(3000).hide('slow',function(){
+                            $(this).remove();
+                        });
+                    });
+                }
+                }); 
+            }                 
         });
         }       
     });
     
     $("#umm_edit_custom_meta_submit").live('click', function(event){
         event.preventDefault();
-        if($("#umm_edit_key").val() != ""){
+        var submit_form = false;
+        if($("input[name='umm_edit_key']:checked").length > 0){
+            console.log('!');
+                submit_form = true;
+        } 
+        console.log('?');
+        if(submit_form){
             var obj = $(this),
         d = obj.data(),
         original_value = obj.val(),
-        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + $("#umm_edit_key").val();
+        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + $("input[name='umm_edit_key']:checked").val();
         obj.prop('disabled',true).val(d.wait);
         $("div.umm-subpage").load(return_page, function(){
                 if(d.message){
                     $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
                 }
                 $("div.umm-subpage").show('slow');
-                $("div#umm-home").hide('slow');    
+                $("div#umm-home").hide('slow');
+                   
         });
         } else {
-           $("#umm_edit_key").effect('highlight',1000); 
+           $("input[name='umm_edit_key']").parent().effect('highlight',2000); 
         }        
     });
 
@@ -295,5 +314,5 @@
            
         }        
     });
-    
+       
 }); // jQuery

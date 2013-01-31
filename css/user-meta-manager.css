@@ -218,3 +218,18 @@ code,
     vertical-align: top;
     text-align: left;
 }
+
+table#umm_edit_key td{
+    text-align: left !important;
+    
+}
+
+td.umm-edit-key-radio-cell{
+  max-width: 10% !important;  
+}
+
+td.umm-draggable.umm-edit-key-name-cell{
+    border: 1px solid red;
+    max-width: 90% !important;
+    cursor: move !important;
+}

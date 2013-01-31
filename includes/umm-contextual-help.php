@@ -36,6 +36,18 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $shortcut_editing_no = ' selected="selected"';
     }
     
+    $pfields_position = (!isset($umm_settings['pfields_position']) || empty($umm_settings['pfields_position'])) ? 1 : $umm_settings['pfields_position'];
+    switch($pfields_position){
+        case 0:
+        $pfields_position_top = ' selected="selected"';
+        $pfields_position_bottom = '';
+        break;
+        
+        default:
+        $pfields_position_top = '';
+        $pfields_position_bottom = ' selected="selected"';
+    }
+    
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $tabs = array(array(
@@ -61,6 +73,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
 </select> <small>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</small>
 <br />
+<strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . ':</strong><br />
+        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"> <small>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</small>
+<br /><br />
 <input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">

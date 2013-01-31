@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.0.9
+Stable tag: 2.1.0
 Tested up to: 3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 2.1.0 =
+Now you can sort the custom fields by dragging and dropping them in position in the Edit Custom Meta screen. This will affect the order in which the custom fields are displayed in the profile editor. Added the option to display a title for the custom profile fields section. Look for the new setting in the contextual help screen under Plugin Settings. Replaced the label tag with the span tag for radio button groups.
 
 = 2.0.9 =
 Fixed a bug which prevented numeric user meta values from being updated. Verified compatibility with WP 3.5.1.
@@ -195,3 +198,6 @@ Removed some development code which set php error reporting to ALL.
 
 = 2.0.9 =
 Fixed a bug which prevented numeric user meta values from being updated. Verified compatibility with WP 3.5.1.
+
+= 2.1.0 =
+Now you can sort the custom fields by dragging and dropping them in position in the Edit Custom Meta screen. This will affect the order in which the custom fields are displayed in the profile editor. Added the option to display a title for the custom profile fields section. Look for the new setting in the contextual help screen under Plugin Settings. Replaced the label tag with the span tag for radio button groups.

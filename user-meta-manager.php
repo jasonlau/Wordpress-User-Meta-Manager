@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.0.9
+ * Version: 2.1.0
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.0.9');
+define('UMM_VERSION', '2.1.0');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
@@ -255,6 +255,7 @@ function umm_deactivate(){
      delete_option('umm_backup_files');
      delete_option('umm_profile_fields');
      delete_option('umm_settings');
+     delete_option('umm_sort_order');
      $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
     endif;   
 }
@@ -442,21 +443,35 @@ function umm_edit_custom_meta(){
     else:
     $edit_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
     if($edit_key == ""):
-        $output = umm_fyi('<p>'.__('Select from the menu a meta key to edit.', UMM_SLUG).'</p>');
+        $output = umm_fyi('<p>'.__('Select from the list a meta key to edit, or drag and drop to sort.', UMM_SLUG).'</p>');
         $output .= '<form id="umm_update_user_meta_form" method="post">
-        <strong>Edit Key:</strong> <select id="umm_edit_key" name="umm_edit_key" title="' . __('Select a meta key to edit.', UMM_SLUG) . '">
-        <option value="">' . __('Select A Key To Edit', UMM_SLUG) . '</option>
+        <table id="umm_edit_key">
+        <tr class="alternate"><td colspan="2"><strong>'.__('Edit Key', UMM_SLUG).'</strong></td></tr>
         ';
+        $sort_order = get_option('umm_sort_order');
+        if(empty($sort_order) || !is_array($sort_order)) $sort_order = $data;
+        /* Sort the fields */
+        if($sort_order):
+           $new_array = array();
+           foreach($sort_order as $profile_field_name):
+              if(isset($data[$profile_field_name]))
+              $new_array[$profile_field_name] = $data[$profile_field_name];
+           endforeach;
+           $data = $new_array;
+        endif;
+        $x = 1;
         foreach($data as $key => $value):
-            $output .= '<option value="'.$key.'">'.$key.'</option>
+            $class = ($x%2) ? ' class="alternate"' : '';
+            $output .= '<tr' . $class . '><td class="umm-edit-key-radio-cell"><input type="radio" name="umm_edit_key" value="'.$key.'" /><input name="umm_item[]" type="hidden" value="' . $key . '" /></td><td class="umm-draggable umm-edit-key-name-cell" style="cursor: move !important;">'.$key.'</td></tr>
             ';
+            $x++;
         endforeach;    
-            $output .= '</select> 
-    <input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
+            $output .= '</table>';
+            $output .= '<input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
     <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" /> 
     </form> 
     ';
-        
+    
     else:
     $profile_fields = get_option('umm_profile_fields');
     if(!$profile_fields) $profile_fields = array();
@@ -582,7 +597,8 @@ function umm_install(){
    add_option('umm_profile_fields', array());
    add_option('umm_users_columns', array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)));
    add_option('umm_usermeta_columns', array());  
-   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no'));
+   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => ''));
+   add_option('umm_sort_order', array());
     
 }
 
@@ -885,13 +901,25 @@ function umm_restore_confirm(){
 
 function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
    global $current_user;
+   $umm_settings = get_option('umm_settings');
     $umm_data = get_option('user_meta_manager_data');
     $profile_fields = get_option('umm_profile_fields');
+    $sort_order = get_option('umm_sort_order');
+    if(empty($sort_order) || !is_array($sort_order)) $sort_order = $profile_fields;
     $show_fields = ($fields) ?  explode(",", str_replace(", ", ",", $fields)) : false;
     if($debug) print_r($profile_fields);
     if(!empty($profile_fields)):
     $output = "";
-
+    /* Sort the profile fields */
+    if($sort_order):
+      $new_array = array();
+      foreach($sort_order as $profile_field_name):
+      if(isset($profile_fields[$profile_field_name]))
+       $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
+      endforeach;
+      $profile_fields = $new_array;   
+    endif;
+    /* If this is a short code reduce the array to only the fields which should be displayed */
     if($show_fields):
       $new_array = array();
       foreach($show_fields as $profile_field_name):
@@ -957,9 +985,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
             break; 
             
             case 'radio':
+            $i = 1;
             foreach($profile_field_settings['options'] as $option => $option_settings):
               if(!empty($option_settings['label'])):
-              $output .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
+              $output .= '<input id="umm_radio_' . $i . '" type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
               
               $output .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
               if($profile_field_settings['required'] == 'yes')
@@ -968,8 +997,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
               $output .= ' checked="checked"';
               if(!empty($profile_field_settings['attrs']))
               $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-              $output .= ' /><label class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</label> ';
+              $output .= ' /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
               endif;
+              $i++;
             endforeach; 
             break;
             
@@ -1010,7 +1040,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     endif; // !empty($profile_fields)
     
     if($output != ""):
-    $output = '<table class="form-table">
+    $section_title = (!isset($umm_settings['section_title'])) ? '<h3 class="umm-custom-fields"></h3>' : '<h3 class="umm-custom-fields">' . $umm_settings['section_title'] . '</h3>';
+    $output = $section_title . '<table class="form-table umm-custom-fields">
   <tbody>
 ' . $output . '
   </tbody>
@@ -1118,6 +1149,13 @@ function umm_update_columns(){
     exit; 
 }
 
+function umm_update_custom_meta_order(){
+    update_option('umm_sort_order', $_REQUEST['umm_item']);
+    $output = __('Order successfully updated.', UMM_SLUG);
+    print $output;
+    exit;
+}
+
 function umm_update_profile_fields(){
     global $current_user;
     $saved_profile_fields = (!get_option('umm_profile_fields')) ? array() : get_option('umm_profile_fields');
@@ -1141,7 +1179,7 @@ function umm_update_user_meta(){
     $mode = $_POST['mode'];
     $all_users = (!empty($_POST['all_users'])) ? true : false;
     $umm_data = get_option('user_meta_manager_data');
-    $umm_singles_data = get_option('user_singles_data');
+    $umm_singles_data = get_option('umm_singles_data');
     $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data;
     $posted_value = !isset($_POST['meta_value']) ? '' : $_POST['meta_value'];
     $meta_key = (!empty($_POST['meta_key'])) ? $_POST['meta_key'] : '';
@@ -1472,11 +1510,14 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
 add_action('admin_menu', 'umm_admin_menu');
 add_action('admin_init', 'umm_admin_init');
 add_action('user_register', 'umm_default_keys');
-//TODO:Add fields to the top or to the bottom of the profile editor
-//add_action('profile_personal_options', 'umm_show_profile_fields');
-add_action('edit_user_profile', 'umm_show_profile_fields');
+
+if(isset($_REQUEST['user_id'])):
+  add_action('edit_user_profile', 'umm_show_profile_fields');
+else:
+  add_action('show_user_profile', 'umm_show_profile_fields');  
+endif;
+
 add_action('profile_update', 'umm_update_profile_fields');
-add_action('show_user_profile', 'umm_show_profile_fields');
 
 // All ajax admin-ajax calls pipe through umm_switch_action()
 add_action('wp_ajax_umm_switch_action','umm_switch_action');
