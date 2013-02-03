@@ -17,7 +17,7 @@
         }); 
        });
     
-    $("a.umm-subpage").live('click', function(event){
+    $().on('click', "a.umm-subpage", function(event){
         event.preventDefault();
         var obj = $(this),
         d = obj.data();
@@ -36,7 +36,7 @@
         });
     });
     
-    $(".umm-button").live('click', function(event){
+    $(document).on('click', ".umm-button", function(event){
         event.preventDefault();
         var obj = $(this),
         d = obj.data(),
@@ -58,7 +58,7 @@
         }      
     });
     
-    $(".umm-subpage-go").live('click', function(event){
+    $(document).on('click', ".umm-subpage-go", function(event){
         event.preventDefault();
         var obj = $(this),
         d = obj.data();
@@ -103,7 +103,7 @@
         }       
     });
     
-    $("#umm_edit_custom_meta_submit").live('click', function(event){
+    $(document).on('click', "#umm_edit_custom_meta_submit", function(event){
         event.preventDefault();
         var submit_form = false;
         if($("input[name='umm_edit_key']:checked").length > 0){
@@ -130,7 +130,7 @@
         }        
     });
 
-    $("#umm_update_user_meta_submit").live('click', function(event){
+    $(document).on('click', "#umm_update_user_meta_submit", function(event){
         event.preventDefault();
         if($("#umm_edit_key").val() != ""){
         var obj = $(this),
@@ -161,7 +161,7 @@
         }
     });
     
-    $(".umm-update-settings-submit").live('click', function(event){
+    $(document).on('click', ".umm-update-settings-submit", function(event){
         event.preventDefault();
         var obj = $(this),
         d = obj.data(),
@@ -174,7 +174,7 @@
         });        
     });
     
-    $("select.umm-profile-field-type").live('change', function(){
+    $(document).on('change', "select.umm-profile-field-type", function(){
         $(".umm-profile-field-options").hide('slow');
         switch($(this).val()){
             case 'text':
@@ -239,12 +239,12 @@
             $(".umm-profile-field-options").hide('slow');
         }
     
-    $(".umm-add-row").live('click', function(event){
+    $(document).on('click', ".umm-add-row", function(event){
         event.preventDefault();
         $(".umm-select-options-clone tr").clone().appendTo(".umm-select-options-table").show();
     });
         
-    $(".umm-remove-row").live('click', function(event){
+    $(document).on('click', ".umm-remove-row", function(event){
         event.preventDefault();
         $(this).closest("tr").remove();
     });
@@ -257,7 +257,7 @@
         });
     }
     
-    $("input[name='meta_key']").live('keyup change', function(event){
+    $(document).on('keyup change', "input[name='meta_key']", function(event){
        $("input#umm_update_user_meta_submit").prop("disabled","disabled"); 
        var obj = $(this),
         original_value = obj.val(),
