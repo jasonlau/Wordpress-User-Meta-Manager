@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.1.1
+ * Version: 2.1.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,11 +31,11 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.1.1');
+define('UMM_VERSION', '2.1.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
-
+error_reporting(0);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
 
@@ -449,7 +449,15 @@ function umm_edit_custom_meta(){
         <tr class="alternate"><td colspan="2"><strong>'.__('Edit Key', UMM_SLUG).'</strong></td></tr>
         ';
         $sort_order = get_option('umm_sort_order');
-        if(empty($sort_order) || !is_array($sort_order)) $sort_order = $data;
+        if(empty($sort_order) || !is_array($sort_order)):
+          $sort_order = array();
+          $x = 0;
+          foreach($data as $field_name => $field_settings):
+              $sort_order[$x] = $field_name;
+              $x++;
+          endforeach;
+        endif;
+        
         /* Sort the fields */
         if($sort_order):
            $new_array = array();
@@ -1039,7 +1047,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     endforeach; 
     endif; // !empty($profile_fields)
     
-    if($output != ""):
+    if(isset($output) && !empty($output)):
     $section_title = (!isset($umm_settings['section_title'])) ? '<h3 class="umm-custom-fields"></h3>' : '<h3 class="umm-custom-fields">' . $umm_settings['section_title'] . '</h3>';
     $output = $section_title . '<table class="form-table umm-custom-fields">
   <tbody>

@@ -229,7 +229,6 @@ td.umm-edit-key-radio-cell{
 }
 
 td.umm-draggable.umm-edit-key-name-cell{
-    border: 1px solid red;
     max-width: 90% !important;
     cursor: move !important;
 }

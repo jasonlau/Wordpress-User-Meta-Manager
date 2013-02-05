@@ -17,7 +17,7 @@
         }); 
        });
     
-    $().on('click', "a.umm-subpage", function(event){
+    $(document).on('click', "a.umm-subpage", function(event){
         event.preventDefault();
         var obj = $(this),
         d = obj.data();
