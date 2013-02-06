@@ -105,38 +105,40 @@
     
     $(document).on('click', "#umm_edit_custom_meta_submit", function(event){
         event.preventDefault();
-        var submit_form = false;
-        if($("input[name='umm_edit_key']:checked").length > 0){
-            console.log('!');
+        var submit_form = false, edit_key = '';
+        if($("input[name='umm_edit_key']:checked").length > 0 || $("select#umm_edit_key option:selected").val()){
                 submit_form = true;
+                edit_key = (!$("input[name='umm_edit_key']:checked").val()) ? $("select#umm_edit_key option:selected").val() : $("input[name='umm_edit_key']:checked").val();
         } 
-        console.log('?');
+
         if(submit_form){
             var obj = $(this),
         d = obj.data(),
         original_value = obj.val(),
-        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + $("input[name='umm_edit_key']:checked").val();
+        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
         obj.prop('disabled',true).val(d.wait);
         $("div.umm-subpage").load(return_page, function(){
                 if(d.message){
-                    $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(d.message).show('slow').delay(5000).hide('slow');
                 }
                 $("div.umm-subpage").show('slow');
                 $("div#umm-home").hide('slow');
                    
         });
         } else {
-           $("input[name='umm_edit_key']").parent().effect('highlight',2000); 
+            var fdata = $("form#umm_update_user_meta_form").data();
+           $('div.umm-message').html(fdata.error_message).show('slow').delay(5000).hide('slow');
+           $("input[name='umm_edit_key']").parent().effect('highlight',2500).css({'border':'1px dashed red'}); 
         }        
     });
 
     $(document).on('click', "#umm_update_user_meta_submit", function(event){
         event.preventDefault();
-        if($("#umm_edit_key").val() != ""){
+        if($("input[name='umm_edit_key']:selected").val() != ""){
         var obj = $(this),
         d = obj.data(),
         original_value = obj.val(),
-        edit_key = ($("#umm_edit_key").val() == undefined) ? '' : $("#umm_edit_key").val(),
+        edit_key = ($("input[name='umm_edit_key']:selected").val() == undefined) ? '' : $("input[name='umm_edit_key']:selected").val(),
         return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
         obj.prop('disabled',true).val(d.wait);
         
@@ -157,7 +159,7 @@
             });
         });
         } else {
-           $("#umm_edit_key").effect('highlight',1000); 
+           $("input[name='umm_edit_key']").parent().effect('highlight',1000); 
         }
     });
     
@@ -277,14 +279,12 @@
         var current_val = obj.val(),
         check_if_exists = function(){
             //if(event.type == 'change'){
-            console.log(event.type);
             var request = $.ajax({
                 url: 'admin-ajax.php?action=umm_switch_action&sub_action=umm_key_exists&meta_key=' + current_val,
                 type: "POST",
                 dataType: "json"
             });
             request.done(function(data){
-                console.log(data.key_exists);
                 if(data.key_exists){
             if(!$(".key-exists-warning").html()){
                 $("input#umm_update_user_meta_submit").prop("disabled","disabled");
