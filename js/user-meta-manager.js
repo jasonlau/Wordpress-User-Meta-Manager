@@ -107,6 +107,7 @@
         event.preventDefault();
         var submit_form = false, edit_key = '';
         if($("input[name='umm_edit_key']:checked").length > 0 || $("select#umm_edit_key option:selected").val()){
+                
                 submit_form = true;
                 edit_key = (!$("input[name='umm_edit_key']:checked").val()) ? $("select#umm_edit_key option:selected").val() : $("input[name='umm_edit_key']:checked").val();
         } 
@@ -134,16 +135,55 @@
 
     $(document).on('click', "#umm_update_user_meta_submit", function(event){
         event.preventDefault();
-        if($("input[name='umm_edit_key']:selected").val() != ""){
+        var edit_key = (!$("input[name='umm_edit_key']:selected").val()) ? $("select[name='umm_edit_key'] option:selected").val() : $("input[name='umm_edit_key']:selected").val();
+        edit_key = (!edit_key) ? $("input[name='umm_edit_key']").val() : edit_key;
+        edit_key = (!edit_key) ? $("input[name='umm_meta_key[]']").val() : edit_key;
+        if(edit_key){            
         var obj = $(this),
         d = obj.data(),
         original_value = obj.val(),
-        edit_key = ($("input[name='umm_edit_key']:selected").val() == undefined) ? '' : $("input[name='umm_edit_key']:selected").val(),
         return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
         obj.prop('disabled',true).val(d.wait);
         
         $("div.umm-subpage-loading").show('slow');
+        
         $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+            
+            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
+                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
+                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
+                $("div.umm-result-container").html('');
+            });
+            $("div.umm-subpage").load(return_page, function(){
+                
+                if(data){
+                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                } 
+               $("div.umm-subpage").show('slow'); 
+               $("div#umm-home").hide('slow');
+               $("div.umm-subpage-loading").hide('slow');          
+            });
+        });
+        } else {
+           $("input[name='umm_edit_key']").parent().effect('highlight',1000); 
+        }
+    });
+    
+    $(document).on('click', "#umm_add_user_meta_submit", function(event){
+        event.preventDefault();
+        var add_key = (!$("input[name='umm_meta_key[]']").val()) ? '' : $("input[name='umm_meta_key[]']").val();
+        
+        if(add_key){            
+        var obj = $(this),
+        d = obj.data(),
+        original_value = obj.val(),
+        return_page = $("#" + d.form + " input[name='return_page']").val();
+        obj.prop('disabled',true).val(d.wait);
+        
+        $("div.umm-subpage-loading").show('slow');
+        
+        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+            
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
                 $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
@@ -159,7 +199,82 @@
             });
         });
         } else {
-           $("input[name='umm_edit_key']").parent().effect('highlight',1000); 
+           $("input[name='umm_meta_key']").effect('highlight',1000); 
+        }
+    });
+    
+    $(document).on('click', "#umm_delete_user_meta_submit", function(event){
+        
+        event.preventDefault();
+        var edit_key = (!$("select[name='umm_edit_key'] option:selected").val()) ? $("input[name='umm_edit_key']").val() : $("select[name='umm_edit_key'] option:selected").val();
+          
+        if(edit_key){            
+        var obj = $(this),
+        d = obj.data(),
+        original_value = obj.val(),
+        return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
+        if($("input[name='sub_mode']").val()){
+           return_page = $("#" + d.form + " input[name='return_page']").val(); 
+        }
+        
+        obj.prop('disabled',true).val(d.wait);
+        
+        $("div.umm-subpage-loading").show('slow');
+        
+        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+            
+            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
+                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
+                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
+                $("div.umm-result-container").html('');
+            });
+            $("div.umm-subpage").load(return_page, function(){
+                
+                if(data){
+                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                } 
+               $("div.umm-subpage").show('slow'); 
+               $("div#umm-home").hide('slow');
+               $("div.umm-subpage-loading").hide('slow');          
+            });
+        });
+        } else {
+           return false; 
+        }
+    });
+    
+    $(document).on('click', "#umm_update_columns_submit", function(event){
+        
+        event.preventDefault();
+        var obj = $(this),
+        d = obj.data();  
+        if((d.mode == "add" && $("select[name='umm_column_key'] option:selected").val()) || ($("input[name='umm_column_key']:checked").val() && d.mode == "delete")){            
+        var original_value = obj.val(),
+        return_page = $("#" + d.form + " input[name='return_page']").val();
+        
+        obj.prop('disabled',true).val(d.wait);
+        
+        $("div.umm-subpage-loading").show('slow');
+        
+        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+            
+            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
+                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
+                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
+                $("div.umm-result-container").html('');
+            });
+            $("div.umm-subpage").load(return_page, function(){
+                
+                if(data){
+                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                } 
+               $("div.umm-subpage").show('slow'); 
+               $("div#umm-home").hide('slow');
+               $("div.umm-subpage-loading").hide('slow');          
+            });
+        });
+        } else {
+           return false; 
         }
     });
     
@@ -259,7 +374,7 @@
         });
     }
     
-    $(document).on('keyup change', "input[name='meta_key']", function(event){
+    $(document).on('keyup change', "input[name='umm_meta_key[]']", function(event){
        $("input#umm_update_user_meta_submit").prop("disabled","disabled"); 
        var obj = $(this),
         original_value = obj.val(),
@@ -280,7 +395,7 @@
         check_if_exists = function(){
             //if(event.type == 'change'){
             var request = $.ajax({
-                url: 'admin-ajax.php?action=umm_switch_action&sub_action=umm_key_exists&meta_key=' + current_val,
+                url: 'admin-ajax.php?action=umm_switch_action&sub_action=umm_key_exists&umm_meta_key=' + current_val,
                 type: "POST",
                 dataType: "json"
             });
