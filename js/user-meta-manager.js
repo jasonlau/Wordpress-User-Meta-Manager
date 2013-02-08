@@ -1,6 +1,6 @@
 /**
  * @author Jason Lau
- * @copyright 2012
+ * @copyright 2013
  * @package user-meta-manager
  */
  
@@ -91,7 +91,7 @@
                $("table#umm_edit_key tbody").sortable({
                 stop: function(event, ui){
                     $("table#umm_edit_key").before("<div class='umm-order-updated hidden' style='padding: 10px;margin: 10px auto 10px auto;background-color: #FFFFC1;border: 1px solid #B3B300;color: #000000;-moz-border-radius: 8px;-khtml-border-radius: 8px;-webkit-border-radius: 8px;border-radius: 8px;'></div>");
-                    $.post('admin-ajax.php?action=umm_switch_action&sub_action=umm_update_custom_meta_order', $("form#umm_update_user_meta_form").serialize(), function(data){
+                    $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_update_custom_meta_order', $("form#umm_update_user_meta_form").serialize(), function(data){
                         $('.umm-order-updated').html(data).show('slow').delay(3000).hide('slow',function(){
                             $(this).remove();
                         });
@@ -147,7 +147,7 @@
         
         $("div.umm-subpage-loading").show('slow');
         
-        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+        $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
@@ -182,7 +182,7 @@
         
         $("div.umm-subpage-loading").show('slow');
         
-        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+        $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
@@ -221,7 +221,7 @@
         
         $("div.umm-subpage-loading").show('slow');
         
-        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+        $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
@@ -256,7 +256,7 @@
         
         $("div.umm-subpage-loading").show('slow');
         
-        $.post('admin-ajax.php?action=umm_switch_action&sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
+        $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
             $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
                 $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
@@ -395,7 +395,7 @@
         check_if_exists = function(){
             //if(event.type == 'change'){
             var request = $.ajax({
-                url: 'admin-ajax.php?action=umm_switch_action&sub_action=umm_key_exists&umm_meta_key=' + current_val,
+                url: 'admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_key_exists&umm_meta_key=' + current_val,
                 type: "POST",
                 dataType: "json"
             });
@@ -429,5 +429,73 @@
            
         }        
     });
+    
+    // Short Code Builder
+    
+    $(document).on('click', "input.umm-shortcode-builder-fields-add", function(event){
+        event.preventDefault();
+        $("div.umm-shortcode-builder-fields-clone div").clone().appendTo("div.umm-shortcode-builder-fields:first").show();
+    });
+    
+    $(document).on('click', "table.umm-shortcode-builder input.umm-shortcode-builder-vars-add", function(event){
+        event.preventDefault();
+        $(".umm-shortcode-builder-vars-clone div").clone().appendTo(".umm-shortcode-builder-vars:first").show();
+    });
+        
+    $(document).on('click', ".umm-shortcode-builder-remove", function(event){
+        event.preventDefault();
+        $(this).closest("div").remove();
+        $("table.umm-shortcode-builder input").trigger('change');
+    });
+    
+    var umm_update_shortcode = function(){
+        var f = Array(), o = Array(), vars = '';
+        $('table.umm-shortcode-builder select.umm-profile-fields-select option:selected').each(function(k,v){
+            if($(this).val()){
+               f[k] = $(this).val(); 
+            }
+            
+        });
+        
+        $("table.umm-shortcode-builder input[data-for='value']").each(function(k,v){
+            o[k] = $(this).val();            
+        });
+        
+        $("table.umm-shortcode-builder input[data-for='key']").each(function(k,v){
+            if($(this).val()){
+                if(k == 0){
+                  vars += $(this).val() + '=' + o[k];  
+                } else {
+                  vars += '&amp;' + $(this).val() + '=' + o[k];   
+                }
+                
+            }            
+        });
+        
+        if($("table.umm-shortcode-builder input[data-for='email_to']").val() != ''){
+            if(!$(".umm-shortcode-builder-email-field").is(':visible')){
+              $(".umm-shortcode-builder-email-field").show('slow').effect('highlight', 2000); 
+              $(".umm-shortcode-builder-shortcode").toggleClass('alternate', true); 
+            }
+            
+        } else {
+            $(".umm-shortcode-builder-email-field").hide('slow');
+            $(".umm-shortcode-builder-shortcode").toggleClass('alternate', false);
+        }
+        
+        $("table.umm-shortcode-builder input[data-for='fields']").val($('table.umm-shortcode-builder select.umm-profile-fields-select').val());
+        var output = '[usermeta class="' + $("table.umm-shortcode-builder input[data-for='class']").val() + '" submit="' + $("table.umm-shortcode-builder input[data-for='submit']").val() + '" success="' + $("table.umm-shortcode-builder input[data-for='success']").val() + '" error="' + $("table.umm-shortcode-builder input[data-for='error']").val() + '" fields="' + f.join() + '" vars="' + vars + '" email_to="' + $("table.umm-shortcode-builder input[data-for='email_to']").val() + '" email_from="' + $("table.umm-shortcode-builder input[data-for='email_from']").val() + '" subject="' + $("table.umm-shortcode-builder input[data-for='subject']").val() + '" message="' + $("table.umm-shortcode-builder textarea[data-for='message']").val() + '"]';
+        $(".umm-shortcode-builder-result").val(output);
+    }
+    
+    $(document).on('change', "table.umm-shortcode-builder input, table.umm-shortcode-builder select, table.umm-shortcode-builder textarea", function(){
+        umm_update_shortcode();
+    });
+    
+    $(document).on('keyup', "table.umm-shortcode-builder input, table.umm-shortcode-builder select, table.umm-shortcode-builder textarea", function(){
+        umm_update_shortcode();
+    });
+    
+    $(".umm-shortcode-builder-email-field").hide();
        
 }); // jQuery

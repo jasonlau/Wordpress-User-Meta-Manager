@@ -198,12 +198,13 @@ code,
 .umm-subpage,
 .umm-subpage form,
 .umm-backup-page-container,
-.umm-fyi
+.umm-fyi,
+.umm-rounded-corners
 {
-    -moz-border-radius: 8px;
-    -khtml-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
+    -moz-border-radius: 8px !important;
+    -khtml-border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+    border-radius: 8px !important;
 }
 
 .umm-help-field-types-table{

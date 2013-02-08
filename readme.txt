@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.1.5
+Stable tag: 2.1.7
 Tested up to: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,7 +25,8 @@ User Meta Manager is a handy plugin, with a simple interface, for managing user 
 *Backup and restore user meta data.
 
 Contribute to the development of this plugin at https://github.com/jasonlau/Wordpress-User-Meta-Manager
-Please don't report bugs in the reviews section.
+
+Please report bugs in the Support section, and not the Reviews section.
 
 == Installation ==
 
@@ -50,6 +51,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 2.1.7 =
+New feature: Added a form short code builder to the contextual help section.
+
+= 2.1.6 =
+Fixed a bug which caused single-user meta key deletion to fail.
 
 = 2.1.5 =
 More bug fixes.
@@ -232,3 +239,9 @@ More bug fixes.
 
 = 2.1.5 =
 More bug fixes.
+
+= 2.1.6 =
+Fixed a bug which caused single-user meta key deletion to fail.
+
+= 2.1.7 =
+New feature: Added a form short code builder to the contextual help section.

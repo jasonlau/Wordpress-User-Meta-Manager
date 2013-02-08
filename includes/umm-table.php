@@ -36,9 +36,9 @@ class UMM_UI extends WP_List_Table {
     
     function column_user_login($item){
         $actions = array(
-        'add_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_add_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Add Meta', 'user-meta-manager') . '</a>',$item->ID),
-            'edit_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Edit Meta', 'user-meta-manager') . '</a>',$item->ID),
-            'delete_user_meta' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_user_meta&u=%s" title="'.__('Delete User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Delete Meta', 'user-meta-manager') . '</a>',$item->ID)
+        'add_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Add Meta', 'user-meta-manager') . '</a>',$item->ID),
+            'edit_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Edit Meta', 'user-meta-manager') . '</a>',$item->ID),
+            'delete_user_meta' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_user_meta&u=%s" title="'.__('Delete User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Delete Meta', 'user-meta-manager') . '</a>',$item->ID)
         );
 
         return sprintf('%1$s %2$s',
@@ -150,7 +150,7 @@ class UMM_UI extends WP_List_Table {
         update_option('umm_settings', $settings);
       endif;
     ?>
-<div class="umm-wrapper" data-help_text="<?php _e('User Meta Manager Help', 'user-meta-manager') ?>" data-umm_loading_image="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" data-first_run="<?php echo $first_run ?>" data-no_spaces="<?php _e('No Spaces', 'user-meta-manager') ?>" data-invalid_chars_warning="<?php _e('Letters, numbers, and underscores only.', 'user-meta-manager') ?>" data-key_exists="<?php _e('<strong>Error:</strong> That key already exists. Choose a different name.', 'user-meta-manager') ?>">
+<div class="umm-wrapper" data-help_text="<?php _e('User Meta Manager Help &amp; Settings', 'user-meta-manager') ?>" data-umm_loading_image="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" data-first_run="<?php echo $first_run ?>" data-no_spaces="<?php _e('No Spaces', 'user-meta-manager') ?>" data-invalid_chars_warning="<?php _e('Letters, numbers, and underscores only.', 'user-meta-manager') ?>" data-key_exists="<?php _e('<strong>Error:</strong> That key already exists. Choose a different name.', 'user-meta-manager') ?>">
 <div id="icon-users" class="icon32"><br/></div><!-- #icon-users .icon32 -->
 <h2 class="umm-plugin-title"><?php _e('User Meta Manager', 'user-meta-manager') ?></h2><!-- .umm-plugin-title -->
 <div class="umm-slogan"><?php _e('Manage User Meta Data', 'user-meta-manager') ?></div><!-- .umm-slogan -->     
@@ -158,11 +158,11 @@ class UMM_UI extends WP_List_Table {
   <div class="umm-nav-wrapper">
     <div class="umm-nav">
       <button title="<?php _e('Home', 'user-meta-manager'); ?>" class="umm-homelink umm-subpage-go umm-active-link button-primary umm-nav-button"><?php _e('Home', 'user-meta-manager'); ?></button><!-- .umm-homelink .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_add_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Add Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Add Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Edit Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_delete_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Delete Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Delete Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_edit_columns&width=600&height=500&amp;u=1" title="<?php _e('Edit Columns', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Columns', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;sub_action=umm_backup_page&width=600&height=500&amp;u=1" title="<?php _e('Backup &amp; Restore', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Backup &amp; Restore', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Add Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Add Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Edit Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Delete Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Delete Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_columns&width=600&height=500&amp;u=1" title="<?php _e('Edit Columns', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Columns', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_backup_page&width=600&height=500&amp;u=1" title="<?php _e('Backup &amp; Restore', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Backup &amp; Restore', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
     </div><!-- .umm-nav -->
   </div><!-- .umm-nav-wrapper -->
   <div class="umm-message hidden"></div><!-- .umm-message -->    
@@ -186,7 +186,9 @@ class UMM_UI extends WP_List_Table {
   </div><!-- .umm-subpage-wrapper -->  
 </div><!-- .umm-secondary-wrapper -->           
 <div class="umm-result-container hidden"></div><!-- .umm-result-container -->
-<code>&copy;<a href="http://JasonLau.biz" target="_blank">JasonLau.biz</a> <a title="WebsiteDev.biz - <?php _e('Your bridge to a strong Internet presence.&trade;', 'user-meta-manager') ?>" href="http://WebsiteDev.biz" target="_blank">WebsiteDev.biz</a></code> <code>[<?php _e($this->title . ' Version', 'user-meta-manager') ?>: <?php echo UMM_VERSION; ?> <a title="<?php _e('Help make this plugin perfect by contributing your code on GitHub', 'user-meta-manager') ?>" href="https://github.com/jasonlau/Wordpress-User-Meta-Manager" target="_blank">Contribute</a>]</code>
+<code>&copy;<?php
+	echo date('Y');
+?> <a href="http://JasonLau.biz" target="_blank">JasonLau.biz</a> <a title="WebsiteDev.biz - <?php _e('Your bridge to a strong Internet presence.&trade;', 'user-meta-manager') ?>" href="http://WebsiteDev.biz" target="_blank">WebsiteDev.biz</a></code> <code>[<?php _e($this->title . ' Version', 'user-meta-manager') ?>: <?php echo UMM_VERSION; ?> <a title="<?php _e('Help make this plugin perfect by contributing your code on GitHub', 'user-meta-manager') ?>" href="https://github.com/jasonlau/Wordpress-User-Meta-Manager" target="_blank">Contribute</a>]</code>
 </div><!-- .umm-wrapper -->
 <?php
   }

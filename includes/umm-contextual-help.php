@@ -51,7 +51,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $tabs = array(array(
-        __('Introduction'),
+        __('Introduction', UMM_SLUG),
         $backup_notice . 
         '<h2>' . __('What is <em>User Meta</em>?', UMM_SLUG) . '</h2>
         <p>' . __('<em>User Meta</em> is user-specific data which is stored in the <em>wp_usermeta</em> database table. This data is stored by WordPress and various and sundry plugins, and can consist of anything from profile information to membership levels.', UMM_SLUG) . '</p>'
@@ -166,14 +166,14 @@ function umm_help($contextual_help, $screen_id, $screen) {
    ),
     
     array(
-        __('Edit Columns'),
+        __('Edit Columns', UMM_SLUG),
         '<h2>' . __( 'Editing Home Screen List Columns', UMM_SLUG) . '</h2><p>' . __( 'This screen controls which columns are displayed in the <em>Home</em> screen list.<br /><br />The list on top displays the columns which are currently in use. By selecting an item from the list, and pressing the <strong><em>Remove Selected Column</em></strong> button, columns can be removed from the results table, except the <strong><em>ID</em></strong> and <strong><em>User Login</em></strong> columns, which are required.<br /><br />Columns can be added to the results table using the bottom form. To add a column, select a <strong><em>Key</em></strong> from the menu, enter a <strong><em>Label</em></strong> for the column, and press the <strong><em>Add Column</em></strong> button. The new column will then be added to the results table, and will become searchable. The <em>Label</em> is displayed at the top of the column for identification purposes.', UMM_SLUG) . '</p>'
     ),
     
     array(
         __('Backup &amp; Restore', UMM_SLUG),
         '<h2>' . __( 'Backup &amp; Restore User Meta Data' ) . '</h2><p>' . __( 'There are several options available for backing-up and restoring the wp_usermeta database. This plugin creates the first backup automatically when first installed.', UMM_SLUG) . '</p><ol start="1">
-    <li>' . __('<strong>Backup:</strong> Create a backup, which is stored in the database, and can only be run by this plugin.', UMM_SLUG) . '</li>
+    <li>' . __('<strong>Backup:</strong> Creates a duplicate backup version of the wp_usermeta table, which is then added to the database.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Restore:</strong> Restore a backup which was generated using the above method.', UMM_SLUG) . '</li>   
     <li>' . __('<strong>Generate SQL:</strong> Generates the SQL needed for restoring usermeta data from a database manager, such as phpMyAdmin. Produces a code which can be copied and pasted.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Generate PHP:</strong> Generates the PHP code needed for restoring usermeta data from a PHP file. Copy and paste the code to a PHP file, save it in the root WordPress directory, and run via a Browser.', UMM_SLUG) . '</li>
@@ -221,6 +221,12 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <li><strong>message:</strong> (Required with email_to) A message to send in the email. <strong>\n</strong> = line break. <strong>%s</strong> = contents of the form submission. <strong>Important:</strong> You must add <strong>%s</strong> where you want the form submission results displayed in the message.</li>
 </ul>
     </p>', UMM_SLUG)
+    ),
+    
+    array(
+        __('Form Short Code Builder', UMM_SLUG),
+        '<h2>' . __('Form Short Code Builder', UMM_SLUG) . '</h2>'
+        . umm_shortcode_builder()
     ),
     
     array(

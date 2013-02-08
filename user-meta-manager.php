@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.1.5
+ * Version: 2.1.7
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,10 +31,10 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.1.5');
+define('UMM_VERSION', '2.1.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
-define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;sub_action=");
+define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
 // error_reporting(E_ALL);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
@@ -376,7 +376,7 @@ function umm_delete_user_meta(){
 	<option value="false">'.__('No', UMM_SLUG).'</option>
 	<option value="true">'.__('Yes', UMM_SLUG).'</option>
 </select><br />
-    <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Submit', UMM_SLUG).'" />
+    <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Submit', UMM_SLUG).'" />
     <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" />
     </form>  
     ';
@@ -385,10 +385,10 @@ function umm_delete_user_meta(){
     <strong>'.__('Deleting', UMM_SLUG).':</strong> ' . $delete_key . '
     <p class="umm-warning">
     '.__('Are you sure you want to delete that item?', UMM_SLUG).'<br />
-    <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Yes', UMM_SLUG).'" /> ';
+    <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Yes', UMM_SLUG).'" /> ';
     $output .= umm_button("umm_delete_user_meta&u=" . $user_id, __('Cancel', UMM_SLUG));
-    $output .= '<input name="umm_meta_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" /></p>
+    $output .= '<input name="umm_edit_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
     </form>';
     endif;
     print $output;
@@ -582,6 +582,44 @@ function umm_get_columns(){
     $users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : get_option("umm_users_columns"));
     $usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
     return array_merge($users_columns, $usermeta_columns);
+}
+
+function umm_get_profile_fields($output_type='array'){
+    $profile_fields = get_option('umm_profile_fields');
+    $sort_order = get_option('umm_sort_order');
+    if(empty($sort_order) || !is_array($sort_order)) $sort_order = false;
+    if($sort_order):
+      $new_array = array();
+      foreach($sort_order as $profile_field_name):
+      if($debug) print_r($profile_field_name);
+      if(isset($profile_fields[$profile_field_name]))
+       $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
+      endforeach;
+      $profile_fields = $new_array;   
+    endif;
+    switch($output_type){
+        case "select":
+         $output = '<select class="umm-profile-fields-select" name="umm_edit_key">' . "\n";
+         $output .= '<option value="" selected="selected">' . __('Select A Key', UMM_SLUG) . '</option>' . "\n";
+         foreach($profile_fields  as $key => $settings):
+            $output .= '<option value="' . $key . '">' . $key . '</option>' . "\n";
+         endforeach;
+         $output .= '</select>' . "\n";
+         return $output;
+        break;
+        
+        case "radio":
+         foreach($profile_fields  as $key => $settings):
+            $output .= '<input type="radio" name="umm_edit_key" value="' . $key . '" />' . $key . ' ' . "\n";
+         endforeach;
+         return $output;
+        break;
+        
+        default: 
+        // Return array
+        return $profile_fields;
+    }
+    
 }
 
 function umm_install(){
@@ -1073,8 +1111,50 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     else:
     return $output;
     endif;
-    endif;
-    
+    endif;   
+}
+
+function umm_shortcode_builder(){
+    $fields = umm_get_profile_fields('select');
+       $output = "<table class='umm-shortcode-builder widefat umm-rounded-corners'>
+<tr class='alternate'>
+	<td><strong>" . __('CSS Classes', UMM_SLUG) . "</strong><br /><input type='text' data-for='class' placeholder='my-class1 my-class2' /><br /><span>" . __('(Optional) A CSS class, or classes, to add to the form.', UMM_SLUG) . "</span></td>
+</tr>
+<tr>
+	<td><strong>" . __('Submit Button Label', UMM_SLUG) . "</strong><br /><input type='text' data-for='submit' placeholder='" . __('Submit', UMM_SLUG) . "' /><br /><span>" . __('(Optional) A label for the submit button.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='alternate'>
+	<td><strong>" . __('Success Message', UMM_SLUG) . "</strong><br /><input type='text' data-for='success' placeholder='" . __('Submission successful!', UMM_SLUG) . "' /><br /><span>" . __('(Optional) A message to display if the form submission is successful.', UMM_SLUG) . "</span></td>
+</tr>
+<tr>
+	<td><strong>" . __('Error Message', UMM_SLUG) . "</strong><br /><input type='text' data-for='error' placeholder='" . __('Submission failed!', UMM_SLUG) . "' /><br /><span>" . __('(Optional) A message to display if the form submission fails.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='alternate'>
+	<td><strong>" . __('Fields', UMM_SLUG) . "</strong><input type='hidden' data-for='fields' /><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value='+' class='umm-shortcode-builder-fields-add' /></div><span>" . __("(Required) A comma delimited list of meta keys to display. Each meta key will be displayed as it's set Field Type in the order in which you list them.", UMM_SLUG) . "</span></td>
+</tr>
+<tr>
+	<td><strong>" . __('Additional Variables', UMM_SLUG) . "</strong><input type='hidden' data-for='vars' />
+    <div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value='+' class='umm-shortcode-builder-vars-add' /></div><span>" . __('(Optional) A URL encoded string of extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.', UMM_SLUG) . "</span>
+    </td>
+</tr>
+<tr class='alternate'>
+	<td><strong>" . __('Email To', UMM_SLUG) . "</strong><br /><input type='text' data-for='email_to' placeholder='" . __('you@your-domain.com', UMM_SLUG) . "' /><br /><span>" . __('(Optional) An email address to send the results of the form submission to. Leave this empty to disable this feature. If you use this option, more options will appear below.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='umm-shortcode-builder-email-field'>
+	<td><strong>" . __('Email From', UMM_SLUG) . "</strong><br /><input type='text' data-for='email_from' placeholder='" . __('do-not-reply@your-domain.com', UMM_SLUG) . "' /><br /><span>" . __('(Used with email_to) An email address as the sender.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='alternate umm-shortcode-builder-email-field'>
+	<td><strong>" . __('Email Subject', UMM_SLUG) . "</strong><br /><input type='text' data-for='subject' placeholder='" . __('A message from your site.', UMM_SLUG) . "' /><br /><span>" . __('(Used with email_to) An email subject.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='umm-shortcode-builder-email-field'>
+	<td><strong>" . __('Email Message', UMM_SLUG) . "</strong><br /><textarea cols='50' rows='5' data-for='message' placeholder='" . __('Greetings,\n\n%s\n\nRegards,\nWebmaster', UMM_SLUG) . "'></textarea><br /><span>" . __('(Required with email_to) A message to send in the email. \n = line break. %s = contents of the form submission. Important: You must add %s where you want the form submission results displayed in the message.', UMM_SLUG) . "</span></td>
+</tr>
+<tr class='umm-shortcode-builder-shortcode'>
+	<td><strong>" . __('Short Code', UMM_SLUG) . "</strong><br /><textarea cols='50' rows='5' class='umm-shortcode-builder-result umm-message' onclick='this.focus();this.select();'>
+</textarea><br /><span>" . __('This is the resulting short code. Copy this short code to any Post or Page to display the form. The form will update meta data for the currently logged-in user.', UMM_SLUG) . "</span></td>
+</tr>
+</table><div class='umm-shortcode-builder-fields-clone umm-hidden'><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value='+' class='umm-shortcode-builder-fields-add' /> <input type='button' value='-' class='umm-shortcode-builder-remove' /></div></div><div class='umm-shortcode-builder-vars-clone umm-hidden'><div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value='+' class='umm-shortcode-builder-vars-add' /> <input type='button' value='-' class='umm-shortcode-builder-remove' /></div></div>";
+       return $output;
 }
 
 function umm_sort($a, $b){
@@ -1102,8 +1182,8 @@ function umm_subpage_title($user_id, $text){
 }
 
 function umm_switch_action(){
-    if(function_exists($_REQUEST['sub_action']))
-       call_user_func($_REQUEST['sub_action']);
+    if(function_exists($_REQUEST['umm_sub_action']))
+       call_user_func($_REQUEST['umm_sub_action']);
 }
 
 function umm_ui(){
