@@ -96,7 +96,7 @@ class UMM_UI extends WP_List_Table {
     }
 
     function prepare_items() {
-        global $wpdb;
+        global $wpdb, $current_site;
         $usermeta_fields = $this->usermeta_columns;
         $this->process_bulk_action();
         $per_page = (!isset($_REQUEST['per_page']) || empty($_REQUEST['per_page'])) ? 10 : $_REQUEST['per_page'];
@@ -109,15 +109,14 @@ class UMM_UI extends WP_List_Table {
         $search = (!isset($_REQUEST['s']) || empty($_REQUEST['s'])) ? false : $_REQUEST['s'];
         $search_mode = (!isset($_REQUEST['umm_search_mode']) || empty($_REQUEST['umm_search_mode'])) ? 'ID' : $_REQUEST['umm_search_mode'];
         define("UMM_ORDERBY", $orderby);
-        define("UMM_ORDER", $order);
-        $query = "SELECT * FROM $wpdb->users";       
-        $data = $wpdb->get_results($query);
+        define("UMM_ORDER", $order);     
+        $data = umm_get_users();
         $x = 0;
         if(count($this->usermeta_columns) > 0):
         foreach($data as $d):
             foreach($this->usermeta_columns as $k => $v):
-              $f_data = get_user_meta($d->ID, $k, true);
-              $data[$x]->$k = $f_data;
+                 $f_data = get_user_meta($d->ID, $k, true);
+                 $data[$x]->$k = $f_data;             
             endforeach;
             $x++;
         endforeach;

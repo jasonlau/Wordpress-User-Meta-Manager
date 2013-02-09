@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.1.7
+ * Version: 2.2.1
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.1.7');
+define('UMM_VERSION', '2.2.1');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -194,7 +194,9 @@ function umm_backup_page(){
     global $wpdb;
     $budate = get_option('umm_backup_date');
     if($budate == "") $budate = __("No backup", UMM_SLUG);
-    
+    $nonce = wp_create_nonce(md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]));
+    $fields1 = umm_usermeta_keys_menu(true, true, true, 'csv', 'umm-csv-builder-keys');
+    $fields2 = umm_usermeta_keys_menu(true, true, true, 'csv', 'umm-csv-builder-keys', false);
     $output = umm_fyi('<p>'.__('Use the following links to backup and restore user meta data.', UMM_SLUG).'</p>');  
     $output .= '<div class="umm-backup-page-container">';
     $output .= '<ul><li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;u=1" title="'.__('Backup', UMM_SLUG).'" class="umm-subpage">'.__('Backup', UMM_SLUG).'</a> <strong>'.__('Last Backup:', UMM_SLUG). '</strong> ' . $budate . '</li>';  
@@ -204,6 +206,15 @@ function umm_backup_page(){
     <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=php&amp;tofile=yes&amp;u=1" title="'.__('Generate PHP Restoration File', UMM_SLUG).'" class="umm-subpage">'.__('Generate PHP Restoration File', UMM_SLUG).'</a></li>
     <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_delete_backup_files" title="'.__('Delete All Backup Files', UMM_SLUG).'" class="umm-subpage">'.__('Delete All Backup Files', UMM_SLUG).'</a></li>
     </ul>';
+    $output .= '<div class="umm-csv-builder"><strong class="umm-csv-builder">'.__('Generate CSV', UMM_SLUG).'</strong>'
+    . "<table class='umm-csv-builder'><tr>
+	<td><strong>" . __('Fields', UMM_SLUG) . ":</strong> <span>" . __("Assemble a list of meta keys to display in the CSV file.", UMM_SLUG) . "</span><input type='hidden' data-for='fields' /><div class='umm-csv-builder-fields'>" . $fields1 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add umm-hidden' /></div></td>
+</tr>
+<tr><td><button class='umm-csv-builder-submit button-secondary' data-csv_link='" . WP_PLUGIN_URL .  "/user-meta-manager/includes/umm-csv.php?umm_nonce=".$nonce."' title='".__('Get CSV', UMM_SLUG)."'>".__('Generate CSV', UMM_SLUG)."</button></td>
+</tr>
+</table><div id='umm-csv-builder-fields-clone' class='umm-csv-builder-fields-clone umm-hidden'><div class='umm-csv-builder-fields'>" . $fields2 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add' /> <input type='button' value=' - ' class='umm-csv-builder-remove' /></div></div>";
+    
+    $output .= '</div>';
     $output .= '</div>';
     print $output;
     exit;
@@ -388,7 +399,7 @@ function umm_delete_user_meta(){
     <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Yes', UMM_SLUG).'" /> ';
     $output .= umm_button("umm_delete_user_meta&u=" . $user_id, __('Cancel', UMM_SLUG));
     $output .= '<input name="umm_edit_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
+    <input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
     </form>';
     endif;
     print $output;
@@ -586,6 +597,7 @@ function umm_get_columns(){
 
 function umm_get_profile_fields($output_type='array'){
     $profile_fields = get_option('umm_profile_fields');
+    if(empty($profile_fields) || !is_array($profile_fields)) $profile_fields = array();
     $sort_order = get_option('umm_sort_order');
     if(empty($sort_order) || !is_array($sort_order)) $sort_order = false;
     if($sort_order):
@@ -601,7 +613,7 @@ function umm_get_profile_fields($output_type='array'){
         case "select":
          $output = '<select class="umm-profile-fields-select" name="umm_edit_key">' . "\n";
          $output .= '<option value="" selected="selected">' . __('Select A Key', UMM_SLUG) . '</option>' . "\n";
-         foreach($profile_fields  as $key => $settings):
+         foreach($profile_fields as $key => $settings):
             $output .= '<option value="' . $key . '">' . $key . '</option>' . "\n";
          endforeach;
          $output .= '</select>' . "\n";
@@ -618,8 +630,25 @@ function umm_get_profile_fields($output_type='array'){
         default: 
         // Return array
         return $profile_fields;
-    }
-    
+    }   
+}
+
+function umm_get_users(){
+    global $wpdb, $current_site;
+    $query = "SELECT * FROM $wpdb->users";       
+    $data = $wpdb->get_results($query);   
+    if(defined('MULTISITE') && MULTISITE):
+       $user_data = array();
+       foreach($data as $d):
+          $user_blogs = get_blogs_of_user($d->ID);
+          $blog_id = get_current_blog_id();
+          if(array_key_exists($blog_id, $user_blogs)):
+             array_push($user_data, $d);
+          endif;
+       endforeach;
+       $data = $user_data;   
+    endif;
+    return $data;
 }
 
 function umm_install(){
@@ -1130,11 +1159,11 @@ function umm_shortcode_builder(){
 	<td><strong>" . __('Error Message', UMM_SLUG) . "</strong><br /><input type='text' data-for='error' placeholder='" . __('Submission failed!', UMM_SLUG) . "' /><br /><span>" . __('(Optional) A message to display if the form submission fails.', UMM_SLUG) . "</span></td>
 </tr>
 <tr class='alternate'>
-	<td><strong>" . __('Fields', UMM_SLUG) . "</strong><input type='hidden' data-for='fields' /><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value='+' class='umm-shortcode-builder-fields-add' /></div><span>" . __("(Required) A comma delimited list of meta keys to display. Each meta key will be displayed as it's set Field Type in the order in which you list them.", UMM_SLUG) . "</span></td>
+	<td><strong>" . __('Fields', UMM_SLUG) . "</strong><input type='hidden' data-for='fields' /><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='umm-shortcode-builder-fields-add' /></div><span>" . __("(Required) A list of meta keys to display. Each meta key will be displayed as it's set <em>Field Type</em> in the order in which you list them.", UMM_SLUG) . "</span></td>
 </tr>
 <tr>
 	<td><strong>" . __('Additional Variables', UMM_SLUG) . "</strong><input type='hidden' data-for='vars' />
-    <div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value='+' class='umm-shortcode-builder-vars-add' /></div><span>" . __('(Optional) A URL encoded string of extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.', UMM_SLUG) . "</span>
+    <div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add' /></div><span>" . __('(Optional) Extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.', UMM_SLUG) . "</span>
     </td>
 </tr>
 <tr class='alternate'>
@@ -1153,7 +1182,7 @@ function umm_shortcode_builder(){
 	<td><strong>" . __('Short Code', UMM_SLUG) . "</strong><br /><textarea cols='50' rows='5' class='umm-shortcode-builder-result umm-message' onclick='this.focus();this.select();'>
 </textarea><br /><span>" . __('This is the resulting short code. Copy this short code to any Post or Page to display the form. The form will update meta data for the currently logged-in user.', UMM_SLUG) . "</span></td>
 </tr>
-</table><div class='umm-shortcode-builder-fields-clone umm-hidden'><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value='+' class='umm-shortcode-builder-fields-add' /> <input type='button' value='-' class='umm-shortcode-builder-remove' /></div></div><div class='umm-shortcode-builder-vars-clone umm-hidden'><div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value='+' class='umm-shortcode-builder-vars-add' /> <input type='button' value='-' class='umm-shortcode-builder-remove' /></div></div>";
+</table><div class='umm-shortcode-builder-fields-clone umm-hidden'><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='umm-shortcode-builder-fields-add' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove' /></div></div><div class='umm-shortcode-builder-vars-clone umm-hidden'><div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove' /></div></div>";
        return $output;
 }
 
@@ -1184,6 +1213,23 @@ function umm_subpage_title($user_id, $text){
 function umm_switch_action(){
     if(function_exists($_REQUEST['umm_sub_action']))
        call_user_func($_REQUEST['umm_sub_action']);
+}
+
+function umm_sync_user_meta(){
+    global $wpdb;
+    $umm_data = get_option('user_meta_manager_data');
+    $data = umm_get_users();
+    foreach($umm_data as $meta_key => $settings):
+       foreach($data as $user):
+          $test = get_user_meta($user->ID, $meta_key);
+          if(!$test):
+             update_user_meta($user->ID, $meta_key, $settings['value'], false);
+          endif;
+       endforeach;
+    endforeach;
+    $output = __('Meta data successfully set for all users.', UMM_SLUG);
+    print $output;
+    exit;
 }
 
 function umm_ui(){
@@ -1348,7 +1394,7 @@ function umm_update_user_meta(){
            switch($u){
             case "all":
                // Insert new key for all users and add new profile field if needed
-               $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
+               $data = umm_get_users();
                foreach($data as $user):
                   update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
                endforeach;
@@ -1386,7 +1432,7 @@ function umm_update_user_meta(){
                // Update custom meta
                if($all_users):
                   // Update value for all users
-                  $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
+                  $data = umm_get_users();
                   foreach($data as $user):
                      update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
                   endforeach;
@@ -1427,7 +1473,7 @@ function umm_update_user_meta(){
         $meta_key = $_POST['umm_edit_key'];
         $saved_profile_fields = get_option('umm_profile_fields');
         if($all_users):
-            $data = $wpdb->get_results("SELECT * FROM $wpdb->users");
+            $data = umm_get_users();
             foreach($data as $user):
                 delete_user_meta($user->ID, $meta_key);
             endforeach;
@@ -1510,20 +1556,40 @@ function umm_usermeta_data($criteria="ORDER BY umeta_id ASC"){
     return $data;
 }
 
-function umm_usermeta_keys_menu($select=true,$optgroup=false,$include_used=false){
-    global $wpdb;
+function umm_usermeta_keys_menu($select=true, $optgroup=false, $include_used=false, $umm_mode=false, $class='umm-usermeta-keys', $show_all_option=true){
+    global $wpdb, $db_prefix;
     $used_columns = umm_get_columns();
     $output = '';
     if($select):
-      $output .= '<select name="umm_usermeta_keys">' . "\n";
+      $output .= '<select name="umm_usermeta_keys" class="' . $class . '">' . "\n";
     endif;
     if($optgroup):
-      $output .= '<optgroup label="wp_usermeta">' . "\n";
-    endif;  
+      $output .= '<optgroup label="' . $db_prefix . 'usermeta">' . "\n";
+    endif;
+    switch($umm_mode){
+        case "csv":
+        if($show_all_option)
+        $output .= '<option value="all" selected="selected">' . __('All Keys', UMM_SLUG) . '</option>' . "\n";
+        break;
+        
+        default:
+        $output .= '<option value="' . $d->meta_key . '|usermeta">' . $d->meta_key . '</option>' . "\n";
+        break;
+        
+    }  
     $data = $wpdb->get_results("SELECT DISTINCT meta_key FROM " . $wpdb->usermeta);
     foreach($data as $d):
     if(!array_key_exists($d->meta_key, $used_columns) || (array_key_exists($d->meta_key, $used_columns) && $include_used)):
-        $output .= '<option value="' . $d->meta_key . '|usermeta">' . $d->meta_key . '</option>' . "\n";         
+       switch($umm_mode){
+        case "csv":
+        $output .= '<option value="' . $d->meta_key . '">' . $d->meta_key . '</option>' . "\n";
+        break;
+        
+        default:
+        $output .= '<option value="' . $d->meta_key . '|usermeta">' . $d->meta_key . '</option>' . "\n";
+        break;
+        
+       }        
     endif;
     endforeach;
     if($optgroup):

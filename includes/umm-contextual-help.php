@@ -79,6 +79,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
+        </form>
+        <br />
+<strong>' . __('Sync Meta Data', UMM_SLUG) . ':</strong><br />
+        <form id="umm_sync_data_form" action="' . UMM_AJAX . 'umm_sync_user_meta&amp;u=0" method="post">
+        <input data-form="umm_sync_data_form" data-subpage="umm_sync_user_meta" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Sync', UMM_SLUG) . '"> <small>' . __('If you use a plugin to import users instead of using the WP registration process, use this button to sync your saved custom meta with all new users.', UMM_SLUG) . '</small>
+        <input name="first_run" type="hidden" value="no">
+        <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
         </form>'
     ),
     

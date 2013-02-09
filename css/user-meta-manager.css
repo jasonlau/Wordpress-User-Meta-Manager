@@ -211,8 +211,11 @@ code,
     -moz-border-radius: 8px;
     -khtml-border-radius: 8px;
     -webkit-border-radius: 8px;
-    border-radius: 8px;
-    
+    border-radius: 8px;   
+}
+
+.umm-drop-shadow{
+    box-shadow: 2px 2px 2px #DFDFDF !important;
 }
 
 .umm-help-field-types-table th{
@@ -232,4 +235,10 @@ td.umm-edit-key-radio-cell{
 td.umm-draggable.umm-edit-key-name-cell{
     max-width: 90% !important;
     cursor: move !important;
+}
+
+strong.umm-csv-builder{
+    font-size: 1.1em;
+    padding: 0px 0px 0px 0px !important;
+    margin: 20px 0px 0px 0px !important;
 }

@@ -206,8 +206,7 @@
     $(document).on('click', "#umm_delete_user_meta_submit", function(event){
         
         event.preventDefault();
-        var edit_key = (!$("select[name='umm_edit_key'] option:selected").val()) ? $("input[name='umm_edit_key']").val() : $("select[name='umm_edit_key'] option:selected").val();
-          
+        var edit_key = (!$("select#umm_edit_key option:selected").val()) ? $("input[name='umm_edit_key']").val() : $("select#umm_edit_key option:selected").val();
         if(edit_key){            
         var obj = $(this),
         d = obj.data(),
@@ -496,6 +495,42 @@
         umm_update_shortcode();
     });
     
-    $(".umm-shortcode-builder-email-field").hide();
+    $(".umm-shortcode-builder-email-field, .umm-csv-builder-fields-add").hide();
+    
+    /* CSV Builder */
+    
+    $(document).on('change', "select.umm-csv-builder-keys", function(event){
+        event.preventDefault();
+        if($(this).val() != 'all'){
+           $(".umm-csv-builder-fields-add").show('slow'); 
+        } else {
+            $(".umm-csv-builder-fields-add").hide('slow');
+            $("div.umm-csv-builder-fields").not("div.umm-csv-builder-fields:last").not("div.umm-csv-builder-fields:first").remove();
+        }
+    });
+    
+    $(document).on('click', "input.umm-csv-builder-fields-add", function(event){
+        event.preventDefault();
+        $("div.umm-csv-builder-fields-clone div").clone().appendTo("div.umm-csv-builder-fields:first").show();
+    });
+        
+    $(document).on('click', ".umm-csv-builder-remove", function(event){
+        event.preventDefault();
+        $(this).closest("div").remove();
+    });
+    
+    $(document).on('click', "a.umm-csv-builder-remove", function(event){
+        event.preventDefault();
+        $(this).closest("div").remove();
+    });
+    
+    $(document).on('click', "button.umm-csv-builder-submit", function(event){
+        event.preventDefault();
+        var q = $(this).data().csv_link;       
+        $("select.umm-csv-builder-keys option:selected").not("select.umm-csv-builder-keys option:selected:last").each(function(){
+           q += '&umm_key[]=' + $(this).val(); 
+        });
+        window.open(q);
+    });
        
 }); // jQuery
