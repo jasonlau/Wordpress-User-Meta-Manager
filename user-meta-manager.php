@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.1
+ * Version: 2.2.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.1');
+define('UMM_VERSION', '2.2.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -208,11 +208,11 @@ function umm_backup_page(){
     </ul>';
     $output .= '<div class="umm-csv-builder"><strong class="umm-csv-builder">'.__('Generate CSV', UMM_SLUG).'</strong>'
     . "<table class='umm-csv-builder'><tr>
-	<td><strong>" . __('Fields', UMM_SLUG) . ":</strong> <span>" . __("Assemble a list of meta keys to display in the CSV file.", UMM_SLUG) . "</span><input type='hidden' data-for='fields' /><div class='umm-csv-builder-fields'>" . $fields1 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add umm-hidden' /></div></td>
+	<td><strong>" . __('Fields', UMM_SLUG) . ":</strong> <span>" . __("Assemble a list of meta keys to display in the CSV file.", UMM_SLUG) . "</span><input type='hidden' data-for='fields' /><div class='umm-csv-builder-fields'>" . $fields1 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add  button-secondary' /></div></td>
 </tr>
-<tr><td><button class='umm-csv-builder-submit button-secondary' data-csv_link='" . WP_PLUGIN_URL .  "/user-meta-manager/includes/umm-csv.php?umm_nonce=".$nonce."' title='".__('Get CSV', UMM_SLUG)."'>".__('Generate CSV', UMM_SLUG)."</button></td>
+<tr><td><button class='umm-csv-builder-submit button-primary' data-csv_link='" . WP_PLUGIN_URL .  "/user-meta-manager/includes/umm-csv.php?umm_nonce=".$nonce."' title='".__('Get CSV', UMM_SLUG)."'>".__('Generate CSV', UMM_SLUG)."</button></td>
 </tr>
-</table><div id='umm-csv-builder-fields-clone' class='umm-csv-builder-fields-clone umm-hidden'><div class='umm-csv-builder-fields'>" . $fields2 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add' /> <input type='button' value=' - ' class='umm-csv-builder-remove' /></div></div>";
+</table><div id='umm-csv-builder-fields-clone' class='umm-csv-builder-fields-clone umm-hidden'><div class='umm-csv-builder-fields'>" . $fields2 . " <input type='button' value=' + ' class='button-secondary umm-csv-builder-fields-add' /> <input type='button' value=' - ' class='button-secondary umm-csv-builder-remove' /></div></div>";
     
     $output .= '</div>';
     $output .= '</div>';
@@ -707,9 +707,9 @@ function umm_key_exists($key=false){
 function umm_load_scripts($hook) {
     if($hook && $hook == "users_page_user-meta-manager"):
        wp_enqueue_script('jquery');
-       wp_register_script('umm_jquery_ui', plugins_url('/js/jquery-ui-1.9.0.min.js?version='.rand(100,1000), __FILE__));
+       wp_register_script('umm_jquery_ui', plugins_url('/js/jquery-ui-1.9.0.min.js', __FILE__));
        wp_enqueue_script('umm_jquery_ui');
-       wp_register_style('umm_css', plugins_url('/css/user-meta-manager.css', __FILE__));
+       wp_register_style('umm_css', plugins_url('/css/user-meta-manager.css?version='.rand(100,1000), __FILE__));
        wp_enqueue_style('umm_css');
        wp_register_script('umm_js', plugins_url('/js/user-meta-manager.js?version='.rand(100,1000), __FILE__));
        wp_enqueue_script('umm_js');
@@ -1159,11 +1159,11 @@ function umm_shortcode_builder(){
 	<td><strong>" . __('Error Message', UMM_SLUG) . "</strong><br /><input type='text' data-for='error' placeholder='" . __('Submission failed!', UMM_SLUG) . "' /><br /><span>" . __('(Optional) A message to display if the form submission fails.', UMM_SLUG) . "</span></td>
 </tr>
 <tr class='alternate'>
-	<td><strong>" . __('Fields', UMM_SLUG) . "</strong><input type='hidden' data-for='fields' /><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='umm-shortcode-builder-fields-add' /></div><span>" . __("(Required) A list of meta keys to display. Each meta key will be displayed as it's set <em>Field Type</em> in the order in which you list them.", UMM_SLUG) . "</span></td>
+	<td><strong>" . __('Fields', UMM_SLUG) . "</strong><input type='hidden' data-for='fields' /><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='button-secondary umm-shortcode-builder-fields-add' /></div><span>" . __("(Required) A list of meta keys to display. Each meta key will be displayed as it's set <em>Field Type</em> in the order in which you list them.", UMM_SLUG) . "</span></td>
 </tr>
 <tr>
 	<td><strong>" . __('Additional Variables', UMM_SLUG) . "</strong><input type='hidden' data-for='vars' />
-    <div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add' /></div><span>" . __('(Optional) Extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.', UMM_SLUG) . "</span>
+    <div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add button-secondary' /></div><span>" . __('(Optional) Extra variable/value pairs you wish to pass with the form submission. Each pair will be converted to a hidden form field, and will be added to the form.', UMM_SLUG) . "</span>
     </td>
 </tr>
 <tr class='alternate'>
@@ -1182,7 +1182,7 @@ function umm_shortcode_builder(){
 	<td><strong>" . __('Short Code', UMM_SLUG) . "</strong><br /><textarea cols='50' rows='5' class='umm-shortcode-builder-result umm-message' onclick='this.focus();this.select();'>
 </textarea><br /><span>" . __('This is the resulting short code. Copy this short code to any Post or Page to display the form. The form will update meta data for the currently logged-in user.', UMM_SLUG) . "</span></td>
 </tr>
-</table><div class='umm-shortcode-builder-fields-clone umm-hidden'><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='umm-shortcode-builder-fields-add' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove' /></div></div><div class='umm-shortcode-builder-vars-clone umm-hidden'><div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove' /></div></div>";
+</table><div class='umm-shortcode-builder-fields-clone umm-hidden'><div class='umm-shortcode-builder-fields'>" . $fields . " <input type='button' value=' + ' class='umm-shortcode-builder-fields-add button-secondary' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove button-secondary' /></div></div><div class='umm-shortcode-builder-vars-clone umm-hidden'><div class='umm-shortcode-builder-vars'>" . __('Key', UMM_SLUG) . " <input type='text' data-for='key'  /> " . __('Value', UMM_SLUG) . " <input type='text' data-for='value'  /> <input type='button' value=' + ' class='umm-shortcode-builder-vars-add button-secondary' /> <input type='button' value=' - ' class='umm-shortcode-builder-remove button-secondary' /></div></div>";
        return $output;
 }
 

@@ -2,7 +2,7 @@
 
 /**
  * @author Jason Lau
- * @copyright 2012
+ * @copyright 2013
  * @package user-meta-manager
  */
  
@@ -61,32 +61,43 @@ function umm_help($contextual_help, $screen_id, $screen) {
         __('Plugin Settings', UMM_SLUG),
         '<h2>' . __( 'User Meta Manager Settings', UMM_SLUG) . '</h2>
         <div class="umm-update-settings-result hidden"></div>
-        <form id="umm_update_settings_form" action="' . UMM_AJAX . 'umm_update_settings&amp;u=0" method="post">
-        <strong>' . __('Retain Saved Data On Uninstall', UMM_SLUG) . ':</strong><br />
+        <form id="umm_update_settings_form" action="' . UMM_AJAX . 'umm_update_settings&amp;u=0" method="post"><table class="umm-settings-table widefat umm-rounded-corners">
+<tr>
+	<td>
+        <strong>' . __('Retain Saved Data On Uninstall', UMM_SLUG) . '</strong><br />
         <select size="1" name="retain_data">
 	<option value="' . __('yes', UMM_SLUG) . '"' . $retain_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $retain_no . '>' . __('No', UMM_SLUG) . '</option>
-</select><br />
-<strong>' . __('Meta Editor Shortcut', UMM_SLUG) . ':</strong><br />
+</select><br /><span>' . __('Select <em>No</em> to remove all traces of this plugin from the database when uninstalled. All saved custom meta data will be lost.', UMM_SLUG) . '</span></td>
+</tr>
+<tr class="alternate">
+	<td><strong>' . __('Meta Editor Shortcut', UMM_SLUG) . '</strong><br />
         <select size="1" name="shortcut_editing">
 	<option value="' . __('yes', UMM_SLUG) . '"' . $shortcut_editing_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
-</select> <small>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</small>
-<br />
-<strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . ':</strong><br />
-        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"> <small>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</small>
-<br /><br />
-<input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
+</select><br /><span>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</span></td>
+</tr>
+<tr>
+	<td><strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . '</strong><br />
+        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</span></td>
+</tr>
+<tr class="alternate">
+	<td><input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
+        <input name="first_run" type="hidden" value="no">
+        <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0"></td>
+</tr>
+</table>
+        </form><br />
+<form id="umm_sync_data_form" action="' . UMM_AJAX . 'umm_sync_user_meta&amp;u=0" method="post">
+        <table class="umm-settings-table widefat umm-rounded-corners">
+<tr>
+	<td><strong>' . __('Sync Meta Data', UMM_SLUG) . '</strong><br />       
+        <input data-form="umm_sync_data_form" data-subpage="umm_sync_user_meta" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Sync', UMM_SLUG) . '"><br /><span>' . __('If you use a plugin to import users instead of using the WP registration process, use this button to sync your saved custom meta with all new users.', UMM_SLUG) . '</span>
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
-        </form>
-        <br />
-<strong>' . __('Sync Meta Data', UMM_SLUG) . ':</strong><br />
-        <form id="umm_sync_data_form" action="' . UMM_AJAX . 'umm_sync_user_meta&amp;u=0" method="post">
-        <input data-form="umm_sync_data_form" data-subpage="umm_sync_user_meta" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Sync', UMM_SLUG) . '"> <small>' . __('If you use a plugin to import users instead of using the WP registration process, use this button to sync your saved custom meta with all new users.', UMM_SLUG) . '</small>
-        <input name="first_run" type="hidden" value="no">
-        <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
-        </form>'
+        </td>
+</tr>
+</table></form>'
     ),
     
     array(
@@ -123,51 +134,51 @@ function umm_help($contextual_help, $screen_id, $screen) {
         __('Field Types And Field Settings', UMM_SLUG), 
         '<h2>' . __( 'Field Types &amp; Field Settings' ) . '</h2><p>' . __('The <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens each contain a <strong><em>Field Type</em></strong> menu. The <em>Field Type</em> menu controls which type of form field, if any, the meta field will be represented as. The form field can be displayed in the user profile editor, or by using a short code, it can also be displayed in a Post or Page.', UMM_SLUG).'</p>
         <p>' . __('When a <em>Field Type</em> is selected from the menu, additional settings for the field will appear. These settings are somewhat generic and may require that you add some additional attributes. For example, if you select the <em>Field Type</em>, "<em>Range</em>", you would need to specify the Range attributes in the <strong><em>Additional Attributes</em></strong> field.', UMM_SLUG).'</p>
-        <strong>Example:</strong>
+        <strong>' . __('Example', UMM_SLUG) . ':</strong>
         <pre>min="1" max="10"</pre>
-        <p><strong>Reference:</strong> <a href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">W3Schools HTML5 Input Types</a></p>
+        <p><strong>' . __('Reference', UMM_SLUG) . ':</strong> <a href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">' . __('W3Schools HTML5 Input Types', UMM_SLUG) . '</a></p>
         <table class="umm-help-field-types-table widefat">
      <tr>
-	<th colspan="2">Settings</th>
+	<th colspan="2">' . __('Settings', UMM_SLUG) . '</th>
 </tr>   
 <tr class="alternate">
-	<th>Label</th>
-	<td>A text label which is displayed before the field. HTML is allowed.</td>
+	<th>' . __('Label', UMM_SLUG) . '</th>
+	<td>' . __('A text label which is displayed before the field. HTML is allowed.', UMM_SLUG) . '</td>
 </tr>
 <tr>
-	<th>Classes</th>
-	<td>A single, or multiple CSS classes which will be added to the field. Seperate classes with a space.<br />
-    <strong>Example:</strong><pre>my-class1 my-class2</pre>
+	<th>' . __('Classes', UMM_SLUG) . '</th>
+	<td>' . __('A single, or multiple CSS classes which will be added to the field. Seperate classes with a space.', UMM_SLUG) . '<br />
+    <strong>' . __('Example', UMM_SLUG) . ':</strong><pre>my-class1 my-class2</pre>
     </td>
 </tr>
 <tr class="alternate">
-	<th>Additional Attributes</th>
-	<td>Any additional attributes to add to the field.<br />
-    <strong>Example:</strong><pre>cols="40" rows="5" title="My title" placeholder="Input text here."</pre></td>
+	<th>' . __('Additional Attributes', UMM_SLUG) . '</th>
+	<td>' . __('Any additional attributes to add to the field.', UMM_SLUG) . '<br />
+    <strong>' . __('Example', UMM_SLUG) . ':</strong><pre>cols="40" rows="5" title="' . __('My title', UMM_SLUG) . '" placeholder="' . __('Input text here.', UMM_SLUG) . '"</pre></td>
 </tr>
 <tr>
-	<th>HTML After</th>
-	<td>Any HTML or text to display directly following the field.</td>
+	<th>' . __('HTML After', UMM_SLUG) . '</th>
+	<td>' . __('Any HTML or text to display directly following the field.', UMM_SLUG) . '</td>
 </tr>
 <tr class="alternate">
-	<th>Required</th>
-	<td>Adds the HTML5 <a title="W3Schools HTML5 Required Attribute Reference" href="http://www.w3schools.com/html5/att_input_required.asp" target="_blank">required</a> attribute to the field. Some older browsers may not support this. Not recommended for use with <em>Radio Button Group</em>.</td>
+	<th>' . __('Required', UMM_SLUG) . '</th>
+	<td>' . __('Adds the HTML5 <a title="W3Schools HTML5 Required Attribute Reference" href="http://www.w3schools.com/html5/att_input_required.asp" target="_blank">required</a> attribute to the field. Some older browsers may not support this. Not recommended for use with <em>Radio Button Group</em>.', UMM_SLUG) . '</td>
 </tr>
 <tr>
-	<th>Allow Tags</th>
-	<td>Strips all HTML tags from the input upon submission.</td>
+	<th>' . __('Allow Tags', UMM_SLUG) . '</th>
+	<td>' . __('Strips all HTML tags from the input upon submission.', UMM_SLUG) . '</td>
 </tr>
 <tr class="alternate">
-	<th>Add To Profile</th>
-	<td>Appends this field to the user profile editor. Otherwise, the field can still be displayed using the form short code. (See <em>Short Codes</em>)</td>
+	<th>' . __('Add To Profile', UMM_SLUG) . '</th>
+	<td>' . __('Appends this field to the user profile editor. Otherwise, the field can still be displayed using the form short code. (See <em>Short Codes</em>)', UMM_SLUG) . '</td>
 </tr>
 <tr>
-	<th>Options - Label</th>
-	<td>A label for the option. This is only visible when <em>Field Type</em> is "<em>Select</em>" or "<em>Radio Button Group</em>"</td>
+	<th>' . __('Options - Label', UMM_SLUG) . '</th>
+	<td>' . __('A label for the option. This is only visible when <em>Field Type</em> is "<em>Select</em>" or "<em>Radio Button Group</em>"', UMM_SLUG) . '</td>
 </tr>
 <tr class="alternate">
-	<th>Options - Value</th>
-	<td>The value for the option.</td>
+	<th>' . __('Options - Value', UMM_SLUG) . '</th>
+	<td>' . __('The value for the option.', UMM_SLUG) . '</td>
 </tr>
 </table>'
    ),

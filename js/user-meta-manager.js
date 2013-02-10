@@ -87,6 +87,7 @@
             if(d.message){
                 $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
             }
+            $(".umm-csv-builder-fields-add").hide();
             if($("table#umm_edit_key tbody").html()){
                $("table#umm_edit_key tbody").sortable({
                 stop: function(event, ui){
@@ -487,15 +488,11 @@
         $(".umm-shortcode-builder-result").val(output);
     }
     
-    $(document).on('change', "table.umm-shortcode-builder input, table.umm-shortcode-builder select, table.umm-shortcode-builder textarea", function(){
+    $(document).on('keyup change', "table.umm-shortcode-builder input, table.umm-shortcode-builder select, table.umm-shortcode-builder textarea", function(){
         umm_update_shortcode();
     });
     
-    $(document).on('keyup', "table.umm-shortcode-builder input, table.umm-shortcode-builder select, table.umm-shortcode-builder textarea", function(){
-        umm_update_shortcode();
-    });
-    
-    $(".umm-shortcode-builder-email-field, .umm-csv-builder-fields-add").hide();
+    $(".umm-shortcode-builder-email-field").hide();
     
     /* CSV Builder */
     
