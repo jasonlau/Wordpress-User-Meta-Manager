@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1 
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 Tested up to: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -52,8 +52,11 @@ Yes I do. Check my website at JasonLau.biz.
 
 == Changelog ==
 
+= 2.2.3 =
+Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
+
 = 2.2.2 =
-Fixed a few language and css bugs. Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
+Fixed a few language and css bugs.
 
 = 2.2.1 =
 New feature: Added a CSV builder to the Backup section.
@@ -274,4 +277,7 @@ Improved multisite support.
 New feature: Added a CSV builder to the Backup section.
 
 = 2.2.2 =
-Fixed a few language and css bugs. Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
+Fixed a few language and css bugs.
+
+= 2.2.3 =
+Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
