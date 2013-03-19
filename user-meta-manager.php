@@ -12,7 +12,7 @@
  * 
  * Always backup your database before making changes.
  * 
- * Copyright 2012 http://jasonlau.biz http://websitedev.biz
+ * Copyright 2012-2013 http://jasonlau.biz http://websitedev.biz
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ function umm_admin_menu(){
 
 function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user, $table_prefix;
-    $backup_files = get_option('umm_backup_files');
+    $backup_files = umm_get_option('backup_files');
     $mode = (!isset($_REQUEST['mode']) || empty($_REQUEST['mode'])) ? '' : $_REQUEST['mode'];
     $mode = (empty($backup_mode)) ? $mode : $backup_mode;
     $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : $_REQUEST['tofile'];
@@ -100,7 +100,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     switch($mode){
         case "sql":
         $data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
-        $budate = get_option('umm_backup_date');
+        $budate = umm_get_option('backup_date');
         $sql = "DELETE FROM `" . $wpdb->usermeta . "`;\n";
         $sql .= "INSERT INTO `" . $wpdb->usermeta . "` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES\n";      
         foreach($data as $d):
@@ -123,7 +123,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
         
         case "php":
         $data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
-        $budate = get_option('umm_backup_date');
+        $budate = umm_get_option('backup_date');
         $output = '<?php
 ';
         $output .= "require('" . ABSPATH . "wp-load.php');\n";
@@ -154,7 +154,7 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
           $file = WP_PLUGIN_DIR . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
           $link = WP_PLUGIN_URL . "/user-meta-manager/backups/" . "usermeta-backup-" . date("m.j.Y-") . date("g.i.a") . "-" . $current_user->ID . "-" . $_SERVER['REMOTE_ADDR'] . "-" . $rs . ".php";
           array_push($backup_files, $file);
-          update_option('umm_backup_files', $backup_files);
+          umm_update_option('backup_files', $backup_files);
           
           if($fp = @fopen($temp_file, "w+")):
             @chmod($temp_file, 0755);
@@ -178,7 +178,7 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
         $wpdb->query("DROP TABLE IF EXISTS  " . $table_prefix . "umm_usermeta_backup");
         $wpdb->query("CREATE  TABLE  " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
         $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
-        update_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
+        umm_update_option('backup_date', date("M d, Y") . ' ' . date("g:i A"));
         $output = '<p class="umm-message">' . __("User meta data backup was successful.", UMM_SLUG) . "</p>";
         break;
     } 
@@ -192,7 +192,7 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
 
 function umm_backup_page(){   
     global $wpdb;
-    $budate = get_option('umm_backup_date');
+    $budate = umm_get_option('backup_date');
     if($budate == "") $budate = __("No backup", UMM_SLUG);
     $nonce = wp_create_nonce(md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]));
     $fields1 = umm_usermeta_keys_menu(true, true, true, 'csv', 'umm-csv-builder-keys');
@@ -239,15 +239,28 @@ function umm_column_exists($key){
    return array_key_exists($key, $used_columns);
 }
 
+function umm_get_option($which=false){
+    if($umm_data = get_option('user_meta_manager_data')):
+       if($which):
+          return $umm_data[$which];
+       else:
+         return $umm_data;
+       endif;
+    else:
+       return false;
+    endif;
+}
+
 function umm_deactivate(){
-    global $wpdb, $table_prefix;    
-    $umm_settings = get_option('umm_settings');
+    global $wpdb, $table_prefix; 
+    $umm_data = umm_get_option();   
+    $umm_settings = $umm_data['settings'];
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     if($umm_settings['retain_data'] == 'no'):
      // Delete all saved data
-     $umm_data = get_option('user_meta_manager_data');
-     if(empty($umm_data)) $umm_data = array();
-     $umm_singles_data = get_option('umm_singles_data');
+     $custom_meta = $umm_data['custom_meta'];
+     if(empty($custom_meta)) $custom_meta = array();
+     $umm_singles_data = $umm_data['singles_data'];
      if(empty($umm_singles_data)) $umm_singles_data = array();
      $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
      foreach($data as $user):
@@ -258,8 +271,11 @@ function umm_deactivate(){
            delete_user_meta($user->ID, $meta_key);
         endforeach;
      endforeach;
-     delete_option('umm_singles_data');
      delete_option('user_meta_manager_data');
+     $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
+     
+     // Delete depreciated options if they exist
+     delete_option('umm_singles_data');    
      delete_option('umm_users_columns');
      delete_option('umm_usermeta_columns');
      delete_option('umm_backup_date');
@@ -267,7 +283,7 @@ function umm_deactivate(){
      delete_option('umm_profile_fields');
      delete_option('umm_settings');
      delete_option('umm_sort_order');
-     $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
+     
     endif;   
 }
 
@@ -276,14 +292,14 @@ function umm_delete_backup_files(){
     if(!empty($_REQUEST['umm_confirm_backups_delete'])):
     $backups_folder = WP_PLUGIN_DIR . "/user-meta-manager/backups";    
     chmod($backups_folder, 0755);
-    $backup_files = get_option('umm_backup_files');
+    $backup_files = umm_get_option('backup_files');
     
     if(is_array($backup_files) && !empty($backup_files)):
     foreach($backup_files as $backup_file):
       @unlink($backup_file);
     endforeach;
     endif;
-    update_option('umm_backup_files', array());   
+    umm_update_option('backup_files', array());   
     $output = $back_button . '<p class="umm-message">' . __('All backup files successfully deleted.', UMM_SLUG) . '</p>';
     else:
     $output = $back_button . '<p class="umm-warning"><strong>' . __('Are you sure you want to delete all backup files?', UMM_SLUG) . '</strong><br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_delete_backup_files&amp;umm_confirm_backups_delete=yes" class="umm-subpage">' . __('Yes', UMM_SLUG) . '</a> <a href="#" data-subpage="' . UMM_AJAX . 'umm_backup_page" class="umm-subpage">' . __('Cancel', UMM_SLUG) . '</a></p>';
@@ -296,7 +312,7 @@ function umm_delete_backup_files(){
 function umm_default_keys(){
     global $wpdb;
     $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1");
-    $umm_data = get_option('user_meta_manager_data');
+    $umm_data = umm_get_option('custom_meta');
     if($umm_data):
         foreach($umm_data as $key => $value):
             update_user_meta($data[0]->user_id, $key, $value, false);
@@ -306,7 +322,7 @@ function umm_default_keys(){
 
 function umm_delete_custom_meta(){
     global $wpdb;
-    $data = get_option('user_meta_manager_data');
+    $data = umm_get_option('custom_meta');
     if(!empty($data)):    
     $delete_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
     $sub_mode = (!isset($_REQUEST['sub_mode']) || empty($_REQUEST['sub_mode'])) ? '' : $_REQUEST['sub_mode'];
@@ -346,12 +362,13 @@ function umm_delete_custom_meta(){
 
 function umm_delete_single_key($key){
     global $wpdb;
-    $profile_fields = get_option('umm_profile_fields');
-    $umm_data = get_option('user_meta_manager_data');    
+    $umm_data = umm_get_option();
+    $profile_fields = $umm_data['profile_fields'];
+    $custom_meta = $umm_data['custom_meta'];    
     unset($profile_fields[$key]);
     unset($umm_data[$key]);    
-    update_option('umm_profile_fields', $profile_fields);
-    update_option('user_meta_manager_data', $umm_data);
+    umm_update_option('profile_fields', $profile_fields);
+    umm_update_option('custom_meta', $custom_meta);
     $data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
     foreach($data as $user):
       update_user_meta($user->ID, $meta_key, $meta_value, false);
@@ -449,7 +466,7 @@ function umm_edit_columns(){
 
 function umm_edit_custom_meta(){
     global $wpdb;
-    $data = get_option('user_meta_manager_data');
+    $data = umm_get_option('custom_meta');
     if(!$data):
        $output = __('No custom meta to edit.', UMM_SLUG); 
     else:
@@ -460,7 +477,7 @@ function umm_edit_custom_meta(){
         <table id="umm_edit_key">
         <tr class="alternate"><td colspan="2"><strong>'.__('Edit Key', UMM_SLUG).'</strong></td></tr>
         ';
-        $sort_order = get_option('umm_sort_order');
+        $sort_order = $data['sort_order'];
         if(empty($sort_order) || !is_array($sort_order)):
           $sort_order = array();
           $x = 0;
@@ -493,7 +510,7 @@ function umm_edit_custom_meta(){
     ';
     
     else:
-    $profile_fields = get_option('umm_profile_fields');
+    $profile_fields = umm_get_option('profile_fields');
     if(!$profile_fields) $profile_fields = array();
     $output = '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> <span class="umm-highlight">' . $_REQUEST['umm_edit_key'] . '</span>';
     $output .= umm_fyi('<p>'.__('Editing custom meta data here will edit the value for all new users. The value you set will become the default value for all users. New registrations will receive the custom meta key and default value.', UMM_SLUG).'</p>');
@@ -529,7 +546,7 @@ function umm_edit_user_meta(){
     $user_id = $_REQUEST['u'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     sort($data);
-    $umm_settings = get_option('umm_settings');
+    $umm_settings = umm_get_option('settings');
     $shortcut_editing = empty($umm_settings['shortcut_editing']) ? 'no' : $umm_settings['shortcut_editing'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Editing Meta Data For %s', UMM_SLUG));
     $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_edit_custom_meta&u=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', UMM_SLUG).'</p>');
@@ -590,15 +607,17 @@ function umm_fyi($message){
 }
 
 function umm_get_columns(){
-    $users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : get_option("umm_users_columns"));
-    $usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
+    $umm_options = umm_get_option();
+    $users_columns = (!$umm_options["users_columns"] ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : $umm_options["users_columns"]);
+    $usermeta_columns = (!$umm_options["usermeta_columns"]) ? array() : $umm_options["usermeta_columns"];
     return array_merge($users_columns, $usermeta_columns);
 }
 
 function umm_get_profile_fields($output_type='array'){
-    $profile_fields = get_option('umm_profile_fields');
+    $umm_options = umm_get_option();
+    $profile_fields = $umm_options['profile_fields'];
     if(empty($profile_fields) || !is_array($profile_fields)) $profile_fields = array();
-    $sort_order = get_option('umm_sort_order');
+    $sort_order = $umm_options['sort_order'];
     if(empty($sort_order) || !is_array($sort_order)) $sort_order = false;
     if($sort_order):
       $new_array = array();
@@ -656,43 +675,59 @@ function umm_install(){
     $wpdb->query("DROP TABLE IF EXISTS  " . $table_prefix . "umm_usermeta_backup");
     $wpdb->query("CREATE  TABLE  " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
     $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);   
-    $bu_data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
-   update_option('umm_backup_date', date("M d, Y") . ' ' . date("g:i A"));
-   add_option('umm_backup_files', array());
-   umm_backup('php', 'yes', false);
-   $umm_data = get_option('user_meta_manager_data');
-   if(!is_array($umm_data) || empty($umm_data)) $umm_data = array();
-   if(!empty($umm_data)):
-   // Backwards compatibility
-   $new_array = array();
-     $d = explode(",", $umm_data);
-     foreach($d as $k):
-       array_push($new_array, trim(stripslashes($k)));
-     endforeach;
-     update_option('user_meta_manager_data', $new_array);
-   else:
-     add_option('user_meta_manager_data', array());
+   
+   if(!$umm_data = get_option('user_meta_manager_data')):
+      $umm_data = array();
    endif;
-   add_option('umm_singles_data', array());     
-   add_option('umm_profile_fields', array());
-   add_option('umm_users_columns', array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)));
-   add_option('umm_usermeta_columns', array());  
-   add_option('umm_settings', array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => ''));
-   $sort_order = get_option('umm_sort_order');
-   if(!is_array($sort_order)) $sort_order = array(); // Backwards compatibility
-   if(empty($sort_order) || count($sort_order) < count($umm_data)):
-        foreach($umm_data as $k => $v):
+   // Backwards compatibility
+   if(!is_array($umm_data) && !empty($umm_data)):     
+      $new_array = array();
+      $d = explode(",", $umm_data);
+      foreach($d as $k):
+        array_push($new_array, trim(stripslashes($k)));
+      endforeach;
+      update_option('user_meta_manager_data', $new_array);
+   endif;
+     
+   if(!$umm_data['singles_data'] = get_option('umm_singles_data'))
+      $umm_data['singles_data'] = array();
+   if(!$umm_data['custom_meta'] = get_option('user_meta_manager_data'))
+      $umm_data['custom_meta'] = array();
+   if(!$umm_data['users_columns'] = get_option('umm_users_columns'))
+      $umm_data['users_columns'] = array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG));
+   if(!$umm_data['usermeta_columns'] = get_option('umm_usermeta_columns'))
+      $umm_data['usermeta_columns'] = array();
+   if(!$umm_data['backup_date'] = get_option('umm_backup_date'))
+      $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
+   if(!$umm_data['backup_files'] = get_option('umm_backup_files'))
+      $umm_data['backup_files'] = array();
+   if(!$umm_data['profile_fields'] = get_option('umm_profile_fields'))
+      $umm_data['profile_fields'] = array();
+   if(!$umm_data['settings'] = get_option('umm_settings'))
+      $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '');
+   if(!$umm_data['sort_order'] = get_option('umm_sort_order')):
+      $sort_order = array();
+        foreach($umm_data['custom_meta'] as $k => $v):
            array_push($sort_order, $k);
         endforeach;
-   endif;
-   add_option('umm_sort_order', $sort_order);
-    
+      $umm_data['sort_order'] = $sort_order;
+   endif; 
+   update_option('user_meta_manager_data', $umm_data);
+   umm_backup('php', 'yes', false);
+   // Remove depreciated options
+   delete_option('umm_singles_data');
+   delete_option('umm_users_columns');
+   delete_option('umm_usermeta_columns');
+   delete_option('umm_backup_date');
+   delete_option('umm_backup_files');
+   delete_option('umm_profile_fields');
+   delete_option('umm_settings');
+   delete_option('umm_sort_order');   
 }
 
 function umm_key_exists($key=false){
     global $wpdb;
     $k = (empty($key)) ? $_REQUEST['umm_meta_key'] : $key;
-    $umm_data = get_option('user_meta_manager_data');
     $data = $wpdb->get_results("SELECT * FROM " . $wpdb->usermeta . " WHERE meta_key='" . $k . "'");
     if(!empty($data)):
        $output = '{"key_exists":true}';
@@ -717,7 +752,7 @@ function umm_load_scripts($hook) {
 }
 
 function umm_profile_field_editor($umm_edit_key=null){
-    $profile_fields = get_option('umm_profile_fields');
+    $profile_fields = umm_get_option('profile_fields');
     $options_output = '';
     $select_option_row = '<tr class="umm-select-option-row">
 	<td><input name="umm_profile_select_label[]" type="text" placeholder="'.__('Label', UMM_SLUG).'" value="" /></td>
@@ -949,16 +984,17 @@ function umm_random_str($number_of_digits = 1, $type = 3){
 
 function umm_reset(){
     global $wpdb;
-    $profile_fields = get_option('umm_profile_fields');
-    $umm_data = get_option('user_meta_manager_data');       
+    $umm_options = umm_get_option();
+    $profile_fields = $umm_options['profile_fields'];
+    $umm_data = $umm_options['custom_meta'];       
     foreach($umm_data as $meta_key):
        $user_data = $wpdb->get_results("SELECT * FROM " . $wpdb->users);
        foreach($user_data as $user):
           delete_user_meta($user->ID, $meta_key);
        endforeach;
     endforeach;
-    update_option('umm_profile_fields', array());
-    update_option('user_meta_manager_data', array());
+    umm_update_option('profile_fields', array());
+    umm_update_option('custom_meta', array());
     $output = "<p>" . __("User Meta Manager data successfully reset.", UMM_SLUG) . "</p>";
     print $output;
     exit;
@@ -975,7 +1011,7 @@ function umm_restore(){
 }
 
 function umm_restore_confirm(){
-    $budate = get_option('umm_backup_date');
+    $budate = umm_get_option('backup_date');
     if($budate == ""): 
       $output = __('No backup data to restore!', UMM_SLUG);
     else:
@@ -988,10 +1024,11 @@ function umm_restore_confirm(){
 
 function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
    global $current_user;
-   $umm_settings = get_option('umm_settings');
-    $umm_data = get_option('user_meta_manager_data');
-    $profile_fields = get_option('umm_profile_fields');
-    $sort_order = get_option('umm_sort_order');
+   $umm_options = umm_get_option();
+   $umm_settings = $umm_options['settings'];
+    $umm_data = $umm_options['custom_meta'];
+    $profile_fields = $umm_options['profile_fields'];
+    $sort_order = $umm_options['sort_order'];
     if(empty($sort_order) || !is_array($sort_order)) $sort_order = false;
     $show_fields = ($fields) ?  explode(",", str_replace(", ", ",", $fields)) : false;
     //if($debug) print_r($profile_fields);
@@ -1217,7 +1254,7 @@ function umm_switch_action(){
 
 function umm_sync_user_meta(){
     global $wpdb;
-    $umm_data = get_option('user_meta_manager_data');
+    $umm_data = umm_get_option('custom_meta');
     $data = umm_get_users();
     foreach($umm_data as $meta_key => $settings):
        foreach($data as $user):
@@ -1257,16 +1294,16 @@ function umm_update_columns(){
           else:
             switch($umm_table){
                 case "users":
-                $users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : get_option("umm_users_columns"));
+                $users_columns = (!umm_get_option("users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : umm_get_option("users_columns"));
                 $users_columns[$umm_column_key] = $umm_column_label;
-                update_option("umm_users_columns", $users_columns);
+                umm_update_option("users_columns", $users_columns);
                 break;
                 
     
                 case "usermeta":
-                $usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
+                $usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
                 $usermeta_columns[$umm_column_key] = $umm_column_label;
-                update_option("umm_usermeta_columns", $usermeta_columns);
+                umm_update_option("usermeta_columns", $usermeta_columns);
                 break;
             }
             $output = __('Column successfully added.', UMM_SLUG);
@@ -1278,14 +1315,14 @@ function umm_update_columns(){
         if(empty($_REQUEST['umm_column_key'])):
           $output = __('No key was selected. Select a key to remove from the table.', UMM_SLUG);
         else:
-        $users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : get_option("umm_users_columns"));
-        $usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
+        $users_columns = (!umm_get_option("users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : umm_get_option("users_columns"));
+        $usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
         if(array_key_exists($umm_column_key, $users_columns)):
             unset($users_columns[$umm_column_key]);
-            update_option("umm_users_columns", $users_columns);
+            umm_update_option("users_columns", $users_columns);
         elseif(array_key_exists($umm_column_key, $usermeta_columns)):
             unset($usermeta_columns[$umm_column_key]);
-            update_option("umm_usermeta_columns", $usermeta_columns);         
+            umm_update_option("usermeta_columns", $usermeta_columns);         
         endif;
         $output = __('Column successfully removed.', UMM_SLUG);
         endif;
@@ -1297,15 +1334,25 @@ function umm_update_columns(){
 }
 
 function umm_update_custom_meta_order(){
-    update_option('umm_sort_order', $_REQUEST['umm_item']);
+    umm_update_option('sort_order', $_REQUEST['umm_item']);
     $output = __('Order successfully updated.', UMM_SLUG);
     print $output;
     exit;
 }
 
+function umm_update_option($key, $value){
+    $umm_data = umm_get_option();
+    $umm_data[$key] = $value;
+    if(update_option('user_meta_manager_data', $umm_data)):
+       return true;
+    else:
+       return false;
+    endif;
+}
+
 function umm_update_profile_fields(){
     global $current_user;
-    $saved_profile_fields = (!get_option('umm_profile_fields')) ? array() : get_option('umm_profile_fields');
+    $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
     foreach($saved_profile_fields as $field_name => $field_settings):
       $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';       
@@ -1314,7 +1361,7 @@ function umm_update_profile_fields(){
 }
 
 function umm_update_profile_fields_settings($meta_key, $meta_value){
-    $saved_profile_fields = get_option('umm_profile_fields'); // Array of profile fields settings
+    $saved_profile_fields = umm_get_option('profile_fields'); // Array of profile fields settings
     if(empty($saved_profile_fields)) $saved_profile_fields = array(); // Backwards compatibility
     $options = array(); // Array for holding options for select menus or radio button groups
     if(isset($_POST['umm_profile_field_type']) && !empty($_POST['umm_profile_field_type'])):
@@ -1342,16 +1389,16 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
                                        'options' => $options);                   
        // add or update field
        $saved_profile_fields[$meta_key] = $new_profile_field_data;
-       update_option('umm_profile_fields', $saved_profile_fields);
+       umm_update_option('profile_fields', $saved_profile_fields);
     elseif(array_key_exists($meta_key, $saved_profile_fields)):
        // Remove an existing profile field
        unset($saved_profile_fields[$meta_key]);
-       update_option('umm_profile_fields', $saved_profile_fields);
+       umm_update_option('profile_fields', $saved_profile_fields);
     endif;            
 }
 
 function umm_update_settings(){
-    update_option('umm_settings', $_POST);
+    umm_update_option('settings', $_POST);
     $output = __('Settings successfully saved.', UMM_SLUG);
     print $output;
     exit; 
@@ -1366,10 +1413,10 @@ function umm_update_user_meta(){
     $meta_key = (!empty($_POST['umm_meta_key'])) ? $_POST['umm_meta_key'] : array();
     $meta_key_exists = false;
     $output = "";
-    $umm_data = get_option('user_meta_manager_data'); // Array of custom meta data for all users
-    $umm_singles_data = get_option('umm_singles_data'); // Array of custom key names for single users
+    $umm_data = umm_get_option('custom_meta'); // Array of custom meta data for all users
+    $umm_singles_data = umm_get_option('singles_data'); // Array of custom key names for single users
     $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data; // Backwards compatibility
-    $sort_order = get_option('umm_sort_order');
+    $sort_order = umm_get_option('sort_order');
     if(!is_array($sort_order)) $sort_order = array(); // Backwards compatibility
     if(empty($sort_order) || count($sort_order) < count($umm_data)):
         foreach($umm_data as $k => $v):
@@ -1400,12 +1447,12 @@ function umm_update_user_meta(){
                endforeach;
                // Add new meta data to custom meta array
                $umm_data[$meta_key[0]] = $meta_value[0];
-               update_option('user_meta_manager_data', $umm_data);
+               umm_update_option('custom_meta', $umm_data);
                // Update profile field settings if needed
                umm_update_profile_fields_settings($meta_key[0], $meta_value[0]);
                // Update sort order
                array_push($sort_order, $meta_key[0]);
-               update_option('umm_sort_order', $sort_order);
+               umm_update_option('sort_order', $sort_order);
             break;
             
             default:
@@ -1439,7 +1486,7 @@ function umm_update_user_meta(){
                endif;
                // Update existing value
                $umm_data[$meta_key[0]] = $meta_value[0];
-               update_option('user_meta_manager_data', $umm_data);                             
+               umm_update_option('custom_meta', $umm_data);                             
                // Update profile field settings if needed
                umm_update_profile_fields_settings($meta_key[0], $meta_value[0]);
             break;
@@ -1455,7 +1502,7 @@ function umm_update_user_meta(){
                         array_push($umm_singles_data, $meta_key);
                      endif;
                   endif;
-                  update_option('umm_singles_data', $umm_singles_data);
+                  umm_update_option('singles_data', $umm_singles_data);
                   update_user_meta($u, $meta_key, maybe_unserialize(trim(stripslashes($meta_value[$x]))), false);
                   $x++;
                endforeach;
@@ -1471,27 +1518,27 @@ function umm_update_user_meta(){
         case "delete":
         if($_POST['umm_edit_key']):
         $meta_key = $_POST['umm_edit_key'];
-        $saved_profile_fields = get_option('umm_profile_fields');
+        $saved_profile_fields = umm_get_option('profile_fields');
         if($all_users):
             $data = umm_get_users();
             foreach($data as $user):
                 delete_user_meta($user->ID, $meta_key);
             endforeach;
             unset($umm_data[$meta_key]);
-            update_option('user_meta_manager_data', $umm_data);
+            umm_update_option('custom_meta', $umm_data);
             if(array_key_exists($meta_key, $saved_profile_fields)):
             // remove field
             unset($saved_profile_fields[$meta_key]);
-            update_option('umm_profile_fields', $saved_profile_fields);
+            umm_update_option('profile_fields', $saved_profile_fields);
             // remove custom column
-            $users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : get_option("umm_users_columns"));
-            $usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
+            $users_columns = (!umm_get_option("users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : umm_get_option("users_columns"));
+            $usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
             if(array_key_exists($meta_key, $users_columns)):
                unset($users_columns[$meta_key]);
-               update_option("umm_users_columns", $users_columns);
+               umm_update_option("users_columns", $users_columns);
             elseif(array_key_exists($meta_key, $usermeta_columns)):
                unset($usermeta_columns[$meta_key]);
-               update_option("umm_usermeta_columns", $usermeta_columns);
+               umm_update_option("usermeta_columns", $usermeta_columns);
             endif; // array_key_exists
          endif; // array_key_exists            
         else: // all_users
@@ -1609,7 +1656,7 @@ function umm_usermeta_shortcode($atts, $content) {
     endif;
     
     if(isset($atts['fields']) && $current_user->ID != 0 && !empty($atts['fields'])):   
-    $umm_data = get_option('user_meta_manager_data');
+    $umm_data = umm_get_option('custom_meta');
     $class = (!empty($atts['class'])) ? $atts['class'] : 'umm-usermeta-update-form';
     $submit = (!empty($atts['submit'])) ? $atts['submit'] : __('Submit', UMM_SLUG);
     $success = (!empty($atts['success'])) ? $atts['success'] : __('Update successful!', UMM_SLUG);

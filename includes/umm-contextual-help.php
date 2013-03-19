@@ -11,7 +11,7 @@ if(!defined("UMM_PATH")) die();
 function umm_help($contextual_help, $screen_id, $screen) {
     if($screen->id != 'users_page_user-meta-manager')
     return;
-    $umm_settings = get_option('umm_settings');
+    $umm_settings = umm_get_option('settings');
     $retain_data = $umm_settings['retain_data'];
     switch($retain_data){
         case 'no':

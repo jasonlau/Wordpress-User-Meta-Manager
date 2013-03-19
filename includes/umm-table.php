@@ -2,7 +2,7 @@
 
 /**
  * @author Jason Lau
- * @copyright 2012
+ * @copyright 2013
  * @package user-meta-manager
  */
 
@@ -26,8 +26,8 @@ class UMM_UI extends WP_List_Table {
         $this->slug = "user-meta-manager";
         $this->shortname = "umm_ui";
         $this->version = UMM_VERSION;
-        $this->users_columns = (!get_option("umm_users_columns") ? array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')) : get_option("umm_users_columns"));
-        $this->usermeta_columns = (!get_option("umm_usermeta_columns")) ? array() : get_option("umm_usermeta_columns");
+        $this->users_columns = (!umm_get_option("users_columns") ? array('ID' => __('ID', 'user-meta-manager'), 'user_login' => __('User Login', 'user-meta-manager'), 'user_registered' => __('Date Registered', 'user-meta-manager')) : umm_get_option("users_columns"));
+        $this->usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
     }
 
     function column_default($item, $column_name){
@@ -142,11 +142,11 @@ class UMM_UI extends WP_List_Table {
     
     function display_module(){
       $per_page = $this->prepare_items();
-      $settings = get_option('umm_settings');
+      $settings = umm_get_option('settings');
       $first_run = (empty($settings['first_run'])) ? 'yes' : $settings['first_run'];
       if($first_run == 'yes'):
         $settings['first_run'] = 'no';
-        update_option('umm_settings', $settings);
+        umm_update_option('settings', $settings);
       endif;
     ?>
 <div class="umm-wrapper" data-help_text="<?php _e('User Meta Manager Help &amp; Settings', 'user-meta-manager') ?>" data-umm_loading_image="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" data-first_run="<?php echo $first_run ?>" data-no_spaces="<?php _e('No Spaces', 'user-meta-manager') ?>" data-invalid_chars_warning="<?php _e('Letters, numbers, and underscores only.', 'user-meta-manager') ?>" data-key_exists="<?php _e('<strong>Error:</strong> That key already exists. Choose a different name.', 'user-meta-manager') ?>">

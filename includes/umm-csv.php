@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * @author Jason Lau
+ * @copyright 2013
+ * @package user-meta-manager
+ */
+
 require('../../../../wp-load.php');
 
 function umm_csv_user_meta_data($criteria="ORDER BY umeta_id ASC"){

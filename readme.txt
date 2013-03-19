@@ -53,7 +53,7 @@ Yes I do. Check my website at JasonLau.biz.
 == Changelog ==
 
 = 2.2.2 =
-Fixed a few language and css bugs.
+Fixed a few language and css bugs. Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
 
 = 2.2.1 =
 New feature: Added a CSV builder to the Backup section.
@@ -274,4 +274,4 @@ Improved multisite support.
 New feature: Added a CSV builder to the Backup section.
 
 = 2.2.2 =
-Fixed a few language and css bugs.
+Fixed a few language and css bugs. Crunched all saved data to a single option, and changed the way data is saved, thus greatly reducing the number of database queries.
