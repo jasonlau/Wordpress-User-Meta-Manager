@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.3
+ * Version: 2.2.4
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.3');
+define('UMM_VERSION', '2.2.4');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -672,49 +672,105 @@ function umm_get_users(){
 
 function umm_install(){
     global $wpdb, $table_prefix;
-    $wpdb->query("DROP TABLE IF EXISTS  " . $table_prefix . "umm_usermeta_backup");
-    $wpdb->query("CREATE  TABLE  " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
-    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);   
+    $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
+    $wpdb->query("CREATE TABLE " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
+    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
+    $umm_data = array();
+    $original_data = get_option('user_meta_manager_data');
+    
+   if(!is_array($original_data)):
+      if($original_data != ''):
+         // Backwards compatibility    
+         $new_array = array();
+         $d = explode(",", $original_data);
+         foreach($d as $k):
+           array_push($new_array, trim(stripslashes($k)));
+         endforeach;
+         $original_data['custom_meta'] = $new_array;
+      else:
+        $original_data = array();
+      endif;     
+   endif;
    
-   if(!$umm_data = get_option('user_meta_manager_data')):
-      $umm_data = array();
-   endif;
-   // Backwards compatibility
-   if(!is_array($umm_data) && !empty($umm_data)):     
-      $new_array = array();
-      $d = explode(",", $umm_data);
-      foreach($d as $k):
-        array_push($new_array, trim(stripslashes($k)));
-      endforeach;
-      update_option('user_meta_manager_data', $new_array);
-   endif;
-     
-   if(!$umm_data['singles_data'] = get_option('umm_singles_data'))
-      $umm_data['singles_data'] = array();
-   if(!$umm_data['custom_meta'] = get_option('user_meta_manager_data'))
+   if(!array_key_exists('custom_meta', $original_data)):
       $umm_data['custom_meta'] = array();
-   if(!$umm_data['users_columns'] = get_option('umm_users_columns'))
-      $umm_data['users_columns'] = array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG));
-   if(!$umm_data['usermeta_columns'] = get_option('umm_usermeta_columns'))
-      $umm_data['usermeta_columns'] = array();
-   if(!$umm_data['backup_date'] = get_option('umm_backup_date'))
-      $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
-   if(!$umm_data['backup_files'] = get_option('umm_backup_files'))
-      $umm_data['backup_files'] = array();
-   if(!$umm_data['profile_fields'] = get_option('umm_profile_fields'))
-      $umm_data['profile_fields'] = array();
-   if(!$umm_data['settings'] = get_option('umm_settings'))
-      $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '');
-   if(!$umm_data['sort_order'] = get_option('umm_sort_order')):
-      $sort_order = array();
-        foreach($umm_data['custom_meta'] as $k => $v):
-           array_push($sort_order, $k);
-        endforeach;
-      $umm_data['sort_order'] = $sort_order;
-   endif; 
+   else:
+      $umm_data['custom_meta'] = $original_data['custom_meta'];  
+   endif;
+   
+   if(!array_key_exists('singles_data', $original_data)):
+      $umm_data['singles_data'] = get_option('umm_singles_data');
+      if(!is_array($umm_data['singles_data'])):
+         $umm_data['singles_data'] = array();
+      endif;
+   else:
+      $umm_data['singles_data'] = $original_data['singles_data']; 
+   endif;
+   
+   if(!array_key_exists('users_columns', $original_data)):
+      $umm_data['users_columns'] = get_option('umm_users_columns');
+      if(!is_array($umm_data['users_columns'])):
+         $umm_data['users_columns'] = array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG));
+     endif;
+   else:
+      $umm_data['users_columns'] = $original_data['users_columns'];
+   endif;
+   
+   if(!array_key_exists('usermeta_columns', $original_data)):
+      $umm_data['usermeta_columns'] = get_option('umm_usermeta_columns');
+      if(!is_array($umm_data['usermeta_columns'])):
+         $umm_data['usermeta_columns'] = array();
+     endif;
+   else:
+      $umm_data['usermeta_columns'] = $original_data['usermeta_columns'];
+   endif;
+   
+   if(!array_key_exists('backup_files', $original_data)):
+      $umm_data['backup_files'] = get_option('umm_backup_files');
+      if(!is_array( $umm_data['backup_files'])):
+         $umm_data['backup_files'] = array();
+     endif;
+   else:
+      $umm_data['backup_files'] = $original_data['backup_files'];
+   endif;
+   
+   if(!array_key_exists('profile_fields', $original_data)):
+      $umm_data['profile_fields'] = get_option('umm_profile_fields');
+      if(!is_array($umm_data['profile_fields'])):
+         $umm_data['profile_fields'] = array();
+     endif;
+   else:
+      $umm_data['profile_fields'] = $original_data['profile_fields'];
+   endif;
+   
+   if(!array_key_exists('settings', $original_data)):
+      $umm_data['settings'] = get_option('umm_settings');
+      if(!is_array($umm_data['settings'])):
+         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '');
+     endif;
+   else:
+      $umm_data['settings'] = $original_data['settings'];
+   endif;
+   
+   if(!array_key_exists('sort_order', $original_data)):
+      $umm_data['sort_order'] = get_option('umm_sort_order');
+      if(!is_array($umm_data['sort_order'])):
+         $sort_order = array();
+           foreach($umm_data['custom_meta'] as $k => $v):
+              array_push($sort_order, $k);
+           endforeach;
+         $umm_data['sort_order'] = $sort_order;
+      endif;
+   else:
+      $umm_data['sort_order'] = $original_data['sort_order'];
+   endif;
+   
+   $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
+   
    update_option('user_meta_manager_data', $umm_data);
    umm_backup('php', 'yes', false);
-   // Remove depreciated options
+   // Depreciated options
+   /*
    delete_option('umm_singles_data');
    delete_option('umm_users_columns');
    delete_option('umm_usermeta_columns');
@@ -722,7 +778,8 @@ function umm_install(){
    delete_option('umm_backup_files');
    delete_option('umm_profile_fields');
    delete_option('umm_settings');
-   delete_option('umm_sort_order');   
+   delete_option('umm_sort_order');
+   */   
 }
 
 function umm_key_exists($key=false){
@@ -888,10 +945,10 @@ function umm_profile_field_editor($umm_edit_key=null){
     </select><br />
     <strong>'.__('Allow Tags', UMM_SLUG).':</strong> <select size="1" name="umm_allow_tags">
 	<option value="no"';
-    if($add_to_profile == 'no' || $add_to_profile == '') $output .= ' selected="selected"';
+    if($allow_tags == 'no' || $allow_tags == '') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>
     <option value="yes"';
-    if($add_to_profile == 'yes') $output .= ' selected="selected"';
+    if($allow_tags == 'yes') $output .= ' selected="selected"';
     $output .= '>'.__('Yes', UMM_SLUG).'</option> 	
     </select><br />
     <strong>'.__('Add To Profile', UMM_SLUG).':</strong> <select size="1" name="umm_add_to_profile">
