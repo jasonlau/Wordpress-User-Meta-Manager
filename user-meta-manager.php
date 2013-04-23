@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.4
+ * Version: 2.2.5
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.4');
+define('UMM_VERSION', '2.2.5');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -746,7 +746,7 @@ function umm_install(){
    if(!array_key_exists('settings', $original_data)):
       $umm_data['settings'] = get_option('umm_settings');
       if(!is_array($umm_data['settings'])):
-         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '');
+         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '', 'duplicate_check_override' => 'no');
      endif;
    else:
       $umm_data['settings'] = $original_data['settings'];
@@ -768,18 +768,7 @@ function umm_install(){
    $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
    
    update_option('user_meta_manager_data', $umm_data);
-   umm_backup('php', 'yes', false);
-   // Depreciated options
-   /*
-   delete_option('umm_singles_data');
-   delete_option('umm_users_columns');
-   delete_option('umm_usermeta_columns');
-   delete_option('umm_backup_date');
-   delete_option('umm_backup_files');
-   delete_option('umm_profile_fields');
-   delete_option('umm_settings');
-   delete_option('umm_sort_order');
-   */   
+   umm_backup('php', 'yes', false); 
 }
 
 function umm_key_exists($key=false){
@@ -1470,6 +1459,8 @@ function umm_update_user_meta(){
     $meta_key = (!empty($_POST['umm_meta_key'])) ? $_POST['umm_meta_key'] : array();
     $meta_key_exists = false;
     $output = "";
+    $umm_settings = umm_get_option('settings');
+    $duplicate_override = (!isset($umm_settings['duplicate_check_override']) || empty($umm_settings['duplicate_check_override'])) ? 'no' : $umm_settings['duplicate_check_override'];
     $umm_data = umm_get_option('custom_meta'); // Array of custom meta data for all users
     $umm_singles_data = umm_get_option('singles_data'); // Array of custom key names for single users
     $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data; // Backwards compatibility
@@ -1491,7 +1482,8 @@ function umm_update_user_meta(){
              $meta_key_exists = true;
            endif;              
         endforeach;
-        if($meta_key_exists && $_POST['mode'] == 'add'):
+        if($_REQUEST['mode'] == 'add'):
+        if($meta_key_exists && $duplicate_override == 'no'):
            // Key already exists
            $output = '<span class="umm-error-message">' . __('Error: Meta key already existed. Choose a different name.', UMM_SLUG) . '</span>';
         else: // Key doesn't exist
@@ -1523,6 +1515,7 @@ function umm_update_user_meta(){
            }
            $output = __('Meta data successfully added.', UMM_SLUG);                           
         endif; // !Key exists
+        endif; // $_REQUEST['mode'] == 'add'
         else:
            // No meta key sent
            $output = '<span class="umm-error-message">' . __('Error: No meta key entered.', UMM_SLUG) . '</span>';
@@ -1727,17 +1720,15 @@ function umm_usermeta_shortcode($atts, $content) {
     $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
     $umm_user = md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
     
-    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST['umm_forbots'] == ''):
-    if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
+    if((isset($_REQUEST['umm_update_usermeta']) && isset($_REQUEST['umm_nonce'])) && $_REQUEST['umm_forbots'] == ''):
+    if(wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_REQUEST['umm_update_usermeta']):
     
     $output = "";
       foreach($show_fields as $field => $field_name):
-        if(isset($_POST[$field_name]) && array_key_exists($field_name, $umm_data)):
-        $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
-        $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
-        $output .= $field_name . " = " . $val . "\n";
-        update_user_meta($current_user->ID, $field_name, $val);       
-        endif;
+         $posted_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+         $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+         $output .= $field_name . " = " . $val . "\n";
+         update_user_meta($current_user->ID, $field_name, $val);
       endforeach;
       if($email_to):
         $email_message = sprintf($message, $output);

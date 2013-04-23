@@ -48,6 +48,18 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $pfields_position_bottom = ' selected="selected"';
     }
     
+    $duplicate_check_override = $umm_settings['duplicate_check_override'];
+    switch($duplicate_check_override){
+        case 'yes':
+        $duplicate_check_override_yes = ' selected="selected"';
+        $duplicate_check_override_no = '';
+        break;
+        
+        default:
+        $duplicate_check_override_yes = '';
+        $duplicate_check_override_no = ' selected="selected"';
+    }
+    
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $tabs = array(array(
@@ -76,6 +88,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('yes', UMM_SLUG) . '"' . $shortcut_editing_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</span></td>
+</tr>
+<tr class="alternate">
+	<td><strong>' . __('Duplicate Meta Key Check Override', UMM_SLUG) . '</strong><br />
+        <select size="1" name="duplicate_check_override">
+	<option value="' . __('yes', UMM_SLUG) . '"' . $duplicate_check_override_yes . '>' . __('Yes', UMM_SLUG) . '</option>
+	<option value="' . __('no', UMM_SLUG) . '"' . $duplicate_check_override_no . '>' . __('No', UMM_SLUG) . '</option>
+</select><br /><span>' . __('Select <em>Yes</em> to override the safety feature that prevents existing meta keys from being overwritten while new custom meta keys are introduced.', UMM_SLUG) . '</span></td>
 </tr>
 <tr>
 	<td><strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . '</strong><br />

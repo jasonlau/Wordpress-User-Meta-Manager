@@ -3,8 +3,8 @@
 Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
-Requires at least: 3.3.1 
-Stable tag: 2.2.4
+Requires at least: 3.3.1
+Stable tag: 2.2.5
 Tested up to: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -51,6 +51,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 2.2.5 =
+Fixed bug which caused empty form fields to not update. Added to the plugin settings an override for the duplicate meta key check.
 
 = 2.2.4 =
 Repaired a bug which caused saved field type data to be lost during the upgrade process. Fixed a bug in the profile field editor, which caused the "Allow Tags" menu to display the incorrect value.
@@ -287,3 +290,6 @@ Crunched all saved data to a single option, and changed the way data is saved, t
 
 = 2.2.4 =
 Repaired a bug which caused saved field type data to be lost during the upgrade process. Fixed a bug in the profile field editor, which caused the "Allow Tags" menu to display the incorrect value.
+
+= 2.2.5 =
+Fixed bug which caused empty form fields to not update. Added to the plugin settings an override for the duplicate meta key check.
