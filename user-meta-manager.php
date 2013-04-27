@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.5
+ * Version: 2.2.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.5');
+define('UMM_VERSION', '2.2.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1718,18 +1718,24 @@ function umm_usermeta_shortcode($atts, $content) {
     $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
     $content = '<form action="#" method="post" class="' . $class .  '">';
     $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
-    $umm_user = md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
+    $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
     
-    if((isset($_REQUEST['umm_update_usermeta']) && isset($_REQUEST['umm_nonce'])) && $_REQUEST['umm_forbots'] == ''):
-    if(wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_REQUEST['umm_update_usermeta']):
+    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST['umm_forbots'] == ''):
+    if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
     
     $output = "";
-      foreach($show_fields as $field => $field_name):
-         $posted_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
-         $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
-         $output .= $field_name . " = " . $val . "\n";
-         update_user_meta($current_user->ID, $field_name, $val);
-      endforeach;
+    foreach($show_fields as $field => $field_name):
+       if(array_key_exists($field_name, $umm_data)):
+          $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
+          if($posted_value != ""):
+             $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+          else:
+             $val = "";
+          endif;
+          $output .= $field_name . " = " . $val . "\n";
+          update_user_meta($current_user->ID, $field_name, $val);
+       endif;
+    endforeach;
       if($email_to):
         $email_message = sprintf($message, $output);
         mail($email_to, $subject, $email_message, "From: " . $email_from . "\n" . "X-Mailer: PHP/" . phpversion());

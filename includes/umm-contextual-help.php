@@ -89,18 +89,18 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</span></td>
 </tr>
-<tr class="alternate">
+<tr>
 	<td><strong>' . __('Duplicate Meta Key Check Override', UMM_SLUG) . '</strong><br />
         <select size="1" name="duplicate_check_override">
 	<option value="' . __('yes', UMM_SLUG) . '"' . $duplicate_check_override_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $duplicate_check_override_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Select <em>Yes</em> to override the safety feature that prevents existing meta keys from being overwritten while new custom meta keys are introduced.', UMM_SLUG) . '</span></td>
 </tr>
-<tr>
+<tr class="alternate">
 	<td><strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . '</strong><br />
         <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</span></td>
 </tr>
-<tr class="alternate">
+<tr>
 	<td><input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0"></td>
