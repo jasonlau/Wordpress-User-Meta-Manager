@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.6
+ * Version: 2.2.7
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.6');
+define('UMM_VERSION', '2.2.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -746,7 +746,7 @@ function umm_install(){
    if(!array_key_exists('settings', $original_data)):
       $umm_data['settings'] = get_option('umm_settings');
       if(!is_array($umm_data['settings'])):
-         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '', 'duplicate_check_override' => 'no');
+         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '', 'duplicate_check_override' => 'no', 'bot_field' => 'umm_forbots');
      endif;
    else:
       $umm_data['settings'] = $original_data['settings'];
@@ -1211,18 +1211,22 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
     endif; // !empty($profile_fields)
     
     if(isset($output) && !empty($output)):
-    $section_title = (!isset($umm_settings['section_title'])) ? '<h3 class="umm-custom-fields"></h3>' : '<h3 class="umm-custom-fields">' . $umm_settings['section_title'] . '</h3>';
-    $output = $section_title . '<table class="form-table umm-custom-fields">
+       if($show_fields):
+          $section_title = '';
+       else:
+          $section_title = (!isset($umm_settings['section_title'])) ? '<h3 class="umm-custom-fields"></h3>' : '<h3 class="umm-custom-fields">' . $umm_settings['section_title'] . '</h3>';
+       endif;
+       $output = $section_title . '<table class="form-table umm-custom-fields">
   <tbody>
 ' . $output . '
   </tbody>
 </table>
 ';
-    if($echo):
-    echo  $output;
-    else:
-    return $output;
-    endif;
+       if($echo):
+          echo  $output;
+       else:
+          return $output;
+       endif;
     endif;   
 }
 
@@ -1707,6 +1711,8 @@ function umm_usermeta_shortcode($atts, $content) {
     
     if(isset($atts['fields']) && $current_user->ID != 0 && !empty($atts['fields'])):   
     $umm_data = umm_get_option('custom_meta');
+    $umm_settings = umm_get_option('settings');
+    $bot_field = (empty($umm_settings['bot_field'])) ? 'umm_forbots' : $umm_settings['bot_field'];
     $class = (!empty($atts['class'])) ? $atts['class'] : 'umm-usermeta-update-form';
     $submit = (!empty($atts['submit'])) ? $atts['submit'] : __('Submit', UMM_SLUG);
     $success = (!empty($atts['success'])) ? $atts['success'] : __('Update successful!', UMM_SLUG);
@@ -1720,7 +1726,7 @@ function umm_usermeta_shortcode($atts, $content) {
     $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
     $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
     
-    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST['umm_forbots'] == ''):
+    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST[$bot_field] == ''):
     if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
     
     $output = "";
@@ -1755,7 +1761,7 @@ function umm_usermeta_shortcode($atts, $content) {
       $content .=  '<input type="hidden" name="' . $v[0] . '" value="' . $v[1] . '" />' . "\n";  
     endforeach;
     $content .=  '<input type="hidden" name="umm_update_usermeta" value="' . $umm_user . '" />
-    <input type="hidden" name="umm_forbots" value="" /></form>' . "\n";
+    <input type="hidden" name="' . $bot_field . '" value="" /></form>' . "\n";
     endif;
     
     return $content; 

@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 2.2.6
+Stable tag: 2.2.7
 Tested up to: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -51,6 +51,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 2.2.7 =
+New feature allows you to change the name of the hidden form-field used to test for spam-bots. Now the profile field section title is only displayed in the profile or user editors.
 
 = 2.2.6 =
 Fixed a bug which caused empty checkboxes to not update properly.
@@ -299,3 +302,6 @@ Fixed bug which caused empty form fields to not update. Added to the plugin sett
 
 = 2.2.6 =
 Fixed a bug which caused empty checkboxes to not update properly.
+
+= 2.2.7 =
+New feature allows you to change the name of the hidden form-field used to test for spam-bots. Now the profile field section title is only displayed in the profile or user editors.

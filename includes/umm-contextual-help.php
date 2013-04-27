@@ -59,8 +59,8 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $duplicate_check_override_yes = '';
         $duplicate_check_override_no = ' selected="selected"';
     }
-    
-    if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes');
+    $bot_field = $umm_settings['bot_field'];
+    if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes', 'bot_field' => 'umm_forbots');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $tabs = array(array(
         __('Introduction', UMM_SLUG),
@@ -101,6 +101,10 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</span></td>
 </tr>
 <tr>
+	<td><strong>' . __('Bot Field Name', UMM_SLUG) . '</strong><br />
+        <input type="text" name="bot_field" value="' . $bot_field . '"><br /><span>' . __('Name of the hidden form field used to test for spam-bots.', UMM_SLUG) . '</span></td>
+</tr>
+<tr class="alternate">
 	<td><input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0"></td>
