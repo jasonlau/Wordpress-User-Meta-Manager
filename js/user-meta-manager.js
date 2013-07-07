@@ -16,6 +16,14 @@
             $("#umm-form").submit();
         }); 
        });
+       
+       $(".pagination-links a").each(function(){
+        var t = $(this).attr('href').split('per_page');
+        if(!t[1]){
+          var h = $(this).attr('href') + '&per_page=' + $("#per-page").val();
+          $(this).attr('href', h);  
+        }        
+       });
     
     $(document).on('click', "a.umm-subpage", function(event){
         event.preventDefault();

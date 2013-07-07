@@ -265,6 +265,46 @@ function umm_help($contextual_help, $screen_id, $screen) {
     ),
     
     array(
+        __('PHP API', UMM_SLUG),
+        '<h2>' . __('PHP API', UMM_SLUG) . '</h2><p>' . __( 'Below are some PHP methods you can use to test User Meta Manager data.', UMM_SLUG) . '</p>
+        <ul class="umm-methods-list">
+        <li><strong class="umm-method">umm_value_contains($key, $search_for, $exact, $user_id)</strong>
+        <p>' . __('Test if a meta value contains a string.', UMM_SLUG) . '</p>
+        <ul>
+          <li><strong>$key</strong> (' . __('string', UMM_SLUG) . ') ' . __('The meta key to test.', UMM_SLUG) . '</li>
+          <li><strong>$search_for</strong> (' . __('string', UMM_SLUG) . ') ' . __('The string to search for.', UMM_SLUG) . '</li>
+          <li><strong>$exact</strong> (' . __('boolean', UMM_SLUG) . ') ' . __('Optional exact match. Default is case-insensitive.', UMM_SLUG) . '</li>
+          <li><strong>$user_id</strong> (' . __('number', UMM_SLUG) . ') ' . __('Optional user ID. Default is the current user.', UMM_SLUG) . '</li>
+        </ul>
+        <strong>' . __('Example', UMM_SLUG) . ':</strong>
+        <pre>$meta_key_to_search = "my_key";
+$string_to_search_for = "abc";
+$case_sensitive = true;
+if(umm_value_contains($meta_key_to_search, $string_to_search_for, $case_sensitive){
+    // ' . __('Exact match for abc', UMM_SLUG) . '
+} else {
+    // ' . __('No exact match for abc', UMM_SLUG) . '
+}</pre></li>
+        <li><strong class="umm-method">umm_value_is($key, $search_for, $user_id)</strong>
+        <p>' . __('Test if a meta value is an exact match.', UMM_SLUG) . '</p>
+        <ul>
+          <li><strong>$key</strong> (' . __('string', UMM_SLUG) . ') ' . __('The meta key to test.', UMM_SLUG) . '</li>
+          <li><strong>$search_for</strong> (' . __('string', UMM_SLUG) . ') ' . __('The string to match.', UMM_SLUG) . '</li>
+          <li><strong>$user_id</strong> (' . __('number', UMM_SLUG) . ') ' . __('Optional user ID. Default is the current user.', UMM_SLUG) . '</li>
+        </ul>
+        <strong>' . __('Example', UMM_SLUG) . ':</strong>
+        <pre>$meta_key_to_test = "my_key";
+$string_to_match = "abc";
+if(umm_value_is($meta_key_to_test, $string_to_match){
+    // ' . __('Exact match for abc', UMM_SLUG) . '
+} else {
+    // ' . __('No exact match for abc', UMM_SLUG) . '
+}</pre></li>
+</ul>
+        '
+    ),
+    
+    array(
         __('Form Short Code Builder', UMM_SLUG),
         '<h2>' . __('Form Short Code Builder', UMM_SLUG) . '</h2>'
         . umm_shortcode_builder()

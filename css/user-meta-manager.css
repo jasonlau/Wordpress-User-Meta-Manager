@@ -242,3 +242,16 @@ strong.umm-csv-builder{
     padding: 0px 0px 0px 0px !important;
     margin: 20px 0px 0px 0px !important;
 }
+
+ul.umm-methods-list li{
+    list-style-type: circle;
+}
+
+ul.umm-methods-list li ul li{
+    list-style-type: square;
+}
+
+strong.umm-method{
+    font-size: larger;
+    text-shadow: 1px 1px 5px #FFFF99;
+}

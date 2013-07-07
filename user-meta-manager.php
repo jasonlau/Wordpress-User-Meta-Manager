@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.7
+ * Version: 2.2.8
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.7');
+define('UMM_VERSION', '2.2.8');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -57,6 +57,23 @@ function umm_add_custom_meta(){
     ';
     print $output;
     exit;
+}
+
+function umm_add_registration_fields(){
+    $content = umm_show_profile_fields(false, false, true);
+    echo $content;
+}
+
+function umm_add_user_fields(){
+    $umm_content = umm_show_profile_fields(false, false, true);
+    $umm_output = '<div id="umm-add-user-fields" style="display:none;">' . $umm_content . '</div>
+    <script type="text/javascript">
+       jQuery(function($){
+	      $("form#createuser p.submit").before($("div#umm-add-user-fields").html());
+	   });
+    </script>
+   ==========';
+   echo $umm_output;
 }
 
 function umm_add_user_meta(){
@@ -310,14 +327,19 @@ function umm_delete_backup_files(){
 }
 
 function umm_default_keys(){
+    // Sets default and posted values for custom meta upon new user registration.
     global $wpdb;
-    $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1");
-    $umm_data = umm_get_option('custom_meta');
+    $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1"); // Gets the latest user id        
+    $umm_options = umm_get_option();
+    $umm_data = $umm_options['custom_meta'];
+    // Set default values for custom meta
     if($umm_data):
         foreach($umm_data as $key => $value):
             update_user_meta($data[0]->user_id, $key, $value, false);
         endforeach;
     endif;
+    // Set posted values for profile fields
+    umm_update_profile_fields($data[0]->user_id);
 }
 
 function umm_delete_custom_meta(){
@@ -1068,7 +1090,7 @@ function umm_restore_confirm(){
     exit;
 }
 
-function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
+function umm_show_profile_fields($echo=true, $fields=false, $register=false, $debug=false){
    global $current_user;
    $umm_options = umm_get_option();
    $umm_settings = $umm_options['settings'];
@@ -1105,6 +1127,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
       $value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
+      if($register) $value = $default_value;
       
       $output .= '<tr>
 	<th><label for="' . $profile_field_name . '" class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . stripslashes(htmlspecialchars_decode($profile_field_settings['label'])) . '</label></th>
@@ -1148,7 +1171,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $debug=false){
             $output .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
               $output .= ' required="required"';
-            if($value != "")
+            if($value != "" && !$register)
               $output .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
@@ -1400,12 +1423,14 @@ function umm_update_option($key, $value){
     endif;
 }
 
-function umm_update_profile_fields(){
+function umm_update_profile_fields($user_id=false){
     global $current_user;
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
-    foreach($saved_profile_fields as $field_name => $field_settings):
-      $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';       
+    if($user_id) $the_user = $user_id;
+    foreach($saved_profile_fields as $field_name => $field_settings):      
+      $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+      if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);     
       update_user_meta($the_user, $field_name, $field_value);
     endforeach;
 }
@@ -1795,9 +1820,45 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
     return $output; 
 }
 
+function umm_value_contains($key, $search_for, $exact=false, $user_id=false){
+    global $current_user;
+    $uid = (!$user_id) ? $current_user->ID : $user_id;
+    $m = get_usermeta($uid, $key);
+    if($exact):
+       $pos = strpos($m, $search_for);
+    else:
+       $pos = stripos($m, $search_for);
+    endif;  
+    if($pos === false):
+       return false;
+    else:
+       return true;
+    endif;
+}
+
+function umm_value_is($key, $search_for, $user_id=false){
+    global $current_user;
+    $uid = (!$user_id) ? $current_user->ID : $user_id;
+    $m = get_usermeta($uid, $key);
+    if($m == $search_for):
+       return true;
+    else:
+       return false;
+    endif;
+}
+
+// Append profile fields to the admin 'Add New User' form. 
+$umm_x = explode("user-new.", $_SERVER["REQUEST_URI"]);
+if($umm_x[1] == 'php'):
+   // No known action for this, so we'll use JavaScript to inject the profile fields in the form.
+   add_action('in_admin_footer', 'umm_add_user_fields');
+endif;
+
 add_action('admin_menu', 'umm_admin_menu');
 add_action('admin_init', 'umm_admin_init');
 add_action('user_register', 'umm_default_keys');
+add_action('createuser', 'umm_default_keys');
+add_action('register_form', 'umm_add_registration_fields');
 
 if(isset($_REQUEST['user_id'])):
   add_action('edit_user_profile', 'umm_show_profile_fields');

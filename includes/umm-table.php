@@ -168,10 +168,10 @@ class UMM_UI extends WP_List_Table {
   <div class="umm-subpage-wrapper">
     <div class="umm-subpage-loading hidden"><img class="umm-loading" src="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" alt="..." /></div><!-- .umm-subpage-loading -->      
     <div class="umm-subpage hidden"></div><!-- .umm-subpage -->
-    <div class="umm-per-page-menu hidden"><strong><?php _e('Items Per Page', 'user-meta-manager') ?>:</strong> <input type="text" id="per-page" size="4" value="<?php echo $per_page ?>" /><input class="umm-go button-secondary action" type="submit" value="<?php _e('Go', 'user-meta-manager') ?>" /></div><!-- .umm-per-page-menu -->
+    <div class="umm-per-page-menu hidden"><strong><?php _e('Items Per Page', 'user-meta-manager') ?>:</strong> <input type="text" id="per-page" name="per_page" size="4" value="<?php echo $per_page ?>" /><input class="umm-go button-secondary action" type="submit" value="<?php _e('Go', 'user-meta-manager') ?>" /></div><!-- .umm-per-page-menu -->
     <div id="umm-home">
       <div class="umm-search-mode-menu hidden"> <?php $this->get_search_menu(); ?></div><!-- .umm-search-mode-menu -->
-      <form id="umm-form" method="get">
+      <form id="umm-form" method="GET">
         <input class="umm-mode" type="hidden" name="umm_mode" value="<?php echo $_REQUEST['umm_mode'] ?>" />
         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
         <input type="hidden" name="paged" value="<?php echo $_REQUEST['paged'] ?>" />
