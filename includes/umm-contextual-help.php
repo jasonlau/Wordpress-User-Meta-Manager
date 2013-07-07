@@ -280,7 +280,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <pre>$meta_key_to_search = "my_key";
 $string_to_search_for = "abc";
 $case_sensitive = true;
-if(umm_value_contains($meta_key_to_search, $string_to_search_for, $case_sensitive){
+if(umm_value_contains($meta_key_to_search, $string_to_search_for, $case_sensitive)){
     // ' . __('Exact match for abc', UMM_SLUG) . '
 } else {
     // ' . __('No exact match for abc', UMM_SLUG) . '
@@ -295,7 +295,7 @@ if(umm_value_contains($meta_key_to_search, $string_to_search_for, $case_sensitiv
         <strong>' . __('Example', UMM_SLUG) . ':</strong>
         <pre>$meta_key_to_test = "my_key";
 $string_to_match = "abc";
-if(umm_value_is($meta_key_to_test, $string_to_match){
+if(umm_value_is($meta_key_to_test, $string_to_match)){
     // ' . __('Exact match for abc', UMM_SLUG) . '
 } else {
     // ' . __('No exact match for abc', UMM_SLUG) . '
