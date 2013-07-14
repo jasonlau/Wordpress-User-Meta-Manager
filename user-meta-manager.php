@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.8
+ * Version: 2.2.9
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.8');
+define('UMM_VERSION', '2.2.9');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -60,19 +60,19 @@ function umm_add_custom_meta(){
 }
 
 function umm_add_registration_fields(){
-    $content = umm_show_profile_fields(false, false, true);
+    $content = umm_show_profile_fields(false, false, 'register');
     echo $content;
 }
 
 function umm_add_user_fields(){
-    $umm_content = umm_show_profile_fields(false, false, true);
+    $umm_content = umm_show_profile_fields(false, false, 'adduser');
     $umm_output = '<div id="umm-add-user-fields" style="display:none;">' . $umm_content . '</div>
     <script type="text/javascript">
        jQuery(function($){
 	      $("form#createuser p.submit").before($("div#umm-add-user-fields").html());
 	   });
     </script>
-   ==========';
+    ';
    echo $umm_output;
 }
 
@@ -694,6 +694,12 @@ function umm_get_users(){
 
 function umm_install(){
     global $wpdb, $table_prefix;
+    $default_html_before = '<h3 class="umm-custom-fields">[section-title]</h3>
+<table class="form-table umm-custom-fields">
+   <tbody>';
+   $default_html_during = '<tr><th>[label]</th><td>[field]</td></tr>';
+   $default_html_after = '</tbody>
+</table>';
     $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
     $wpdb->query("CREATE TABLE " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
     $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
@@ -768,7 +774,25 @@ function umm_install(){
    if(!array_key_exists('settings', $original_data)):
       $umm_data['settings'] = get_option('umm_settings');
       if(!is_array($umm_data['settings'])):
-         $umm_data['settings'] = array('retain_data' => 'yes', 'first_run' => 'yes', 'shortcut_editing' => 'no', 'section_title' => '', 'duplicate_check_override' => 'no', 'bot_field' => 'umm_forbots');
+         $umm_data['settings'] = array('retain_data' => 'yes', 
+                                       'first_run' => 'yes',
+                                       'shortcut_editing' => 'no',
+                                       'section_title' => '',
+                                       'duplicate_check_override' => 'no',
+                                       'bot_field' => 'umm_forbots',
+                                       'version' => UMM_VERSION,
+                                       'html_before_adduser' => $default_html_before,
+                                       'html_during_adduser' => $default_html_during,
+                                       'html_after_adduser' => $default_html_after,
+                                       'html_before_register' => $default_html_before,
+                                       'html_during_register' => $default_html_during,
+                                       'html_after_register' => $default_html_after,
+                                       'html_before_shortcode' => $default_html_before,
+                                       'html_during_shortcode' => $default_html_during,
+                                       'html_after_shortcode' => $default_html_after,
+                                       'html_before_profile' => $default_html_before,
+                                       'html_during_profile' => $default_html_during,
+                                       'html_after_profile' => $default_html_after);
      endif;
    else:
       $umm_data['settings'] = $original_data['settings'];
@@ -789,8 +813,39 @@ function umm_install(){
    
    $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
    
+   // v2.2.9 adds version number to settings array
+   if(!isset($umm_data['settings']['version'])) $umm_data['settings']['version'] = '2.2.8'; 
+   
+   /* 
+   
+   v2.2.9+ Upgrades 
+   
+   */   
+    
+   if(version_compare($umm_data['settings']['version'], '2.2.9', '<')){
+       // v2.2.9 adds html syntax options
+       $umm_data['settings']['html_before_adduser'] = $default_html_before;
+       $umm_data['settings']['html_during_adduser'] = $default_html_during;
+       $umm_data['settings']['html_after_adduser'] = $default_html_after;
+       $umm_data['settings']['html_before_register'] = $default_html_before;
+       $umm_data['settings']['html_during_register'] = $default_html_during;
+       $umm_data['settings']['html_after_register'] = $default_html_after;
+       $umm_data['settings']['html_before_shortcode'] = $default_html_before;
+       $umm_data['settings']['html_during_shortcode'] = $default_html_during;
+       $umm_data['settings']['html_after_shortcode'] = $default_html_after;
+       $umm_data['settings']['html_before_profile'] = $default_html_before;
+       $umm_data['settings']['html_during_profile'] = $default_html_during;
+       $umm_data['settings']['html_after_profile'] = $default_html_after;
+   }
+   
+   /* 
+   
+   End Upgrades 
+   
+   */
+   
    update_option('user_meta_manager_data', $umm_data);
-   umm_backup('php', 'yes', false); 
+   umm_backup('php', 'yes', false);
 }
 
 function umm_key_exists($key=false){
@@ -1090,7 +1145,7 @@ function umm_restore_confirm(){
     exit;
 }
 
-function umm_show_profile_fields($echo=true, $fields=false, $register=false, $debug=false){
+function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $debug=false){
    global $current_user;
    $umm_options = umm_get_option();
    $umm_settings = $umm_options['settings'];
@@ -1098,6 +1153,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $register=false, $de
     $profile_fields = $umm_options['profile_fields'];
     $sort_order = $umm_options['sort_order'];
     if(empty($sort_order) || !is_array($sort_order)) $sort_order = false;
+    /* If this is a short code, $fields string is to be converted to an array. */
     $show_fields = ($fields) ?  explode(",", str_replace(", ", ",", $fields)) : false;
     //if($debug) print_r($profile_fields);
     if(!empty($profile_fields)):
@@ -1121,18 +1177,20 @@ function umm_show_profile_fields($echo=true, $fields=false, $register=false, $de
       endforeach;
       $profile_fields = $new_array;   
     endif;
+    
+    $output .= stripslashes(htmlspecialchars_decode($umm_settings['html_before_' . $mode]));
 
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
       $value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
-      if($register) $value = $default_value;
+      if($mode == 'register' || $mode == 'adduser') $value = $default_value;
       
-      $output .= '<tr>
-	<th><label for="' . $profile_field_name . '" class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . stripslashes(htmlspecialchars_decode($profile_field_settings['label'])) . '</label></th>
-	<td>';
-    switch($profile_field_settings['type']){
+      $label = stripslashes(htmlspecialchars_decode($profile_field_settings['label']));
+      
+      $field_html = '';
+      switch($profile_field_settings['type']){
             case 'text':
             case 'color':
             case 'date':
@@ -1147,109 +1205,109 @@ function umm_show_profile_fields($echo=true, $fields=false, $register=false, $de
             case 'time':
             case 'url':
             case 'week':           
-            $output .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
-            $output .= ' required="required"';
+            $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
-            $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $output .= " />";
+            $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= " />";
             break;
             
             case 'textarea':
-            $output .= '<textarea name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<textarea name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
-            $output .= ' required="required"';
+            $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
-            $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $output .= '>' . $value . '</textarea>' . "\n";
+            $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= '>' . $value . '</textarea>' . "\n";
             break;
             
             case 'checkbox':
  //TODO:Support for checkbox groups                      
-            $output .= '<input type="checkbox" name="' . $profile_field_name;
+            $field_html .= '<input type="checkbox" name="' . $profile_field_name;
             //if(count($profile_field_settings['options']) > 1) $output .= '[]';
-            $output .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
-              $output .= ' required="required"';
+              $field_html .= ' required="required"';
             if($value != "" && !$register)
-              $output .= ' checked="checked"';
+              $field_html .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
-              $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $output .= ' />' . "\n";
+              $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= ' />' . "\n";
             break; 
             
             case 'radio':
             $i = 1;
             foreach($profile_field_settings['options'] as $option => $option_settings):
               if(!empty($option_settings['label'])):
-              $output .= '<input id="umm_radio_' . $i . '" type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
+              $field_html .= '<input id="umm_radio_' . $i . '" type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
               
-              $output .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+              $field_html .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
               if($profile_field_settings['required'] == 'yes')
-              $output .= ' required="required"';
+              $field_html .= ' required="required"';
               if($option_settings['value'] == $value)
-              $output .= ' checked="checked"';
+              $field_html .= ' checked="checked"';
               if(!empty($profile_field_settings['attrs']))
-              $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-              $output .= ' /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
+              $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+              $field_html .= ' /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
               endif;
               $i++;
             endforeach; 
             break;
             
             case 'select':
-            $output .= '<select name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<select name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
-            $output .= ' required="required"';
+            $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
-            $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $output .= ">\n";
+            $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= ">\n";
             foreach($profile_field_settings['options'] as $option => $option_settings):
             if(!empty($option_settings['label'])):
-            $output .= '<option value="' . stripslashes($option_settings['value']) . '"';
-              if($option_settings['value'] == $value) $output .= ' selected="selected"';
-            $output .= '>'.stripslashes($option_settings['label']).'</option>
+            $field_html .= '<option value="' . stripslashes($option_settings['value']) . '"';
+              if($option_settings['value'] == $value) $field_html .= ' selected="selected"';
+            $field_html .= '>'.stripslashes($option_settings['label']).'</option>
             ';
             endif;
             endforeach; 
-            $output .= "<select>\n";           
+            $field_html .= "<select>\n";           
             break;
             
             default:
-            $output .= '<input type="text" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<input type="text" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
             if($profile_field_settings['required'] == 'yes')
-            $output .= ' required="required"';
+            $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
-            $output .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $output .= " />";
+            $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= " />";
         }
     
-    if(!empty($profile_field_settings['after'])) 
-    $output .= stripslashes(htmlspecialchars_decode($profile_field_settings['after']));
+    if(!empty($profile_field_settings['after'])):
+       $field_html .= stripslashes(htmlspecialchars_decode($profile_field_settings['after']));
+    endif;
     
-    $output .= "</td>
-</tr>";
+    $html_during = str_replace('[label]', $label, stripslashes(htmlspecialchars_decode($umm_settings['html_during_' . $mode])));
+    $html_during = str_replace('[field]', $field_html, $html_during);
+    $html_during = str_replace('[field-name]', $profile_field_name, $html_during);
+    $html_during = str_replace('[field-slug]', str_replace("_", "-", strtolower($profile_field_name)), $html_during);
+    $output .= $html_during;
+
     endif; // $show_fields
-    endforeach; 
+    endforeach;
+    $html_after = stripslashes(htmlspecialchars_decode($umm_settings['html_after_' . $mode]));
+    $output .= $html_after; 
     endif; // !empty($profile_fields)
-    
+
     if(isset($output) && !empty($output)):
-       if($show_fields):
-          $section_title = '';
-       else:
-          $section_title = (!isset($umm_settings['section_title'])) ? '<h3 class="umm-custom-fields"></h3>' : '<h3 class="umm-custom-fields">' . $umm_settings['section_title'] . '</h3>';
-       endif;
-       $output = $section_title . '<table class="form-table umm-custom-fields">
-  <tbody>
-' . $output . '
-  </tbody>
-</table>
-';
+       
+       $output = str_replace('[section-title]', stripslashes(htmlspecialchars_decode($umm_settings['section_title'])), $output);
+       
        if($echo):
           echo  $output;
        else:
           return $output;
        endif;
+       
     endif;   
 }
 
@@ -1777,7 +1835,7 @@ function umm_usermeta_shortcode($atts, $content) {
     endif;
     endif;
     $umm_nonce = wp_nonce_field('umm_wp_nonce', 'umm_nonce');
-    $content .= umm_show_profile_fields(false, $atts['fields']) . '
+    $content .= umm_show_profile_fields(false, $atts['fields'], 'shortcode') . '
     <button type="submit">' . $submit .  '</button>' . "\n" . $umm_nonce . "\n";
  
     foreach($vars as $var):

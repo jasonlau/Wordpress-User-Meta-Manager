@@ -255,3 +255,44 @@ strong.umm-method{
     font-size: larger;
     text-shadow: 1px 1px 5px #FFFF99;
 }
+
+#umm-tabs {
+    width: 400px;
+    min-width: 300px;
+    
+}
+
+#umm-tabs ul, #umm-tabs div{
+    display: block;
+    clear: both;
+}
+
+#umm-tabs li{
+    margin: 5px 0px;
+    padding: 5px;
+    display: inline;
+    float: left;
+    list-style-type: none;
+    
+}
+
+#umm-tabs .ui-state-default{
+    background-color: white;
+    border: 1px solid #EEEEEE;
+}
+
+#umm-tabs .ui-state-active{
+    background-color: #EEEEEE;
+    border: 1px solid #EEEEEE;
+    font-weight: bold;
+}
+
+.ui-tabs-panel{
+   background-color: #EEEEEE; 
+   padding: 10px 20px;
+}
+
+.umm-settings-textarea{
+    width: 300px;
+    height: 80px;
+}

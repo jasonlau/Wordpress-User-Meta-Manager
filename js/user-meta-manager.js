@@ -537,5 +537,7 @@
         });
         window.open(q);
     });
+    
+    $('#umm-tabs').tabs();
        
 }); // jQuery

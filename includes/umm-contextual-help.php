@@ -96,20 +96,75 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('no', UMM_SLUG) . '"' . $duplicate_check_override_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Select <em>Yes</em> to override the safety feature that prevents existing meta keys from being overwritten while new custom meta keys are introduced.', UMM_SLUG) . '</span></td>
 </tr>
+
+
 <tr class="alternate">
-	<td><strong>' . __('Custom Profile Field Section Title', UMM_SLUG) . '</strong><br />
-        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom profile fields, which is visible in the profile editor.', UMM_SLUG) . '</span></td>
-</tr>
-<tr>
 	<td><strong>' . __('Bot Field Name', UMM_SLUG) . '</strong><br />
         <input type="text" name="bot_field" value="' . $bot_field . '"><br /><span>' . __('Name of the hidden form field used to test for spam-bots.', UMM_SLUG) . '</span></td>
 </tr>
+
+<tr>
+	<td><strong>' . __('Custom Field Section Title', UMM_SLUG) . '</strong><br />
+        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the HTML syntax options below.', UMM_SLUG) . '</span></td>
+</tr>
+
+<tr class="alternate">
+	<td><strong>' . __('HTML Syntax', UMM_SLUG) . '</strong><br />
+    
+    <div id="umm-tabs">
+  <ul>
+    <li><a href="#umm-tabs-1">Registration</a></li>
+    <li><a href="#umm-tabs-2">Profile/Edit User</a></li>
+    <li><a href="#umm-tabs-3">Short Code</a></li>
+    <li><a href="#umm-tabs-4">Add User</a></li>
+  </ul>
+  <div id="umm-tabs-1">
+  <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_before_register">' . stripslashes($umm_settings['html_before_register']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_during_register">' . stripslashes($umm_settings['html_during_register']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_after_register">' . stripslashes($umm_settings['html_after_register']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+  </div>
+  <div id="umm-tabs-2">
+  <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_before_profile">' . stripslashes($umm_settings['html_before_profile']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_during_profile">' . stripslashes($umm_settings['html_during_profile']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_after_profile">' . stripslashes($umm_settings['html_after_profile']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+  </div>
+  <div id="umm-tabs-3">
+  <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_before_shortcode">' . stripslashes($umm_settings['html_before_shortcode']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_during_shortcode">' . stripslashes($umm_settings['html_during_shortcode']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_after_shortcode">' . stripslashes($umm_settings['html_after_shortcode']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+  </div>
+  <div id="umm-tabs-4">
+  <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_before_adduser">' . stripslashes($umm_settings['html_before_adduser']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_during_adduser">' . stripslashes($umm_settings['html_during_adduser']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
+        <textarea class="umm-settings-textarea" name="html_after_adduser">' . stripslashes($umm_settings['html_after_adduser']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+  </div>
+</div>
+<code><strong>[section-title]</strong> ' . __('Replaced by the <em>Custom Field Section Title</em> option.', UMM_SLUG) . '<br /><strong>[field]</strong> ' . __('Replaced by the field\'s HTML and HTML After option, if any.', UMM_SLUG) . '<br /><strong>[label]</strong> ' . __('Replaced by the field label. Example: My Field', UMM_SLUG) . '<br /><strong>[field-name]</strong> ' . __('Replaced by the field name. Example: my_field', UMM_SLUG) . '<br /><strong>[field-slug]</strong> ' . __('Replaced by the field slug. Example: my-field', UMM_SLUG) . '</code>
+    </td>
+</tr>
+
+
 <tr class="alternate">
 	<td><input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0"></td>
 </tr>
 </table>
+
+
+
         </form><br />
 <form id="umm_sync_data_form" action="' . UMM_AJAX . 'umm_sync_user_meta&amp;u=0" method="post">
         <table class="umm-settings-table widefat umm-rounded-corners">
@@ -120,7 +175,8 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
         </td>
 </tr>
-</table></form>'
+</table>
+</form>'
     ),
     
     array(
