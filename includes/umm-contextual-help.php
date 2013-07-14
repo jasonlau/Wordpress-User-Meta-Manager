@@ -105,11 +105,11 @@ function umm_help($contextual_help, $screen_id, $screen) {
 
 <tr>
 	<td><strong>' . __('Custom Field Section Title', UMM_SLUG) . '</strong><br />
-        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the HTML syntax options below.', UMM_SLUG) . '</span></td>
+        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the <em>HTML Markup</em> options below.', UMM_SLUG) . '</span></td>
 </tr>
 
 <tr class="alternate">
-	<td><strong>' . __('HTML Syntax', UMM_SLUG) . '</strong><br />
+	<td><strong>' . __('HTML Markup', UMM_SLUG) . '</strong><br />
     
     <div id="umm-tabs">
   <ul>
