@@ -1907,7 +1907,7 @@ function umm_value_is($key, $search_for, $user_id=false){
 
 // Append profile fields to the admin 'Add New User' form. 
 $umm_x = explode("user-new.", $_SERVER["REQUEST_URI"]);
-if($umm_x[1] == 'php'):
+if(isset ($umm_x[1]) && $umm_x[1] == 'php'):
    // No known action for this, so we'll use JavaScript to inject the profile fields in the form.
    add_action('in_admin_footer', 'umm_add_user_fields');
 endif;
