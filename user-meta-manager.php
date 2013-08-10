@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 2.2.9
+ * Version: 3.0.1
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '2.2.9');
+define('UMM_VERSION', '3.0.1');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -813,30 +813,48 @@ function umm_install(){
    
    $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
    
-   // v2.2.9 adds version number to settings array
-   if(!isset($umm_data['settings']['version'])) $umm_data['settings']['version'] = '2.2.8'; 
-   
    /* 
    
    v2.2.9+ Upgrades 
    
-   */   
-    
-   if(version_compare($umm_data['settings']['version'], '2.2.9', '<')){
-       // v2.2.9 adds html syntax options
-       $umm_data['settings']['html_before_adduser'] = $default_html_before;
-       $umm_data['settings']['html_during_adduser'] = $default_html_during;
-       $umm_data['settings']['html_after_adduser'] = $default_html_after;
-       $umm_data['settings']['html_before_register'] = $default_html_before;
-       $umm_data['settings']['html_during_register'] = $default_html_during;
-       $umm_data['settings']['html_after_register'] = $default_html_after;
-       $umm_data['settings']['html_before_shortcode'] = $default_html_before;
-       $umm_data['settings']['html_during_shortcode'] = $default_html_during;
-       $umm_data['settings']['html_after_shortcode'] = $default_html_after;
-       $umm_data['settings']['html_before_profile'] = $default_html_before;
-       $umm_data['settings']['html_during_profile'] = $default_html_during;
-       $umm_data['settings']['html_after_profile'] = $default_html_after;
-   }
+   */
+   
+   if(!isset($umm_data['settings']['html_before_adduser']) || empty($umm_data['settings']['html_before_adduser'])):
+    $umm_data['settings']['html_before_adduser'] = $default_html_before;
+   endif;
+   if(!isset($umm_data['settings']['html_during_adduser']) || empty($umm_data['settings']['html_during_adduser'])):
+    $umm_data['settings']['html_during_adduser'] = $default_html_during;
+   endif; 
+   if(!isset($umm_data['settings']['html_after_adduser']) || empty($umm_data['settings']['html_after_adduser'])):
+    $umm_data['settings']['html_after_adduser'] = $default_html_after;
+   endif; 
+   if(!isset($umm_data['settings']['html_before_register']) || empty($umm_data['settings']['html_before_register'])):
+    $umm_data['settings']['html_before_register'] = $default_html_before;
+   endif; 
+   if(!isset($umm_data['settings']['html_during_register']) || empty($umm_data['settings']['html_during_register'])):
+    $umm_data['settings']['html_during_register'] = $default_html_during;
+   endif; 
+   if(!isset($umm_data['settings']['html_after_register']) || empty($umm_data['settings']['html_after_register'])):
+    $umm_data['settings']['html_after_register'] = $default_html_after;
+   endif; 
+   if(!isset($umm_data['settings']['html_before_shortcode']) || empty($umm_data['settings']['html_before_shortcode'])):
+    $umm_data['settings']['html_before_shortcode'] = $default_html_before;
+   endif; 
+   if(!isset($umm_data['settings']['html_during_shortcode']) || empty($umm_data['settings']['html_during_shortcode'])):
+    $umm_data['settings']['html_during_shortcode'] = $default_html_during;
+   endif; 
+   if(!isset($umm_data['settings']['html_after_shortcode']) || empty($umm_data['settings']['html_after_shortcode'])):
+    $umm_data['settings']['html_after_shortcode'] = $default_html_after;
+   endif; 
+   if(!isset($umm_data['settings']['html_before_profile']) || empty($umm_data['settings']['html_before_profile'])):
+    $umm_data['settings']['html_before_profile'] = $default_html_before;
+   endif; 
+   if(!isset($umm_data['settings']['html_during_profile']) || empty($umm_data['settings']['html_during_profile'])):
+    $umm_data['settings']['html_during_profile'] = $default_html_during;
+   endif; 
+   if(!isset($umm_data['settings']['html_after_profile']) || empty($umm_data['settings']['html_after_profile'])):
+    $umm_data['settings']['html_after_profile'] = $default_html_after;
+   endif;   
    
    /* 
    
@@ -844,6 +862,8 @@ function umm_install(){
    
    */
    
+   // v2.2.9 adds version number to settings array
+   $umm_data['settings']['version'] = UMM_VERSION;
    update_option('user_meta_manager_data', $umm_data);
    umm_backup('php', 'yes', false);
 }
@@ -1178,7 +1198,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
       $profile_fields = $new_array;   
     endif;
     
-    $output .= stripslashes(htmlspecialchars_decode($umm_settings['html_before_' . $mode]));
+    $html_before = (!isset($umm_settings['html_before_' . $mode]) || empty($umm_settings['html_before_' . $mode])) ? '<h3 class="umm-custom-fields">[section-title]</h3>
+<table class="form-table umm-custom-fields">
+   <tbody>' : stripslashes(htmlspecialchars_decode($umm_settings['html_before_' . $mode]));
+    $output .= $html_before;
 
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
@@ -1286,7 +1309,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
        $field_html .= stripslashes(htmlspecialchars_decode($profile_field_settings['after']));
     endif;
     
-    $html_during = str_replace('[label]', $label, stripslashes(htmlspecialchars_decode($umm_settings['html_during_' . $mode])));
+    $html_during = (!isset($umm_settings['html_during_' . $mode]) || empty($umm_settings['html_during_' . $mode])) ? '<tr><th>[label]</th><td>[field]</td></tr>' : $umm_settings['html_during_' . $mode];
+    
+    $html_during = str_replace('[label]', $label, stripslashes(htmlspecialchars_decode($html_during)));
     $html_during = str_replace('[field]', $field_html, $html_during);
     $html_during = str_replace('[field-name]', $profile_field_name, $html_during);
     $html_during = str_replace('[field-slug]', str_replace("_", "-", strtolower($profile_field_name)), $html_during);
@@ -1294,8 +1319,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
 
     endif; // $show_fields
     endforeach;
-    $html_after = stripslashes(htmlspecialchars_decode($umm_settings['html_after_' . $mode]));
-    $output .= $html_after; 
+    $html_after = (!isset($umm_settings['html_after_' . $mode]) || empty($umm_settings['html_after_' . $mode])) ? '</tbody>
+</table>' : stripslashes(htmlspecialchars_decode($umm_settings['html_after_' . $mode]));
+    $umm_nonce = wp_nonce_field('umm_wp_nonce', 'umm_nonce');
+    $output .= $html_after . "\n" . $umm_nonce . "\n"; 
     endif; // !empty($profile_fields)
 
     if(isset($output) && !empty($output)):
@@ -1486,11 +1513,13 @@ function umm_update_profile_fields($user_id=false){
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
     if($user_id) $the_user = $user_id;
-    foreach($saved_profile_fields as $field_name => $field_settings):      
-      $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
-      if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);     
-      update_user_meta($the_user, $field_name, $field_value);
-    endforeach;
+    if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
+       foreach($saved_profile_fields as $field_name => $field_settings):      
+         $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+         if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);     
+         update_user_meta($the_user, $field_name, $field_value);
+       endforeach;
+    endif;
 }
 
 function umm_update_profile_fields_settings($meta_key, $meta_value){
@@ -1834,9 +1863,8 @@ function umm_usermeta_shortcode($atts, $content) {
       $content .= '<div class="umm-error-message">' . $error . '</div>' . "\n";
     endif;
     endif;
-    $umm_nonce = wp_nonce_field('umm_wp_nonce', 'umm_nonce');
     $content .= umm_show_profile_fields(false, $atts['fields'], 'shortcode') . '
-    <button type="submit">' . $submit .  '</button>' . "\n" . $umm_nonce . "\n";
+    <button type="submit">' . $submit .  '</button>' . "\n";
  
     foreach($vars as $var):
       $v = split('=', $var);
@@ -1907,7 +1935,7 @@ function umm_value_is($key, $search_for, $user_id=false){
 
 // Append profile fields to the admin 'Add New User' form. 
 $umm_x = explode("user-new.", $_SERVER["REQUEST_URI"]);
-if($umm_x[1] == 'php'):
+if(isset($umm_x[1]) && $umm_x[1] == 'php'):
    // No known action for this, so we'll use JavaScript to inject the profile fields in the form.
    add_action('in_admin_footer', 'umm_add_user_fields');
 endif;
