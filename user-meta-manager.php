@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.1
+ * Version: 3.0.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.1');
+define('UMM_VERSION', '3.0.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -70,6 +70,47 @@ function umm_add_user_fields(){
     <script type="text/javascript">
        jQuery(function($){
 	      $("form#createuser p.submit").before($("div#umm-add-user-fields").html());
+          var is_duplicate = function(obj, key, value){
+            var request = $.ajax({
+                url: \'admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_is_duplicate&echo=true&umm_key=\' + key + \'&umm_value=\' + value,
+                type: "POST",
+                dataType: "json"
+            });
+            request.done(function(data){
+                if(data.is_duplicate){
+            if(!$(".umm-duplicate-warning").html()){
+                $("input#createusersub").prop("disabled", "disabled");
+            obj.after(\'<div class="umm-warning umm-duplicate-warning hidden" style="color:red">\' + data.error_message.replace(\'%s\',obj.parent().parent().find(\'th\').html()) + \'</div>\');
+            obj.css({"background-color": "#FFFF99"});
+            $(".umm-duplicate-warning").show(\'slow\');
+            }
+            return true;
+        } else {
+            if($(".umm-duplicate-warning").html()){
+                $(".umm-duplicate-warning").hide(\'slow\').remove();
+            }
+            obj.css({"background-color": "inherit"});
+            $("input#createusersub").prop("disabled", "");
+            return false;
+        }
+            });
+        };
+        $(document).on(\'change\', ".umm-unique", function(event){
+            is_duplicate($(this), $(this).attr(\'name\'), $(this).val());
+        });
+        
+        $(document).on(\'click\', "input#createusersub", function(event){
+            event.preventDefault();
+            var has_duplicates = false;
+            $(".umm-unique").each(function(){
+                if(is_duplicate($(this), $(this).attr(\'name\'), $(this).val())){
+                    has_duplicates = true;
+                }
+            });
+            if(!has_duplicates){
+                    $("form#createuser").submit();
+            }     
+        });
 	   });
     </script>
     ';
@@ -85,7 +126,7 @@ function umm_add_user_meta(){
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
     <input name="umm_meta_key[]" title="'.__('Letters, numbers, and underscores only', UMM_SLUG).'" type="text" value="" placeholder="'.__('Meta Key', UMM_SLUG).'" /><br />
     <strong>'.__('Value', UMM_SLUG).':</strong><br />
-    <input name="umm_meta_value[]" type="text" value="" size="40" placeholder="'.__('Default Value', UMM_SLUG).'" />';
+    <textarea cols="30" name="umm_meta_value[]" placeholder="'.__('Default Value', UMM_SLUG).'"></textarea>';
     $output .= '<br />
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
     <input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_user_meta&u=' . $user_id . '" />
@@ -547,7 +588,7 @@ function umm_edit_custom_meta(){
     else:
         foreach($data as $key => $value):
         if($key == $_REQUEST['umm_edit_key']):
-            $output .= '<strong>' . __('Value', UMM_SLUG) . ':</strong><input name="umm_meta_key[]" type="hidden" value="' . $key . '" /><br /><input name="umm_meta_value[]" type="text" value="' . htmlspecialchars($value) . '" size="40" /><br />';
+            $output .= '<strong>' . __('Value', UMM_SLUG) . ':</strong><input name="umm_meta_key[]" type="hidden" value="' . $key . '" /><br /><textarea rows="3" cols="40" name="umm_meta_value[]"  placeholder="">' . htmlspecialchars($value) . '</textarea><br />';
             endif; 
         endforeach;
     endif;
@@ -565,6 +606,7 @@ function umm_edit_custom_meta(){
 
 function umm_edit_user_meta(){  
     global $wpdb;
+    $profile_fields = umm_get_option('profile_fields');
     $user_id = $_REQUEST['u'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     sort($data);
@@ -606,7 +648,12 @@ function umm_edit_user_meta(){
     foreach($data as $d):
     $class = ($x%2) ? ' class="alternate"' : '';
     if($d->meta_key == $edit_key || $shortcut_editing == 'yes'):
-        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="umm_meta_key[]" type="hidden" value="' . $d->meta_key . '" /><input name="umm_meta_value[]" type="text" value="' . htmlspecialchars($d->meta_value) . '" size="40" /></td></tr>';
+        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="umm_meta_key[]" type="hidden" value="' . $d->meta_key . '" /><textarea name="umm_meta_value[]" value="" cols="40" rows="1">' . htmlspecialchars($d->meta_value) . '</textarea>';
+        if(array_key_exists($d->meta_key, $profile_fields) && $profile_fields[$d->meta_key]['unique'] == 'yes'):
+           $output .= ' <small>*'.__('Unique Value Required', UMM_SLUG).'</small>';
+               
+        endif;
+        $output .= '</td></tr>';
         $x++;
     endif;         
     endforeach;
@@ -644,7 +691,6 @@ function umm_get_profile_fields($output_type='array'){
     if($sort_order):
       $new_array = array();
       foreach($sort_order as $profile_field_name):
-      if($debug) print_r($profile_field_name);
       if(isset($profile_fields[$profile_field_name]))
        $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
       endforeach;
@@ -676,7 +722,7 @@ function umm_get_profile_fields($output_type='array'){
 
 function umm_get_users(){
     global $wpdb, $current_site;
-    $query = "SELECT * FROM $wpdb->users";       
+    $query = "SELECT * FROM " . $wpdb->users;       
     $data = $wpdb->get_results($query);   
     if(defined('MULTISITE') && MULTISITE):
        $user_data = array();
@@ -868,6 +914,32 @@ function umm_install(){
    umm_backup('php', 'yes', false);
 }
 
+function umm_is_duplicate($key=false, $value=false, $user=false, $echo=false){
+    global $wpdb;
+    
+    $key = (!$key && isset($_REQUEST['umm_key'])) ? $_REQUEST['umm_key'] : $key;
+    $value = (!$value && isset($_REQUEST['umm_value'])) ? $_REQUEST['umm_value'] : $value;
+    $echo = (!$echo && isset($_REQUEST['echo'])) ? $_REQUEST['echo'] : $echo;
+    $data = $wpdb->get_results("SELECT * FROM " . $wpdb->usermeta . " WHERE meta_key='" . $key . "' AND meta_value='" . $value . "'");
+    
+    if((!empty($data) && !$user) || (!empty($data) && $data[0]->user_id != $user)):
+       if($echo):
+          $output = '{"is_duplicate":true, "error_message":"' . __('%s is already taken by another user. Please use a different selection.', UMM_SLUG) . '"}';
+          print $output;
+       else:
+          return true;
+       endif;
+    else:
+       if($echo):
+          $output = '{"is_duplicate":false}';
+          print $output;
+       else:
+          return false;
+       endif;
+    endif;
+    exit; 
+}
+
 function umm_key_exists($key=false){
     global $wpdb;
     $k = (empty($key)) ? $_REQUEST['umm_meta_key'] : $key;
@@ -897,11 +969,7 @@ function umm_load_scripts($hook) {
 function umm_profile_field_editor($umm_edit_key=null){
     $profile_fields = umm_get_option('profile_fields');
     $options_output = '';
-    $select_option_row = '<tr class="umm-select-option-row">
-	<td><input name="umm_profile_select_label[]" type="text" placeholder="'.__('Label', UMM_SLUG).'" value="" /></td>
-	<td><input name="umm_profile_select_value[]" type="text" placeholder="'.__('Value', UMM_SLUG).'" value="" /></td>
-	<td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option">-</button></td>
-</tr>
+    $select_option_row = '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option">-</button></td></tr></table></li>
 ';
     
     if(!empty($umm_edit_key) && array_key_exists($umm_edit_key, $profile_fields)):
@@ -914,17 +982,14 @@ function umm_profile_field_editor($umm_edit_key=null){
           $required = $profile_fields[$umm_edit_key]['required'];          
           $allow_tags = $profile_fields[$umm_edit_key]['allow_tags'];
           $add_to_profile = $profile_fields[$umm_edit_key]['add_to_profile'];
+          $unique_value = $profile_fields[$umm_edit_key]['unique'];
           $options = (!is_array($profile_fields[$umm_edit_key]['options'])) ? array() : $profile_fields[$umm_edit_key]['options'];
           
           $x = 1;          
           foreach($options as $option):
             $hide_button = ($x == 1) ? ' hidden' : '';
             if(!empty($option['label'])):          
-            $options_output .= '<tr class="umm-select-option-row">
-	<td><input name="umm_profile_select_label[]" type="text" placeholder="'.__('Label', UMM_SLUG).'" value="' . stripslashes($option['label']) . '" /></td>
-	<td><input name="umm_profile_select_value[]" type="text" placeholder="'.__('Value', UMM_SLUG).'" value="' . stripslashes(htmlspecialchars_decode($option['value'])) . '" /></td>
-	<td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option' . $hide_button . '">-</button></td>
-</tr>
+            $options_output .= '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'">' . stripslashes($option['label']) . '</textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'">' . stripslashes(htmlspecialchars_decode($option['value'])) . '</textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option' . $hide_button . '">-</button></td></tr></table></li>
 ';
           endif; //!empty($option['label'])
           $x++;
@@ -997,6 +1062,9 @@ function umm_profile_field_editor($umm_edit_key=null){
     <option value="checkbox"';
     if($type == 'checkbox') $output .= ' selected="selected"';
     $output .= '>'.__('Checkbox', UMM_SLUG).'</option>
+    <option value="checkbox_group"';
+    if($type == 'checkbox_group') $output .= ' selected="selected"';
+    $output .= '>'.__('Checkbox Group', UMM_SLUG).'</option>
     <option value="radio"';
     if($type == 'radio') $output .= ' selected="selected"';
     $output .= '>'.__('Radio Button Group', UMM_SLUG).'</option>
@@ -1021,7 +1089,7 @@ function umm_profile_field_editor($umm_edit_key=null){
     <strong>'.__('HTML After', UMM_SLUG).':</strong><br />
     <textarea rows="3" cols="40" name="umm_profile_field_after" placeholder="">' . $after . '</textarea>
     <br />   
-    <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required">
+    <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required" title="' . __('Make this a required field.', UMM_SLUG) . '">
 	<option value="no"';
     if($required == 'no' || $required == '') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>
@@ -1029,7 +1097,7 @@ function umm_profile_field_editor($umm_edit_key=null){
     if($required == 'yes') $output .= ' selected="selected"';
     $output .= '>'.__('Yes', UMM_SLUG).'</option>
     </select><br />
-    <strong>'.__('Allow Tags', UMM_SLUG).':</strong> <select size="1" name="umm_allow_tags">
+    <strong>'.__('Allow Tags', UMM_SLUG).':</strong> <select size="1" name="umm_allow_tags" title="' . __('Allow users to input HTML tags. (Not recommended)', UMM_SLUG) . '">
 	<option value="no"';
     if($allow_tags == 'no' || $allow_tags == '') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>
@@ -1037,37 +1105,38 @@ function umm_profile_field_editor($umm_edit_key=null){
     if($allow_tags == 'yes') $output .= ' selected="selected"';
     $output .= '>'.__('Yes', UMM_SLUG).'</option> 	
     </select><br />
-    <strong>'.__('Add To Profile', UMM_SLUG).':</strong> <select size="1" name="umm_add_to_profile">
+    <strong>'.__('Add To Profile', UMM_SLUG).':</strong> <select size="1" name="umm_add_to_profile" title="' . __('Add this field to the user profile and registration forms.', UMM_SLUG) . '">
 	<option value="yes"';
     if($add_to_profile == 'yes' || $add_to_profile == '') $output .= ' selected="selected"';
     $output .= '>'.__('Yes', UMM_SLUG).'</option>
     <option value="no"';
     if($add_to_profile == 'no') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>	
+    </select><br />
+    <strong>'.__('Unique Value', UMM_SLUG).':</strong> <select size="1" name="umm_unique_value" title="' . __('Make the value for this field unique to each user. No duplicate entries will be allowed. Only works for future submissions.', UMM_SLUG) . '">
+	<option value="no"';
+    if($unique_value == 'no' || $unique_value == '') $output .= ' selected="selected"';
+    $output .= '>'.__('No', UMM_SLUG).'</option>
+    <option value="yes"';
+    if($unique_value == 'yes') $output .= ' selected="selected"';
+    $output .= '>'.__('Yes', UMM_SLUG).'</option>	
     </select>
     </div>';
     
-    $hidden = ($type == 'select' || $type == 'radio') ? '' : ' hidden';
+    $hidden = ($type == 'select' || $type == 'radio' || $type == 'checkbox_group') ? '' : ' hidden';
     
     $output .= '
     <div class="umm-select-options' . $hidden . ' umm-profile-field-options">
     <h3>'.__('Options', UMM_SLUG).'</h3>
-    <table class="umm-select-options-table">
-<tr>
-	<th>Label</th>
-	<th>Value</th>
-	<th></th>
-</tr>
+    <ul class="umm-select-options-table">
+<li><table style="width: 300px;"><tr><th>Label</th><th>Value</th><th></th></tr></table></li>
+
 ';
 $output .= $options_output;
-$output .= '</table>
-<table class="umm-select-options-clone hidden">
- <tr class="umm-select-option-row">
-	<td><input name="umm_profile_select_label[]" type="text" placeholder="'.__('Label', UMM_SLUG).'" value="" /></td>
-	<td><input name="umm_profile_select_value[]" type="text" placeholder="'.__('Value', UMM_SLUG).'" value="" /></td>
-	<td><button class="umm-add-row button-secondary umm-profile-editor">+</button> <button class="umm-remove-row button-secondary umm-profile-editor">-</button></td>
-</tr>
-</table>
+$output .= '</ul>
+<ul class="umm-select-options-clone hidden">
+ <li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor">-</button></td></tr></table></li>
+</ul>
     </div>
     </div>';   
     return $output;
@@ -1207,11 +1276,12 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
-      $value = stripslashes(htmlspecialchars_decode(get_user_meta($the_user, $profile_field_name, true)));
+      $v = get_user_meta($the_user, $profile_field_name, true);
+      $value = (!is_array($v)) ? stripslashes(htmlspecialchars_decode($v)) : $v;
       if($mode == 'register' || $mode == 'adduser') $value = $default_value;
       
       $label = stripslashes(htmlspecialchars_decode($profile_field_settings['label']));
-      
+      $unique = ($profile_field_settings['unique'] == 'yes') ? ' umm-unique' : '';
       $field_html = '';
       switch($profile_field_settings['type']){
             case 'text':
@@ -1228,7 +1298,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             case 'time':
             case 'url':
             case 'week':           
-            $field_html .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1237,7 +1307,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             break;
             
             case 'textarea':
-            $field_html .= '<textarea name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<textarea name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1245,11 +1315,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             $field_html .= '>' . $value . '</textarea>' . "\n";
             break;
             
-            case 'checkbox':
- //TODO:Support for checkbox groups                      
+            case 'checkbox':                    
             $field_html .= '<input type="checkbox" name="' . $profile_field_name;
-            //if(count($profile_field_settings['options']) > 1) $output .= '[]';
-            $field_html .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
             if($value != "" && !$register)
@@ -1257,6 +1325,24 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
             $field_html .= ' />' . "\n";
+            break;
+            
+            case 'checkbox_group':
+            $x = 0;
+            foreach($profile_field_settings['options'] as $option => $option_settings):
+            if(!empty($option_settings['label'])):
+            $field_html .= '<span class="umm-checkbox-group-item"><input type="checkbox" name="' . $profile_field_name;
+            $field_html .= '[]" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
+            if($profile_field_settings['required'] == 'yes')
+              $field_html .= ' required="required"';
+            if(in_array($option_settings['value'], $value) && !$register)
+              $field_html .= ' checked="checked"';
+            if(!empty($profile_field_settings['attrs']))
+              $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+            $field_html .= ' />' . stripslashes($option_settings['label']) . "</span> \n";
+            endif;
+            $x++;
+            endforeach;            
             break; 
             
             case 'radio':
@@ -1265,7 +1351,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
               if(!empty($option_settings['label'])):
               $field_html .= '<input id="umm_radio_' . $i . '" type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
               
-              $field_html .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+              $field_html .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
               if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
               if($option_settings['value'] == $value)
@@ -1279,7 +1365,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             break;
             
             case 'select':
-            $field_html .= '<select name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<select name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1297,7 +1383,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             break;
             
             default:
-            $field_html .= '<input type="text" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . '"';
+            $field_html .= '<input type="text" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1514,9 +1600,20 @@ function umm_update_profile_fields($user_id=false){
     $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
     if($user_id) $the_user = $user_id;
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
-       foreach($saved_profile_fields as $field_name => $field_settings):      
-         $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
-         if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);     
+       foreach($saved_profile_fields as $field_name => $field_settings):
+         if(isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name]) && $field_settings['type'] == 'checkbox_group'):
+            // This is a checkbox group array
+            $field_value = array();
+            $x = 0;
+            foreach($field_settings['options'] as $option => $option_settings):
+               $field_value[$x] = (isset($_REQUEST[$field_name][$x])) ? $_REQUEST[$field_name][$x] : '';
+               $x++;           
+            endforeach;          
+         else:
+            $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+            if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value); 
+         endif;      
+             
          update_user_meta($the_user, $field_name, $field_value);
        endforeach;
     endif;
@@ -1528,7 +1625,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
     $options = array(); // Array for holding options for select menus or radio button groups
     if(isset($_POST['umm_profile_field_type']) && !empty($_POST['umm_profile_field_type'])):
        // This is a profile field
-       if(!empty($_POST['umm_profile_select_label']) && ($_POST['umm_profile_field_type'] == 'select' || $_POST['umm_profile_field_type'] == 'radio')):
+       if(!empty($_POST['umm_profile_select_label']) && ($_POST['umm_profile_field_type'] == 'select' || $_POST['umm_profile_field_type'] == 'radio' || $_POST['umm_profile_field_type'] == 'checkbox_group')):
           // Assemble options for select menus or radio button groups
            $x = 0;
            foreach($_POST['umm_profile_select_label'] as $option_label):
@@ -1540,6 +1637,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
        endif;
        // Assemble profile field settings into an array 
        $new_profile_field_data = array('value' => $meta_value,
+                                       'unique' => $_POST['umm_unique_value'],
                                        'type' => $_POST['umm_profile_field_type'],
                                        'label' => htmlspecialchars($_POST['umm_profile_field_label']),
                                        'class' => $_POST['umm_profile_field_class'],
@@ -1643,38 +1741,57 @@ function umm_update_user_meta(){
            switch($u){
             case "all":
                // Update custom meta
-               if($all_users):
-                  // Update value for all users
-                  $data = umm_get_users();
-                  foreach($data as $user):
-                     update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
-                  endforeach;
+               $profile_fields = umm_get_option('profile_fields');
+               if(($profile_fields[$meta_key]['unique'] == 'yes' && $all_users) || ($profile_fields[$meta_key]['unique'] == 'yes' && umm_is_duplicate($meta_key[0], $meta_value[0]))):
+                  $output = '<span class="umm-error-message">' . __('Error: This field is set as unique. Change the field settings first.', UMM_SLUG) . '</span>';
+               else:
+                  if($all_users):                                  
+                     // Update value for all users
+                     $data = umm_get_users();
+                     foreach($data as $user):
+                        update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+                     endforeach;
+                  endif;
+                  // Update existing value
+                  $umm_data[$meta_key[0]] = $meta_value[0];
+                  umm_update_option('custom_meta', $umm_data);
+                  // Update profile field settings if needed
+                  umm_update_profile_fields_settings($meta_key[0], $meta_value[0]);
+                  $output = __('Meta data successfully updated.', UMM_SLUG);
                endif;
-               // Update existing value
-               $umm_data[$meta_key[0]] = $meta_value[0];
-               umm_update_option('custom_meta', $umm_data);                             
-               // Update profile field settings if needed
-               umm_update_profile_fields_settings($meta_key[0], $meta_value[0]);
             break;
             
-            default:
-               // Update meta for single user - no profile field settings here
+            default: 
+               // Update meta for single user
+               $profile_fields = umm_get_option('profile_fields');
+               $error = false;
                $x = 0;
                foreach($_POST['umm_meta_key'] as $meta_key):
-                  if(empty($umm_singles_data)):
-                     $umm_singles_data = array($meta_key);
-                  else:
-                     if(!in_array($meta_key, $umm_singles_data)):
-                        array_push($umm_singles_data, $meta_key);
-                     endif;
+                  if($profile_fields[$meta_key]['unique'] == 'yes' && umm_is_duplicate($meta_key, $meta_value[$x], $u)):
+                     $error = true;
                   endif;
-                  umm_update_option('singles_data', $umm_singles_data);
-                  update_user_meta($u, $meta_key, maybe_unserialize(trim(stripslashes($meta_value[$x]))), false);
                   $x++;
                endforeach;
+               if($error):
+                  $output = '<span class="umm-error-message">' . sprintf(__('Error: %s is set as unique. The value you entered is already in use. Change the field settings or change the value.', UMM_SLUG), $meta_key) . '</span>';
+               else:
+                  $x = 0;
+                  foreach($_POST['umm_meta_key'] as $meta_key):
+                     if(empty($umm_singles_data)):
+                        $umm_singles_data = array($meta_key);
+                     else:
+                        if(!in_array($meta_key, $umm_singles_data)):
+                           array_push($umm_singles_data, $meta_key);
+                        endif;
+                     endif;
+                     umm_update_option('singles_data', $umm_singles_data);
+                     update_user_meta($u, $meta_key, maybe_unserialize(trim(stripslashes($meta_value[$x]))), false);
+                     $x++;
+                  endforeach;
+                  $output = __('Meta data successfully updated.', UMM_SLUG);
+               endif;
             break;            
-           }
-           $output = __('Meta data successfully updated.', UMM_SLUG);
+           }           
         else:
            // No meta key sent
            $output = '<span class="umm-error-message">' . __('Error: No meta key selected.', UMM_SLUG) . '</span>';  
@@ -1759,7 +1876,10 @@ function umm_useraccess_shortcode($atts, $content) {
         else:
             $content = __('You do not have sufficient permissions to access this content.', UMM_SLUG);
         endif;
-    endif;    
+    endif;
+    
+    $content = do_shortcode($content);
+        
     return $content;         
 }
 
@@ -1814,55 +1934,157 @@ function umm_usermeta_keys_menu($select=true, $optgroup=false, $include_used=fal
 
 function umm_usermeta_shortcode($atts, $content) {
     global $current_user;
-    
-    if(isset($atts['key']) && !empty($atts['key'])):
-    $key = $atts['key'];
     $user = !empty($atts['user']) ? $atts['user'] : $current_user->ID;
-    $content = get_user_meta($user, $key, true);
-    endif;
+    $content = '';
+    if(isset($atts['key']) && !empty($atts['key'])):
+       // Display a single key
+       $key = $atts['key'];
+       $c = get_user_meta($user, $key, true);
+       $content .= (is_array($c)) ? implode(', ', $c) : $c;
     
-    if(isset($atts['fields']) && $current_user->ID != 0 && !empty($atts['fields'])):   
-    $umm_data = umm_get_option('custom_meta');
-    $umm_settings = umm_get_option('settings');
-    $bot_field = (empty($umm_settings['bot_field'])) ? 'umm_forbots' : $umm_settings['bot_field'];
-    $class = (!empty($atts['class'])) ? $atts['class'] : 'umm-usermeta-update-form';
-    $submit = (!empty($atts['submit'])) ? $atts['submit'] : __('Submit', UMM_SLUG);
-    $success = (!empty($atts['success'])) ? $atts['success'] : __('Update successful!', UMM_SLUG);
-    $error = (!empty($atts['error'])) ? $atts['error'] : __('Authorization required!', UMM_SLUG);
-    $email_to = (!empty($atts['email_to'])) ? $atts['email_to'] : false;
-    $email_from = (!empty($atts['email_from'])) ? $atts['email_from'] : __('do-not-reply', UMM_SLUG) . '@' . $_SERVER["HTTP_HOST"];
-    $subject = (!empty($atts['subject'])) ? $atts['subject'] : false;
-    $message = (!empty($atts['message'])) ? $atts['message'] : false;
-    $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
-    $content = '<form action="#" method="post" class="' . $class .  '">';
-    $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
-    $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
+    elseif(isset($atts['keys']) && !empty($atts['keys'])):
+       // Display multiple keys
+       $keys = explode(',', $atts['keys']);
+       foreach($keys as $key):
+          $meta_data = get_user_meta($user, trim($key), true);
+          $v = (is_array($meta_data)) ? implode(', ', $meta_data) : $meta_data;
+          $content .= stripslashes(htmlspecialchars_decode($atts['before_key'])) . $v . stripslashes(htmlspecialchars_decode($atts['after_key'])); 
+       endforeach;
+    elseif(isset($atts['fields']) && $current_user->ID > 0 && !empty($atts['fields'])):   
+       $umm_data = umm_get_option('custom_meta');
+       $umm_settings = umm_get_option('settings');
+       $profile_fields = umm_get_option('profile_fields');
+       $bot_field = (empty($umm_settings['bot_field'])) ? 'umm_forbots' : $umm_settings['bot_field'];
+       $class = (!empty($atts['class'])) ? $atts['class'] : 'umm-usermeta-update-form';
+       $submit = (!empty($atts['submit'])) ? $atts['submit'] : __('Submit', UMM_SLUG);
+       $success = (!empty($atts['success'])) ? $atts['success'] : __('Update successful!', UMM_SLUG);
+       $error = (!empty($atts['error'])) ? $atts['error'] : __('Authorization required!', UMM_SLUG);
+       $email_to = (!empty($atts['email_to'])) ? $atts['email_to'] : false;
+       $email_from = (!empty($atts['email_from'])) ? $atts['email_from'] : __('do-not-reply', UMM_SLUG) . '@' . $_SERVER["HTTP_HOST"];
+       $subject = (!empty($atts['subject'])) ? $atts['subject'] : false;
+       $message = (!empty($atts['message'])) ? $atts['message'] : false;
+       $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
+       $content = '<form action="#" method="post" class="' . $class .  '">';
+       $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
+       $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
+       $umm_error = false;
+       $output = "";
+       $error = "";
     
-    if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST[$bot_field] == ''):
-    if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
+       /*
     
-    $output = "";
-    foreach($show_fields as $field => $field_name):
-       if(array_key_exists($field_name, $umm_data)):
-          $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
-          if($posted_value != ""):
-             $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+       PROCESS FORM SUBMISSION 
+    
+       */
+    
+       if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST[$bot_field] == ''):
+       if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
+      
+    /*
+    
+    TEST INPUT
+    
+    */
+    
+       foreach($show_fields as $field => $field_name):
+          if(array_key_exists($field_name, $umm_data)):
+             $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
+             if($posted_value != ""):
+                $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+             else:
+                $val = "";
+             endif;
+             if($profile_fields[$field_name]['unique'] == 'yes' && $val != ""):
+                if(umm_is_duplicate($field_name, $val, $current_user->ID)):
+                   $umm_error = true;
+                   switch ($profile_fields[$field_name]['type']):
+                      case 'select':
+                         $type = 'select';
+                      break;
+                   
+                      case 'textarea':
+                         $type = 'textarea';
+                      break;
+                   
+                      default:
+                      $type = 'input';
+                   endswitch;
+                   $error .= sprintf(__('%s is already taken by another user.', UMM_SLUG), $profile_fields[$field_name]['label']) . '<script type="text/javascript"> jQuery(function($){ $("' . $type . '[name=\'' . $field_name . '\']").addClass("umm-error-field"); }); </script> ';  
+                endif;
+             endif;
           else:
-             $val = "";
+          $umm_error = true;
+          $error .= __('An error occurred. The submission was terminated. ', UMM_SLUG);
           endif;
-          $output .= $field_name . " = " . $val . "\n";
-          update_user_meta($current_user->ID, $field_name, $val);
-       endif;
-    endforeach;
-      if($email_to):
-        $email_message = sprintf($message, $output);
-        mail($email_to, $subject, $email_message, "From: " . $email_from . "\n" . "X-Mailer: PHP/" . phpversion());
-      endif;
-      $content .= '<div class="umm-success-message">' . $success . '</div>' . "\n";
+       endforeach;
+    
+       /*
+    
+       SUCCESS - PROCESS DATA
+    
+       */
+    
+       if(!$umm_error):
+          foreach($show_fields as $field => $field_name):
+             if(array_key_exists($field_name, $umm_data)):
+                $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
+                if($posted_value != "" && !is_array($posted_value)):
+                   $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+                elseif(is_array($posted_value)):
+                   // This is a checkbox group
+                   $val = array();
+                   foreach($posted_value  as $key => $value):
+                      $save_value = (is_numeric($value)) ? sprintf("%d", $value) : sprintf("%s", $value);
+                      $val[$key] = $save_value;
+                   endforeach;
+                else:
+                   $val = "";
+                endif;
+                $v = (is_array($val)) ? implode(', ', $val) : $val;
+                $output .= $field_name . " = " . $v . "\n";
+                update_user_meta($current_user->ID, $field_name, $val);
+             endif;
+          endforeach;
+         if($email_to):
+           $email_message = sprintf($message, $output);
+           mail($email_to, $subject, $email_message, "From: " . $email_from . "\n" . "X-Mailer: PHP/" . phpversion());
+         endif;
+       endif; // !$umm_error
+       
     else:
-      $content .= '<div class="umm-error-message">' . $error . '</div>' . "\n";
+    
+      /* 
+      
+      ERROR - BAD SUBMISSION
+      
+      */
+      
+      $umm_error = true;
+      $error = __('Authorization required!', UMM_SLUG);
+      
     endif;
+    
+    /*
+    
+    RETURN RESULT
+    
+    */
+    
+    if($umm_error):
+       $content .= '<div class="umm-error-message">' . $error . '</div>' . "\n";
+    else:
+       $content .= '<div class="umm-success-message">' . $success . '</div>' . "\n";
     endif;
+    
+    
+    endif;
+    
+    /*
+    
+    END SUBMISSION PROCESSING 
+    
+    */
+    
     $content .= umm_show_profile_fields(false, $atts['fields'], 'shortcode') . '
     <button type="submit">' . $submit .  '</button>' . "\n";
  
@@ -1874,6 +2096,8 @@ function umm_usermeta_shortcode($atts, $content) {
     $content .=  '<input type="hidden" name="umm_update_usermeta" value="' . $umm_user . '" />
     <input type="hidden" name="' . $bot_field . '" value="" /></form>' . "\n";
     endif;
+    
+    $content = do_shortcode($content);
     
     return $content; 
 }
@@ -1904,6 +2128,21 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
       $output .= '</select>' . "\n";
     endif;
     return $output; 
+}
+
+function umm_validate_registration_fields($errors, $sanitized_user_login, $user_email) {
+    $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
+    if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
+       foreach($saved_profile_fields as $field_name => $field_settings):      
+         $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+         if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
+         if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value)):
+            $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
+         endif;   
+       endforeach;
+    endif;
+    
+    return $errors;
 }
 
 function umm_value_contains($key, $search_for, $exact=false, $user_id=false){
@@ -1961,6 +2200,7 @@ add_shortcode('usermeta', 'umm_usermeta_shortcode');
 add_shortcode('useraccess', 'umm_useraccess_shortcode');
 
 add_filter('contextual_help', 'umm_help', 10, 3);
+add_filter('registration_errors', 'umm_validate_registration_fields', 10, 3);
 
 register_activation_hook(__FILE__, 'umm_install');
 register_deactivation_hook(__FILE__, 'umm_deactivate');

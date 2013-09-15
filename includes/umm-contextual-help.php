@@ -251,6 +251,10 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<th>' . __('Add To Profile', UMM_SLUG) . '</th>
 	<td>' . __('Appends this field to the user profile editor. Otherwise, the field can still be displayed using the form short code. (See <em>Short Codes</em>)', UMM_SLUG) . '</td>
 </tr>
+<tr class="alternate">
+	<th>' . __('Unique Value', UMM_SLUG) . '</th>
+	<td>' . __('Require users to input a unique value. A user cannot enter the same value as another user.', UMM_SLUG) . '</td>
+</tr>
 <tr>
 	<th>' . __('Options - Label', UMM_SLUG) . '</th>
 	<td>' . __('A label for the option. This is only visible when <em>Field Type</em> is "<em>Select</em>" or "<em>Radio Button Group</em>"', UMM_SLUG) . '</td>
@@ -282,11 +286,20 @@ function umm_help($contextual_help, $screen_id, $screen) {
     array(
         __('Short Codes', UMM_SLUG),
         '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
-        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br />    <strong>Display data for a particular user:</strong>
+        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br />    <strong>Display a single meta key for a particular user:</strong>
     <pre>[usermeta key="meta key" user="user id"]</pre>
     <br />
-    <strong>Display data for the current user:</strong>
+    <strong>Display a single meta key for the current user:</strong>
     <pre>[usermeta key="meta key"]</pre>
+    <br />
+    <strong>Display multiple meta keys for the current user:</strong>
+    <pre>[usermeta keys="key1, key2, key3" after_key=" "]<br /><br /><strong>Example Output:</strong><br /><br />key1 key2 key3</pre>
+    <br />
+    <strong>Display multiple meta keys for the current user in a list:</strong>
+    <pre>&lt;ul&gt;[usermeta keys="key1, key2, key3" before_key="&amp;lt;li&amp;gt;" after_key="&amp;lt;/li&amp;gt;"]&lt;/ul&gt;<br /><br /><strong>Example Output:</strong><ul><li>key1</li><li>key2</li><li>key3</li></ul></pre>
+    <br />
+    <strong>Display multiple meta keys for a particular user:</strong>
+    <pre>[usermeta keys="key1, key2, key3" user="user id"]</pre>
     <br />
     <strong>Restrict access based on meta key and value:</strong>
     <pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
@@ -302,7 +315,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     Additionally, you could repeat the same meta key multiple times.
     <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre><br /><br />
     <strong>Display a form in a Post or Page:</strong><br />
-    Display a form which allows members to update meta data. The updated data is saved and optionally emailed to a set address. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. 
+    Display a form which allows members to update meta data. The updated data is saved and optionally emailed to a set address. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. Use the <strong>Form Short Code Builder</strong> tab on the left to easily generate the short code.
     <pre>[usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
     <strong>Form Short Code Attributes</strong><br />
     <ul>
@@ -317,6 +330,12 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <li><strong>subject:</strong> (Used with email_to) An email subject.</li>
     <li><strong>message:</strong> (Required with email_to) A message to send in the email. <strong>\n</strong> = line break. <strong>%s</strong> = contents of the form submission. <strong>Important:</strong> You must add <strong>%s</strong> where you want the form submission results displayed in the message.</li>
 </ul>
+<br />
+<strong>Nested Short Codes:</strong><br />
+You can use short codes inside of short codes to restrict access to meta data forms.
+<pre>[useraccess users="1 22 301" message="You do not have permission to view this content."][usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"][/useraccess]</pre>
+In the above example, only members with a matching user id can access the meta data form.
+<br /><br />
     </p>', UMM_SLUG)
     ),
     

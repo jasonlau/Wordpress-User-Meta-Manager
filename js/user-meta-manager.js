@@ -323,6 +323,7 @@
                        
             case 'radio':
             case 'select':
+            case 'checkbox_group':
             $(".umm-input-options").show('slow');
             $(".umm-select-options").show('slow');
             $(".umm-remove-option:first").hide();
@@ -355,6 +356,7 @@
                       
             case 'radio':
             case 'select':
+            case 'checkbox_group':
             $(".umm-input-options").show('slow');
             $(".umm-select-options").show('slow');
             $(".umm-remove-option:first").hide();
@@ -364,14 +366,17 @@
             $(".umm-profile-field-options").hide('slow');
         }
     
+    $(".umm-select-options-table").sortable();
+    
     $(document).on('click', ".umm-add-row", function(event){
         event.preventDefault();
-        $(".umm-select-options-clone tr").clone().appendTo(".umm-select-options-table").show();
+        $(this).parent().parent().parent().parent().parent().after($(".umm-select-options-clone li").clone().show());
+        $(".umm-select-options-table").sortable();
     });
         
     $(document).on('click', ".umm-remove-row", function(event){
         event.preventDefault();
-        $(this).closest("tr").remove();
+        $(this).closest("li").remove();
     });
        
     $("#contextual-help-link").html(page_data.help_text).delay(1500).effect('highlight', 2000);
