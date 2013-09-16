@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the User Meta Manager package.
 msgid ""
 msgstr ""
-"Project-Id-Version: User Meta Manager 2.2.1\n"
+"Project-Id-Version: User Meta Manager 3.0.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/user-meta-manager\n"
-"POT-Creation-Date: 2013-02-09 16:22:17+00:00\n"
+"POT-Creation-Date: 2013-09-16 12:04:37+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -51,11 +51,12 @@ msgid "yes"
 msgstr ""
 
 #: includes/umm-contextual-help.php:67 includes/umm-contextual-help.php:72
-#: user-meta-manager.php:149 user-meta-manager.php:289
-#: user-meta-manager.php:334 user-meta-manager.php:388
-#: user-meta-manager.php:399 user-meta-manager.php:515
-#: user-meta-manager.php:852 user-meta-manager.php:860
-#: user-meta-manager.php:865 user-meta-manager.php:983
+#: user-meta-manager.php:207 user-meta-manager.php:363
+#: user-meta-manager.php:413 user-meta-manager.php:468
+#: user-meta-manager.php:479 user-meta-manager.php:595
+#: user-meta-manager.php:1098 user-meta-manager.php:1106
+#: user-meta-manager.php:1111 user-meta-manager.php:1122
+#: user-meta-manager.php:1231
 msgid "Yes"
 msgstr ""
 
@@ -64,8 +65,9 @@ msgid "no"
 msgstr ""
 
 #: includes/umm-contextual-help.php:68 includes/umm-contextual-help.php:73
-#: user-meta-manager.php:387 user-meta-manager.php:849
-#: user-meta-manager.php:857 user-meta-manager.php:868
+#: user-meta-manager.php:467 user-meta-manager.php:1095
+#: user-meta-manager.php:1103 user-meta-manager.php:1114
+#: user-meta-manager.php:1119
 msgid "No"
 msgstr ""
 
@@ -91,12 +93,12 @@ msgid ""
 msgstr ""
 
 #: includes/umm-contextual-help.php:79 user-meta-manager.php:54
-#: user-meta-manager.php:73 user-meta-manager.php:326
-#: user-meta-manager.php:334 user-meta-manager.php:390
-#: user-meta-manager.php:399 user-meta-manager.php:431
-#: user-meta-manager.php:442 user-meta-manager.php:490
-#: user-meta-manager.php:517 user-meta-manager.php:547
-#: user-meta-manager.php:579
+#: user-meta-manager.php:131 user-meta-manager.php:405
+#: user-meta-manager.php:413 user-meta-manager.php:470
+#: user-meta-manager.php:479 user-meta-manager.php:511
+#: user-meta-manager.php:522 user-meta-manager.php:570
+#: user-meta-manager.php:597 user-meta-manager.php:628
+#: user-meta-manager.php:665
 msgid "Wait..."
 msgstr ""
 
@@ -469,21 +471,21 @@ msgstr ""
 msgid "umm-users"
 msgstr ""
 
-#: includes/umm-table.php:29 user-meta-manager.php:593
-#: user-meta-manager.php:678 user-meta-manager.php:1260
-#: user-meta-manager.php:1281 user-meta-manager.php:1487
+#: includes/umm-table.php:29 user-meta-manager.php:680
+#: user-meta-manager.php:787 user-meta-manager.php:1541
+#: user-meta-manager.php:1562 user-meta-manager.php:1817
 msgid "ID"
 msgstr ""
 
-#: includes/umm-table.php:29 user-meta-manager.php:593
-#: user-meta-manager.php:678 user-meta-manager.php:1260
-#: user-meta-manager.php:1281 user-meta-manager.php:1487
+#: includes/umm-table.php:29 user-meta-manager.php:680
+#: user-meta-manager.php:787 user-meta-manager.php:1541
+#: user-meta-manager.php:1562 user-meta-manager.php:1817
 msgid "User Login"
 msgstr ""
 
-#: includes/umm-table.php:29 user-meta-manager.php:593
-#: user-meta-manager.php:678 user-meta-manager.php:1260
-#: user-meta-manager.php:1281 user-meta-manager.php:1487
+#: includes/umm-table.php:29 user-meta-manager.php:680
+#: user-meta-manager.php:787 user-meta-manager.php:1541
+#: user-meta-manager.php:1562 user-meta-manager.php:1817
 msgid "Date Registered"
 msgstr ""
 
@@ -532,7 +534,7 @@ msgid ""
 "<strong>Error:</strong> That key already exists. Choose a different name."
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (User Meta Manager 2.2.1)  #-#-#-#-#
+#. #-#-#-#-#  plugin.pot (User Meta Manager 3.0.3)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: includes/umm-table.php:155
 msgid "User Meta Manager"
@@ -550,7 +552,7 @@ msgstr ""
 msgid "Go"
 msgstr ""
 
-#: includes/umm-table.php:180 user-meta-manager.php:803
+#: includes/umm-table.php:180 user-meta-manager.php:1046
 msgid "Search"
 msgstr ""
 
@@ -566,636 +568,690 @@ msgstr ""
 msgid "Insert a key and default value in the fields below."
 msgstr ""
 
-#: user-meta-manager.php:47 user-meta-manager.php:68 user-meta-manager.php:418
-#: user-meta-manager.php:436 user-meta-manager.php:561
-#: user-meta-manager.php:1166 user-meta-manager.php:1185
+#: user-meta-manager.php:47 user-meta-manager.php:126
+#: user-meta-manager.php:498 user-meta-manager.php:516
+#: user-meta-manager.php:642 user-meta-manager.php:1447
+#: user-meta-manager.php:1466
 msgid "Key"
 msgstr ""
 
-#: user-meta-manager.php:48 user-meta-manager.php:69
+#: user-meta-manager.php:48 user-meta-manager.php:127
 msgid "Letters, numbers, and underscores only"
 msgstr ""
 
-#: user-meta-manager.php:48 user-meta-manager.php:69 user-meta-manager.php:316
-#: user-meta-manager.php:377
+#: user-meta-manager.php:48 user-meta-manager.php:127
+#: user-meta-manager.php:395 user-meta-manager.php:457
 msgid "Meta Key"
 msgstr ""
 
-#: user-meta-manager.php:49 user-meta-manager.php:71
+#: user-meta-manager.php:49 user-meta-manager.php:129
 msgid "Default Value"
 msgstr ""
 
-#: user-meta-manager.php:54 user-meta-manager.php:73 user-meta-manager.php:326
-#: user-meta-manager.php:390 user-meta-manager.php:490
-#: user-meta-manager.php:547 user-meta-manager.php:1153
-#: user-meta-manager.php:1614
+#: user-meta-manager.php:54 user-meta-manager.php:131
+#: user-meta-manager.php:405 user-meta-manager.php:470
+#: user-meta-manager.php:570 user-meta-manager.php:628
+#: user-meta-manager.php:1434 user-meta-manager.php:1974
 msgid "Submit"
 msgstr ""
 
-#: user-meta-manager.php:65
+#: user-meta-manager.php:123
 msgid "Adding Meta Data For %s"
 msgstr ""
 
-#: user-meta-manager.php:66
+#: user-meta-manager.php:124
 msgid "Insert a meta key and default value and press <em>Submit</em>."
 msgstr ""
 
-#: user-meta-manager.php:70 user-meta-manager.php:511
-#: user-meta-manager.php:562 user-meta-manager.php:724
-#: user-meta-manager.php:747 user-meta-manager.php:889
-#: user-meta-manager.php:1166 user-meta-manager.php:1185
+#: user-meta-manager.php:128 user-meta-manager.php:591
+#: user-meta-manager.php:643 user-meta-manager.php:972
+#: user-meta-manager.php:992 user-meta-manager.php:1138
+#: user-meta-manager.php:1447 user-meta-manager.php:1466
 msgid "Value"
 msgstr ""
 
-#: user-meta-manager.php:121
+#: user-meta-manager.php:179
 msgid "Below is the sql needed to restore the usermeta table."
 msgstr ""
 
-#: user-meta-manager.php:121 user-meta-manager.php:172
+#: user-meta-manager.php:179 user-meta-manager.php:230
 msgid "Backup from"
 msgstr ""
 
-#: user-meta-manager.php:130 user-meta-manager.php:1616
+#: user-meta-manager.php:188 user-meta-manager.php:1976
+#: user-meta-manager.php:2078
 msgid "Authorization required!"
 msgstr ""
 
-#: user-meta-manager.php:149
+#: user-meta-manager.php:207
 msgid "Restore complete."
 msgstr ""
 
-#: user-meta-manager.php:149
+#: user-meta-manager.php:207
 msgid ""
 "Are you sure you want to restore all user meta data to the backup version?"
 msgstr ""
 
-#: user-meta-manager.php:167
+#: user-meta-manager.php:225
 msgid "Backup php file was successfully generated at "
 msgstr ""
 
-#: user-meta-manager.php:167
+#: user-meta-manager.php:225
 msgid "Run the file in your browser to begin the restoration process."
 msgstr ""
 
-#: user-meta-manager.php:169
+#: user-meta-manager.php:227
 msgid "Error: Backup php file could not be generated at "
 msgstr ""
 
-#: user-meta-manager.php:169
+#: user-meta-manager.php:227
 msgid "Please be sure the directory exists and is owner-writable."
 msgstr ""
 
-#: user-meta-manager.php:172
+#: user-meta-manager.php:230
 msgid ""
 "Below is the php needed to restore the usermeta table. Save this code as a "
 "php file to the root WordPress folder, then run it in your browser."
 msgstr ""
 
-#: user-meta-manager.php:182
+#: user-meta-manager.php:240
 msgid "User meta data backup was successful."
 msgstr ""
 
-#: user-meta-manager.php:196
+#: user-meta-manager.php:254
 msgid "No backup"
 msgstr ""
 
-#: user-meta-manager.php:200
+#: user-meta-manager.php:258
 msgid "Use the following links to backup and restore user meta data."
 msgstr ""
 
-#: user-meta-manager.php:202
+#: user-meta-manager.php:260
 msgid "Backup"
 msgstr ""
 
-#: user-meta-manager.php:202
+#: user-meta-manager.php:260
 msgid "Last Backup:"
 msgstr ""
 
-#: user-meta-manager.php:203 user-meta-manager.php:983
+#: user-meta-manager.php:261 user-meta-manager.php:1231
 msgid "Restore"
 msgstr ""
 
-#: user-meta-manager.php:204
+#: user-meta-manager.php:262
 msgid "Generate SQL"
 msgstr ""
 
-#: user-meta-manager.php:205
+#: user-meta-manager.php:263
 msgid "Generate PHP"
 msgstr ""
 
-#: user-meta-manager.php:206
+#: user-meta-manager.php:264
 msgid "Generate PHP Restoration File"
 msgstr ""
 
-#: user-meta-manager.php:207
+#: user-meta-manager.php:265
 msgid "Delete All Backup Files"
 msgstr ""
 
-#: user-meta-manager.php:209 user-meta-manager.php:213
+#: user-meta-manager.php:267 user-meta-manager.php:271
 msgid "Generate CSV"
 msgstr ""
 
-#: user-meta-manager.php:211 user-meta-manager.php:1162
+#: user-meta-manager.php:269 user-meta-manager.php:1443
 msgid "Fields"
 msgstr ""
 
-#: user-meta-manager.php:211
+#: user-meta-manager.php:269
 msgid "Assemble a list of meta keys to display in the CSV file."
 msgstr ""
 
-#: user-meta-manager.php:213
+#: user-meta-manager.php:271
 msgid "Get CSV"
 msgstr ""
 
-#: user-meta-manager.php:224 user-meta-manager.php:275
-#: user-meta-manager.php:971 user-meta-manager.php:982
+#: user-meta-manager.php:282 user-meta-manager.php:349
+#: user-meta-manager.php:1219 user-meta-manager.php:1230
 msgid "<< Back"
 msgstr ""
 
-#: user-meta-manager.php:287
+#: user-meta-manager.php:361
 msgid "All backup files successfully deleted."
 msgstr ""
 
-#: user-meta-manager.php:289
+#: user-meta-manager.php:363
 msgid "Are you sure you want to delete all backup files?"
 msgstr ""
 
-#: user-meta-manager.php:289 user-meta-manager.php:335
-#: user-meta-manager.php:400 user-meta-manager.php:983
+#: user-meta-manager.php:363 user-meta-manager.php:414
+#: user-meta-manager.php:480 user-meta-manager.php:1231
 msgid "Cancel"
 msgstr ""
 
-#: user-meta-manager.php:314
+#: user-meta-manager.php:393
 msgid "Select from the menu a meta key to delete."
 msgstr ""
 
-#: user-meta-manager.php:317 user-meta-manager.php:378
+#: user-meta-manager.php:396 user-meta-manager.php:458
 msgid "Select A Meta Key"
 msgstr ""
 
-#: user-meta-manager.php:331 user-meta-manager.php:396
+#: user-meta-manager.php:410 user-meta-manager.php:476
 msgid "Deleting"
 msgstr ""
 
-#: user-meta-manager.php:333 user-meta-manager.php:398
+#: user-meta-manager.php:412 user-meta-manager.php:478
 msgid "Are you sure you want to delete that item?"
 msgstr ""
 
-#: user-meta-manager.php:341
+#: user-meta-manager.php:420
 msgid "No custom meta to delete."
 msgstr ""
 
-#: user-meta-manager.php:359 user-meta-manager.php:1500
+#: user-meta-manager.php:439 user-meta-manager.php:1830
 msgid "Meta data successfully deleted."
 msgstr ""
 
-#: user-meta-manager.php:368
+#: user-meta-manager.php:448
 msgid "Deleting Meta Data For %s"
 msgstr ""
 
-#: user-meta-manager.php:375
+#: user-meta-manager.php:455
 msgid ""
 "Select a <em>Meta Key</em> to delete, then press the <em>Submit</em> button. "
 "Select <em>All Users</em> to delete the selected item from all users."
 msgstr ""
 
-#: user-meta-manager.php:386
+#: user-meta-manager.php:466
 msgid "All Users"
 msgstr ""
 
-#: user-meta-manager.php:411
+#: user-meta-manager.php:491
 msgid "Use the forms below to edit which table columns are displayed."
 msgstr ""
 
-#: user-meta-manager.php:413
+#: user-meta-manager.php:493
 msgid "Display Columns"
 msgstr ""
 
-#: user-meta-manager.php:419 user-meta-manager.php:441
-#: user-meta-manager.php:723 user-meta-manager.php:746
-#: user-meta-manager.php:834 user-meta-manager.php:888
+#: user-meta-manager.php:499 user-meta-manager.php:521
+#: user-meta-manager.php:972 user-meta-manager.php:992
+#: user-meta-manager.php:1080 user-meta-manager.php:1138
 msgid "Label"
 msgstr ""
 
-#: user-meta-manager.php:431
+#: user-meta-manager.php:511
 msgid "Remove Selected Column"
 msgstr ""
 
-#: user-meta-manager.php:435
+#: user-meta-manager.php:515
 msgid "Add A New Column"
 msgstr ""
 
-#: user-meta-manager.php:437
+#: user-meta-manager.php:517
 msgid "Keys"
 msgstr ""
 
-#: user-meta-manager.php:441
+#: user-meta-manager.php:521
 msgid "Enter a label"
 msgstr ""
 
-#: user-meta-manager.php:441
+#: user-meta-manager.php:521
 msgid "Enter a label which will appear in the top row of the results table."
 msgstr ""
 
-#: user-meta-manager.php:442
+#: user-meta-manager.php:522
 msgid "Add Column"
 msgstr ""
 
-#: user-meta-manager.php:454
+#: user-meta-manager.php:534
 msgid "No custom meta to edit."
 msgstr ""
 
-#: user-meta-manager.php:458
+#: user-meta-manager.php:538
 msgid "Select from the list a meta key to edit, or drag and drop to sort."
 msgstr ""
 
-#: user-meta-manager.php:459 user-meta-manager.php:539
+#: user-meta-manager.php:539 user-meta-manager.php:620
 msgid "Select a meta key to edit."
 msgstr ""
 
-#: user-meta-manager.php:461
+#: user-meta-manager.php:541
 msgid "Edit Key"
 msgstr ""
 
-#: user-meta-manager.php:498 user-meta-manager.php:554
+#: user-meta-manager.php:578 user-meta-manager.php:635
 msgid "Now Editing"
 msgstr ""
 
-#: user-meta-manager.php:499
+#: user-meta-manager.php:579
 msgid ""
 "Editing custom meta data here will edit the value for all new users. The "
 "value you set will become the default value for all users. New registrations "
 "will receive the custom meta key and default value."
 msgstr ""
 
-#: user-meta-manager.php:506
+#: user-meta-manager.php:586
 msgid "No custom meta to display."
 msgstr ""
 
-#: user-meta-manager.php:515
+#: user-meta-manager.php:595
 msgid "Update Value For All Current Users"
 msgstr ""
 
-#: user-meta-manager.php:515
+#: user-meta-manager.php:595
 msgid ""
 "Check the box to update the value for all current users. Leave blank to "
 "update the value for future registrations only."
 msgstr ""
 
-#: user-meta-manager.php:517 user-meta-manager.php:579
+#: user-meta-manager.php:597 user-meta-manager.php:665
 msgid "Update"
 msgstr ""
 
-#: user-meta-manager.php:534
+#: user-meta-manager.php:615
 msgid "Editing Meta Data For %s"
 msgstr ""
 
-#: user-meta-manager.php:540
+#: user-meta-manager.php:621
 msgid "Select A Key To Edit"
 msgstr ""
 
-#: user-meta-manager.php:615
+#: user-meta-manager.php:653
+msgid "Unique Value Required"
+msgstr ""
+
+#: user-meta-manager.php:702
 msgid "Select A Key"
 msgstr ""
 
-#: user-meta-manager.php:770
+#: user-meta-manager.php:927
+msgid "%s is already taken by another user. Please use a different selection."
+msgstr ""
+
+#: user-meta-manager.php:1013
 msgid ""
 "Field <a title=\"W3Schools HTML5 Input Types Reference Page\" href=\"http://"
 "www.w3schools.com/html/html5_form_input_types.asp\" target=\"_blank\">Type</"
 "a>"
 msgstr ""
 
-#: user-meta-manager.php:771
+#: user-meta-manager.php:1014
 msgid "Do not add to user profile."
 msgstr ""
 
-#: user-meta-manager.php:773
+#: user-meta-manager.php:1016
 msgid "None"
 msgstr ""
 
-#: user-meta-manager.php:776
+#: user-meta-manager.php:1019
 msgid "Text"
 msgstr ""
 
-#: user-meta-manager.php:779
+#: user-meta-manager.php:1022
 msgid "Color"
 msgstr ""
 
-#: user-meta-manager.php:782
+#: user-meta-manager.php:1025
 msgid "Date"
 msgstr ""
 
-#: user-meta-manager.php:785
+#: user-meta-manager.php:1028
 msgid "Date-Time"
 msgstr ""
 
-#: user-meta-manager.php:788
+#: user-meta-manager.php:1031
 msgid "Date-Time-Local"
 msgstr ""
 
-#: user-meta-manager.php:791
+#: user-meta-manager.php:1034
 msgid "Email"
 msgstr ""
 
-#: user-meta-manager.php:794
+#: user-meta-manager.php:1037
 msgid "Month"
 msgstr ""
 
-#: user-meta-manager.php:797
+#: user-meta-manager.php:1040
 msgid "Number"
 msgstr ""
 
-#: user-meta-manager.php:800
+#: user-meta-manager.php:1043
 msgid "Range"
 msgstr ""
 
-#: user-meta-manager.php:806
+#: user-meta-manager.php:1049
 msgid "Telephone"
 msgstr ""
 
-#: user-meta-manager.php:809
+#: user-meta-manager.php:1052
 msgid "Time"
 msgstr ""
 
-#: user-meta-manager.php:812
+#: user-meta-manager.php:1055
 msgid "URL"
 msgstr ""
 
-#: user-meta-manager.php:815
+#: user-meta-manager.php:1058
 msgid "Week"
 msgstr ""
 
-#: user-meta-manager.php:818
+#: user-meta-manager.php:1061
 msgid "Textarea"
 msgstr ""
 
-#: user-meta-manager.php:821
+#: user-meta-manager.php:1064
 msgid "Checkbox"
 msgstr ""
 
-#: user-meta-manager.php:824
+#: user-meta-manager.php:1067
+msgid "Checkbox Group"
+msgstr ""
+
+#: user-meta-manager.php:1070
 msgid "Radio Button Group"
 msgstr ""
 
-#: user-meta-manager.php:827
+#: user-meta-manager.php:1073
 msgid "Select Menu"
 msgstr ""
 
-#: user-meta-manager.php:833
+#: user-meta-manager.php:1079
 msgid "Settings"
 msgstr ""
 
-#: user-meta-manager.php:837
+#: user-meta-manager.php:1083
 msgid "Classes"
 msgstr ""
 
-#: user-meta-manager.php:840
+#: user-meta-manager.php:1086
 msgid "Additional Attributes"
 msgstr ""
 
-#: user-meta-manager.php:841
+#: user-meta-manager.php:1087
 msgid "Example"
 msgstr ""
 
-#: user-meta-manager.php:841
+#: user-meta-manager.php:1087
 msgid "My Title"
 msgstr ""
 
-#: user-meta-manager.php:841
+#: user-meta-manager.php:1087
 msgid "My Text"
 msgstr ""
 
-#: user-meta-manager.php:843
+#: user-meta-manager.php:1089
 msgid "HTML After"
 msgstr ""
 
-#: user-meta-manager.php:846
+#: user-meta-manager.php:1092
 msgid "Required"
 msgstr ""
 
-#: user-meta-manager.php:854
+#: user-meta-manager.php:1092
+msgid "Make this a required field."
+msgstr ""
+
+#: user-meta-manager.php:1100
 msgid "Allow Tags"
 msgstr ""
 
-#: user-meta-manager.php:862
+#: user-meta-manager.php:1100
+msgid "Allow users to input HTML tags. (Not recommended)"
+msgstr ""
+
+#: user-meta-manager.php:1108
 msgid "Add To Profile"
 msgstr ""
 
-#: user-meta-manager.php:876
+#: user-meta-manager.php:1108
+msgid "Add this field to the user profile and registration forms."
+msgstr ""
+
+#: user-meta-manager.php:1116
+msgid "Unique Value"
+msgstr ""
+
+#: user-meta-manager.php:1116
+msgid ""
+"Make the value for this field unique to each user. No duplicate entries will "
+"be allowed. Only works for future submissions."
+msgstr ""
+
+#: user-meta-manager.php:1130
 msgid "Options"
 msgstr ""
 
-#: user-meta-manager.php:962
+#: user-meta-manager.php:1210
 msgid "User Meta Manager data successfully reset."
 msgstr ""
 
-#: user-meta-manager.php:972
+#: user-meta-manager.php:1220
 msgid "User meta data successfully restored."
 msgstr ""
 
-#: user-meta-manager.php:980
+#: user-meta-manager.php:1228
 msgid "No backup data to restore!"
 msgstr ""
 
-#: user-meta-manager.php:983
+#: user-meta-manager.php:1231
 msgid "Restore all user meta data to the backup version?"
 msgstr ""
 
-#: user-meta-manager.php:1150
+#: user-meta-manager.php:1431
 msgid "CSS Classes"
 msgstr ""
 
-#: user-meta-manager.php:1150
+#: user-meta-manager.php:1431
 msgid "(Optional) A CSS class, or classes, to add to the form."
 msgstr ""
 
-#: user-meta-manager.php:1153
+#: user-meta-manager.php:1434
 msgid "Submit Button Label"
 msgstr ""
 
-#: user-meta-manager.php:1153
+#: user-meta-manager.php:1434
 msgid "(Optional) A label for the submit button."
 msgstr ""
 
-#: user-meta-manager.php:1156
+#: user-meta-manager.php:1437
 msgid "Success Message"
 msgstr ""
 
-#: user-meta-manager.php:1156
+#: user-meta-manager.php:1437
 msgid "Submission successful!"
 msgstr ""
 
-#: user-meta-manager.php:1156
+#: user-meta-manager.php:1437
 msgid "(Optional) A message to display if the form submission is successful."
 msgstr ""
 
-#: user-meta-manager.php:1159
+#: user-meta-manager.php:1440
 msgid "Error Message"
 msgstr ""
 
-#: user-meta-manager.php:1159
+#: user-meta-manager.php:1440
 msgid "Submission failed!"
 msgstr ""
 
-#: user-meta-manager.php:1159
+#: user-meta-manager.php:1440
 msgid "(Optional) A message to display if the form submission fails."
 msgstr ""
 
-#: user-meta-manager.php:1162
+#: user-meta-manager.php:1443
 msgid ""
 "(Required) A list of meta keys to display. Each meta key will be displayed "
 "as it's set <em>Field Type</em> in the order in which you list them."
 msgstr ""
 
-#: user-meta-manager.php:1165
+#: user-meta-manager.php:1446
 msgid "Additional Variables"
 msgstr ""
 
-#: user-meta-manager.php:1166
+#: user-meta-manager.php:1447
 msgid ""
 "(Optional) Extra variable/value pairs you wish to pass with the form "
 "submission. Each pair will be converted to a hidden form field, and will be "
 "added to the form."
 msgstr ""
 
-#: user-meta-manager.php:1170
+#: user-meta-manager.php:1451
 msgid "Email To"
 msgstr ""
 
-#: user-meta-manager.php:1170
+#: user-meta-manager.php:1451
 msgid "you@your-domain.com"
 msgstr ""
 
-#: user-meta-manager.php:1170
+#: user-meta-manager.php:1451
 msgid ""
 "(Optional) An email address to send the results of the form submission to. "
 "Leave this empty to disable this feature. If you use this option, more "
 "options will appear below."
 msgstr ""
 
-#: user-meta-manager.php:1173
+#: user-meta-manager.php:1454
 msgid "Email From"
 msgstr ""
 
-#: user-meta-manager.php:1173
+#: user-meta-manager.php:1454
 msgid "do-not-reply@your-domain.com"
 msgstr ""
 
-#: user-meta-manager.php:1173
+#: user-meta-manager.php:1454
 msgid "(Used with email_to) An email address as the sender."
 msgstr ""
 
-#: user-meta-manager.php:1176
+#: user-meta-manager.php:1457
 msgid "Email Subject"
 msgstr ""
 
-#: user-meta-manager.php:1176
+#: user-meta-manager.php:1457
 msgid "A message from your site."
 msgstr ""
 
-#: user-meta-manager.php:1176
+#: user-meta-manager.php:1457
 msgid "(Used with email_to) An email subject."
 msgstr ""
 
-#: user-meta-manager.php:1179
+#: user-meta-manager.php:1460
 msgid "Email Message"
 msgstr ""
 
-#: user-meta-manager.php:1179
+#: user-meta-manager.php:1460
 msgid "Greetings,\\n\\n%s\\n\\nRegards,\\nWebmaster"
 msgstr ""
 
-#: user-meta-manager.php:1179
+#: user-meta-manager.php:1460
 msgid ""
 "(Required with email_to) A message to send in the email. \\n = line break. "
 "%s = contents of the form submission. Important: You must add %s where you "
 "want the form submission results displayed in the message."
 msgstr ""
 
-#: user-meta-manager.php:1182
+#: user-meta-manager.php:1463
 msgid "Short Code"
 msgstr ""
 
-#: user-meta-manager.php:1183
+#: user-meta-manager.php:1464
 msgid ""
 "This is the resulting short code. Copy this short code to any Post or Page "
 "to display the form. The form will update meta data for the currently logged-"
 "in user."
 msgstr ""
 
-#: user-meta-manager.php:1230
+#: user-meta-manager.php:1511
 msgid "Meta data successfully set for all users."
 msgstr ""
 
-#: user-meta-manager.php:1237
+#: user-meta-manager.php:1518
 msgid "You do not have the appropriate permission to view this content."
 msgstr ""
 
-#: user-meta-manager.php:1253
+#: user-meta-manager.php:1534
 msgid "Key and label are both required. Try again."
 msgstr ""
 
-#: user-meta-manager.php:1256
+#: user-meta-manager.php:1537
 msgid "Column already exists."
 msgstr ""
 
-#: user-meta-manager.php:1272
+#: user-meta-manager.php:1553
 msgid "Column successfully added."
 msgstr ""
 
-#: user-meta-manager.php:1279
+#: user-meta-manager.php:1560
 msgid "No key was selected. Select a key to remove from the table."
 msgstr ""
 
-#: user-meta-manager.php:1290
+#: user-meta-manager.php:1571
 msgid "Column successfully removed."
 msgstr ""
 
-#: user-meta-manager.php:1301
+#: user-meta-manager.php:1582
 msgid "Order successfully updated."
 msgstr ""
 
-#: user-meta-manager.php:1355
+#: user-meta-manager.php:1662
 msgid "Settings successfully saved."
 msgstr ""
 
-#: user-meta-manager.php:1392
+#: user-meta-manager.php:1702
 msgid "Error: Meta key already existed. Choose a different name."
 msgstr ""
 
-#: user-meta-manager.php:1420
+#: user-meta-manager.php:1730
 msgid "Meta data successfully added."
 msgstr ""
 
-#: user-meta-manager.php:1424
+#: user-meta-manager.php:1735
 msgid "Error: No meta key entered."
 msgstr ""
 
-#: user-meta-manager.php:1464
+#: user-meta-manager.php:1746
+msgid "Error: This field is set as unique. Change the field settings first."
+msgstr ""
+
+#: user-meta-manager.php:1760 user-meta-manager.php:1791
 msgid "Meta data successfully updated."
 msgstr ""
 
-#: user-meta-manager.php:1467
+#: user-meta-manager.php:1776
+msgid ""
+"Error: %s is set as unique. The value you entered is already in use. Change "
+"the field settings or change the value."
+msgstr ""
+
+#: user-meta-manager.php:1797
 msgid "Error: No meta key selected."
 msgstr ""
 
-#: user-meta-manager.php:1502
+#: user-meta-manager.php:1832
 msgid "Meta Key is required!"
 msgstr ""
 
-#: user-meta-manager.php:1547
+#: user-meta-manager.php:1877
 msgid "You do not have sufficient permissions to access this content."
 msgstr ""
 
-#: user-meta-manager.php:1572
+#: user-meta-manager.php:1905
 msgid "All Keys"
 msgstr ""
 
-#: user-meta-manager.php:1615
+#: user-meta-manager.php:1975
 msgid "Update successful!"
 msgstr ""
 
-#: user-meta-manager.php:1618
+#: user-meta-manager.php:1978
 msgid "do-not-reply"
+msgstr ""
+
+#: user-meta-manager.php:2027
+msgid "%s is already taken by another user."
+msgstr ""
+
+#: user-meta-manager.php:2032
+msgid "An error occurred. The submission was terminated. "
 msgstr ""
 
 #. Plugin URI of the plugin/theme

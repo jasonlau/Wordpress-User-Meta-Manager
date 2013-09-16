@@ -52,6 +52,9 @@ Yes I do. Check my website at JasonLau.biz.
 
 == Changelog ==
 
+= 3.0.4 =
+Bug fix. Updated language file.
+
 = 3.0.3 =
 Core user data, ID, user_login, user_nicename, user_email, user_url, user_registered, display_name, can now be displayed using the usermeta short code.
 
@@ -341,3 +344,6 @@ Added <strong>Unique Value</strong> option to the <em>Add Custom Meta</em> and <
 
 = 3.0.3 =
 Core user data, ID, user_login, user_nicename, user_email, user_url, user_registered, display_name, can now be displayed using the usermeta short code.
+
+= 3.0.4 =
+Bug fix. Updated language file.
