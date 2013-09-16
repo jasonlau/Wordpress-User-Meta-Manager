@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.2
+ * Version: 3.0.3
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.2');
+define('UMM_VERSION', '3.0.3');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1933,20 +1933,35 @@ function umm_usermeta_keys_menu($select=true, $optgroup=false, $include_used=fal
 }
 
 function umm_usermeta_shortcode($atts, $content) {
-    global $current_user;
+    global $current_user, $wpdb;
     $user = !empty($atts['user']) ? $atts['user'] : $current_user->ID;
+    $core = array('ID', 'user_login', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'display_name');
     $content = '';
     if(isset($atts['key']) && !empty($atts['key'])):
        // Display a single key
        $key = $atts['key'];
-       $c = get_user_meta($user, $key, true);
+       if(in_array($key, $core)):
+          $query = sprintf("SELECT * FROM " . $wpdb->users . " WHERE ID=%d", $user);
+          $data = $wpdb->get_results($query);
+          $c = $data[0]->$key;
+       else:
+          $c = get_user_meta($user, $key, true);
+       endif;
+       
        $content .= (is_array($c)) ? implode(', ', $c) : $c;
     
     elseif(isset($atts['keys']) && !empty($atts['keys'])):
        // Display multiple keys
        $keys = explode(',', $atts['keys']);
        foreach($keys as $key):
-          $meta_data = get_user_meta($user, trim($key), true);
+          $key = trim($key);
+          if(in_array($key, $core)):
+             $query = sprintf("SELECT * FROM " . $wpdb->users . " WHERE ID=%d", $user);
+             $data = $wpdb->get_results($query);
+             $meta_data = $data[0]->$key;
+          else:
+             $meta_data = get_user_meta($user, $key, true);
+          endif;
           $v = (is_array($meta_data)) ? implode(', ', $meta_data) : $meta_data;
           $content .= stripslashes(htmlspecialchars_decode($atts['before_key'])) . $v . stripslashes(htmlspecialchars_decode($atts['after_key'])); 
        endforeach;

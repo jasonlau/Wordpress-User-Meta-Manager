@@ -286,9 +286,10 @@ function umm_help($contextual_help, $screen_id, $screen) {
     array(
         __('Short Codes', UMM_SLUG),
         '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
-        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br />    <strong>Display a single meta key for a particular user:</strong>
-    <pre>[usermeta key="meta key" user="user id"]</pre>
-    <br />
+        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br /><strong>Display a single meta key, or core user data for a particular user:</strong>
+    <pre>[usermeta key="meta key" user="user id"]</pre><br />
+    Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
+    <br /><br />
     <strong>Display a single meta key for the current user:</strong>
     <pre>[usermeta key="meta key"]</pre>
     <br />
@@ -299,8 +300,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <pre>&lt;ul&gt;[usermeta keys="key1, key2, key3" before_key="&amp;lt;li&amp;gt;" after_key="&amp;lt;/li&amp;gt;"]&lt;/ul&gt;<br /><br /><strong>Example Output:</strong><ul><li>key1</li><li>key2</li><li>key3</li></ul></pre>
     <br />
     <strong>Display multiple meta keys for a particular user:</strong>
-    <pre>[usermeta keys="key1, key2, key3" user="user id"]</pre>
-    <br />
+    <pre>[usermeta keys="key1, key2, key3" user="user id"]</pre><br />
+    Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
+    <br /><br />
     <strong>Restrict access based on meta key and value:</strong>
     <pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
     Allowed users will have a matching meta value.<br /><br /><br />

@@ -4,8 +4,8 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.0.2
-Tested up to: 3.6.0
+Stable tag: 3.0.3
+Tested up to: 3.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.0.3 =
+Core user data, ID, user_login, user_nicename, user_email, user_url, user_registered, display_name, can now be displayed using the usermeta short code.
 
 = 3.0.2 =
 Added Unique Value option to the Add Custom Meta and Edit Custom Meta screens. This allows you to create meta data which is exclusive to each user. If a user enters a duplicate value, the submission is terminated, an error message is returned, and the CSS class umm-error-field is added to the faulty field. Added total support for checkbox groups. Added new short code attributes. Added support for nested short codes. Updated Help section. Verified compatibility with latest WordPress 3.6.1.
@@ -335,3 +338,6 @@ Bug fixes. Added nonce field to all custom meta forms. Verified compatibility wi
 
 = 3.0.2 =
 Added <strong>Unique Value</strong> option to the <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens. This allows you to create meta data which is exclusive to each user. If a user enters a duplicate value, the submission is terminated, an error message is returned, and the CSS class <strong>umm-error-field</strong> is added to the faulty field. Added total support for <strong>checkbox groups</strong>. Added <strong>new short code attributes</strong>. Added <strong>support for nested short codes</strong>. Updated Help section. Verified compatibility with latest WordPress 3.6.1.
+
+= 3.0.3 =
+Core user data, ID, user_login, user_nicename, user_email, user_url, user_registered, display_name, can now be displayed using the usermeta short code.
