@@ -286,9 +286,10 @@ function umm_help($contextual_help, $screen_id, $screen) {
     array(
         __('Short Codes', UMM_SLUG),
         '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
-        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br /><strong>Display a single meta key, or core user data for a particular user:</strong>
+        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br /><br />
+        <strong>Display a single meta key, or core user data for a particular user:</strong>
     <pre>[usermeta key="meta key" user="user id"]</pre><br />
-    Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
+    Additionally, the following core user data can also be used instead of a meta key: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
     <br /><br />
     <strong>Display a single meta key for the current user:</strong>
     <pre>[usermeta key="meta key"]</pre>
@@ -303,12 +304,18 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <pre>[usermeta keys="key1, key2, key3" user="user id"]</pre><br />
     Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
     <br /><br />
-    <strong>Restrict access based on meta key and value:</strong>
+    <strong>Restrict access to content based on meta key and value:</strong>
     <pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
     Allowed users will have a matching meta value.<br /><br /><br />
-    <strong>Restrict access based on user ID:</strong>
+    <strong>Restrict access to content based on user ID:</strong>
     <pre>[useraccess users="1 22 301" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
     Allowed user IDs are listed in the <em>users</em> attribute.<br /><br /><br />
+    <strong>Restrict access to content and bounce the user to a different page:</strong>
+    <pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content." url="http://jasonlau.biz"]Restricted content.[/useraccess]</pre>
+    Restricted users are redirected to the address contained in the <strong>url</strong> attribute.<br /><br /><br />
+    <strong>Bounce restricted users to a different page:</strong>
+    <pre>[useraccess users="1 22 301" key="meta key" value="meta value" message="You do not have permission to view this content." url="http://jasonlau.biz"]</pre>
+    In this example, allowed users are listed in the <strong>users</strong> attribute. However, allowed users must have a matching meta key and value, or they will be restricted also. Restricted users are redirected to the address contained in the <strong>url</strong> attribute. <strong>Important:</strong> This method does not hide restricted content. Use the previous method to hide restricted content from view.<br /><br /><br />
     <strong>Restrict access based on multiple meta keys and values:</strong>
     <pre>[useraccess json=\'{"access_level":"gold","sub_level":"silver"}\' message="You need permission to view this content."]Restricted content.[/useraccess]</pre>
     The <em>json</em> attribute is used to define a list of meta keys and values. The list must be JSON encoded, as seen in the example above. Users with matching meta keys and values will be granted access to restricted content.<br/><br/>

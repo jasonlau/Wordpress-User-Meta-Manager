@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.4
+ * Version: 3.0.5
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.4');
+define('UMM_VERSION', '3.0.5');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -540,7 +540,7 @@ function umm_edit_custom_meta(){
         <table id="umm_edit_key">
         <tr class="alternate"><td colspan="2"><strong>'.__('Edit Key', UMM_SLUG).'</strong></td></tr>
         ';
-        $sort_order = $data['sort_order'];
+        $sort_order = umm_get_option('sort_order');
         if(empty($sort_order) || !is_array($sort_order)):
           $sort_order = array();
           $x = 0;
@@ -956,9 +956,13 @@ function umm_key_exists($key=false){
 
 function umm_load_scripts($hook) {
     if($hook && $hook == "users_page_user-meta-manager"):
+       //wp_enqueue_script('');
        wp_enqueue_script('jquery');
-       wp_register_script('umm_jquery_ui', plugins_url('/js/jquery-ui-1.9.0.min.js', __FILE__));
-       wp_enqueue_script('umm_jquery_ui');
+       wp_enqueue_script('jquery-ui-core');
+       wp_enqueue_script('jquery-effects-core');
+       wp_enqueue_script('jquery-ui-tabs');
+       wp_enqueue_script('jquery-ui-sortable');   
+       wp_enqueue_script('jquery-effects-highlight');      
        wp_register_style('umm_css', plugins_url('/css/user-meta-manager.css?version='.rand(100,1000), __FILE__));
        wp_enqueue_style('umm_css');
        wp_register_script('umm_js', plugins_url('/js/user-meta-manager.js?version='.rand(100,1000), __FILE__));
@@ -1579,6 +1583,7 @@ function umm_update_columns(){
 
 function umm_update_custom_meta_order(){
     umm_update_option('sort_order', $_REQUEST['umm_item']);
+    $new_order = umm_get_option('sort_order');
     $output = __('Order successfully updated.', UMM_SLUG);
     print $output;
     exit;
@@ -1742,8 +1747,11 @@ function umm_update_user_meta(){
             case "all":
                // Update custom meta
                $profile_fields = umm_get_option('profile_fields');
-               if(($profile_fields[$meta_key]['unique'] == 'yes' && $all_users) || ($profile_fields[$meta_key]['unique'] == 'yes' && umm_is_duplicate($meta_key[0], $meta_value[0]))):
-                  $output = '<span class="umm-error-message">' . __('Error: This field is set as unique. Change the field settings first.', UMM_SLUG) . '</span>';
+               
+               $field_settings = $profile_fields[$meta_key[0]];
+               
+               if(($field_settings['unique'] == 'yes' && $all_users) || ($field_settings['unique'] == 'yes' && umm_is_duplicate($meta_key[0], $meta_value[0]))):
+                  $output = '<span class="umm-error-message">' . __('Error: This field is set as unique. Change the field settings first or enter a different value.', UMM_SLUG) . '</span>';
                else:
                   if($all_users):                                  
                      // Update value for all users
@@ -1845,6 +1853,7 @@ function umm_useraccess_shortcode($atts, $content) {
     $users = (isset($atts['users'])) ? explode(" ", $atts['users']) : false;
     $message = (!isset($atts['message'])) ? '' : $atts['message'];
     $json = (!isset($atts['json'])) ? false : $atts['json'];
+    $redir = (!isset($atts['url'])) ? false : $atts['url'];
     if($json):
     $access = false;
       $json = json_decode($json);
@@ -1871,8 +1880,16 @@ function umm_useraccess_shortcode($atts, $content) {
     endif;
 
     if(!$access):
-        if($message):
+        if($message && !$redir):
             $content = $message;
+        elseif($redir):
+           if($message):
+              $content = $message;
+           else:
+              $content = __('You do not have sufficient permissions to access this content.', UMM_SLUG);
+           endif;
+           // Bounce the user with JS
+           $content .= '<script type="text/javascript">window.location.href = "' . $redir . '";</script>';
         else:
             $content = __('You do not have sufficient permissions to access this content.', UMM_SLUG);
         endif;
