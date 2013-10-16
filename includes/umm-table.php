@@ -147,7 +147,7 @@ class UMM_UI extends WP_List_Table {
       if($first_run == 'yes'):
         $settings['first_run'] = 'no';
         umm_update_option('settings', $settings);
-      endif;
+      endif;   
     ?>
 <div class="umm-wrapper" data-help_text="<?php _e('User Meta Manager Help &amp; Settings', 'user-meta-manager') ?>" data-umm_loading_image="<?php echo WP_PLUGIN_URL . "/user-meta-manager/images/umm-loading.gif" ?>" data-first_run="<?php echo $first_run ?>" data-no_spaces="<?php _e('No Spaces', 'user-meta-manager') ?>" data-invalid_chars_warning="<?php _e('Letters, numbers, and underscores only.', 'user-meta-manager') ?>" data-key_exists="<?php _e('<strong>Error:</strong> That key already exists. Choose a different name.', 'user-meta-manager') ?>" data-duplicate_override="<?php echo $settings['duplicate_check_override'];  ?>">
 <div id="icon-users" class="icon32"><br/></div><!-- #icon-users .icon32 -->
@@ -187,7 +187,7 @@ class UMM_UI extends WP_List_Table {
 <div class="umm-result-container hidden"></div><!-- .umm-result-container -->
 <code>&copy;<?php
 	echo date('Y');
-?> <a href="http://JasonLau.biz" target="_blank">JasonLau.biz</a> <a title="WebsiteDev.biz - <?php _e('Your bridge to a strong Internet presence.&trade;', 'user-meta-manager') ?>" href="http://WebsiteDev.biz" target="_blank">WebsiteDev.biz</a></code> <code>[<?php _e($this->title . ' Version', 'user-meta-manager') ?>: <?php echo UMM_VERSION; ?> <a title="<?php _e('Help make this plugin perfect by contributing your code on GitHub', 'user-meta-manager') ?>" href="https://github.com/jasonlau/Wordpress-User-Meta-Manager" target="_blank">Contribute</a>]</code>
+?> <a href="http://JasonLau.biz" target="_blank">JasonLau.biz</a> <a title="AmericanBully.pro - <?php _e('Breeders Of Fine American Bullies', 'user-meta-manager') ?>" href="http://americanbully.pro" target="_blank"><img src="<?php echo WP_PLUGIN_URL; ?>/user-meta-manager/images/triline-kennels-bully-head-sm.png" alt="AmericanBully.pro" title="AmericanBully.pro" style="vertical-align: middle;" /></a> <a title="AmericanBully.pro - <?php _e('Breeders Of Fine American Bullies', 'user-meta-manager') ?>" href="http://americanbully.pro" target="_blank">AmericanBully.pro</a></code> <code>[<?php _e($this->title . ' Version', 'user-meta-manager') ?>: <?php echo UMM_VERSION; ?> <a title="<?php _e('Help make this plugin perfect by contributing your code on GitHub', 'user-meta-manager') ?>" href="https://github.com/jasonlau/Wordpress-User-Meta-Manager" target="_blank">Contribute</a>]</code>
 </div><!-- .umm-wrapper -->
 <?php
   }

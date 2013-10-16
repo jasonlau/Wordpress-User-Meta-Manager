@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.5
+ * Version: 3.0.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -12,7 +12,7 @@
  * 
  * Always backup your database before making changes.
  * 
- * Copyright 2012-2013 http://jasonlau.biz http://websitedev.biz
+ * Copyright 2012-2013 http://jasonlau.biz http://americanbully.pro
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.5');
+define('UMM_VERSION', '3.0.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -671,6 +671,31 @@ function umm_edit_user_meta(){
     exit;
 }
 
+function umm_format_text($text, $format){
+    switch ($format):
+       case 'ucfirst':
+       $formatted = ucfirst($text);    
+       break;
+              
+       case 'ucwords':
+       $formatted = ucwords($text);  
+       break;
+              
+       case 'uc':
+       $formatted = strtoupper($text);  
+       break;
+              
+       case 'lc':
+       $formatted = strtolower($text);  
+       break;
+              
+       default:
+       $formatted = $text;
+       break;  
+    endswitch;        
+    return $formatted;         
+}
+
 function umm_fyi($message){
     return '<div class="umm-fyi">' . $message . '</div>';
 }
@@ -988,7 +1013,9 @@ function umm_profile_field_editor($umm_edit_key=null){
           $add_to_profile = $profile_fields[$umm_edit_key]['add_to_profile'];
           $unique_value = $profile_fields[$umm_edit_key]['unique'];
           $options = (!is_array($profile_fields[$umm_edit_key]['options'])) ? array() : $profile_fields[$umm_edit_key]['options'];
-          
+          $allow_multi = $profile_fields[$umm_edit_key]['allow_multi'];
+          $size = (!isset($profile_fields[$umm_edit_key]['size']) || empty($profile_fields[$umm_edit_key]['size'])) ? '1' : $profile_fields[$umm_edit_key]['size'];
+          $roles = (!isset($profile_fields[$umm_edit_key]['roles']) || !is_array($profile_fields[$umm_edit_key]['roles'])) ? array() : $profile_fields[$umm_edit_key]['roles'];
           $x = 1;          
           foreach($options as $option):
             $hide_button = ($x == 1) ? ' hidden' : '';
@@ -1013,6 +1040,7 @@ function umm_profile_field_editor($umm_edit_key=null){
     $required = (!isset($required) || empty($required)) ? '' : $required;
     $add_to_profile = (!isset($add_to_profile) || empty($add_to_profile)) ? '' : $add_to_profile;
     $class = (!isset($class) || empty($class)) ? '' : $class;
+    $roles = (!isset($roles) || empty($roles) || !is_array($roles)) ? array() : $roles;
     $output = '<div class="umm-profile-field-editor">
     <strong>'.__('Field <a title="W3Schools HTML5 Input Types Reference Page" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">Type</a>', UMM_SLUG).' :</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
     <option value="" title="'.__('Do not add to user profile.', UMM_SLUG).'"';
@@ -1093,7 +1121,7 @@ function umm_profile_field_editor($umm_edit_key=null){
     <strong>'.__('HTML After', UMM_SLUG).':</strong><br />
     <textarea rows="3" cols="40" name="umm_profile_field_after" placeholder="">' . $after . '</textarea>
     <br />   
-    <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required" title="' . __('Make this a required field.', UMM_SLUG) . '">
+    <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required" title="' . __('Make this a required field. Not recommended for checkbox groups.', UMM_SLUG) . '">
 	<option value="no"';
     if($required == 'no' || $required == '') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>
@@ -1124,12 +1152,49 @@ function umm_profile_field_editor($umm_edit_key=null){
     <option value="yes"';
     if($unique_value == 'yes') $output .= ' selected="selected"';
     $output .= '>'.__('Yes', UMM_SLUG).'</option>	
-    </select>
+    </select><br />
+    <strong style="vertical-align:top;">'.__('Roles', UMM_SLUG).':</strong> <select size="3" name="umm_roles[]" title="' . __('User roles allowed to view this field.', UMM_SLUG) . '" multiple="multiple">
+	<option value="all"';
+    if(in_array('all', $roles) || empty($roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('All', UMM_SLUG).'</option>
+    <option value="administrator"';
+    if(in_array('administrator', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Administrator', UMM_SLUG).'</option>
+    <option value="editor"';
+    if(in_array('editor', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Editor', UMM_SLUG).'</option>
+    <option value="author"';
+    if(in_array('author', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Author', UMM_SLUG).'</option>
+    <option value="contributor"';
+    if(in_array('contributor', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Contributor', UMM_SLUG).'</option>
+    <option value="subscriber"';
+    if(in_array('subscriber', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Subscriber', UMM_SLUG).'</option>
+    <option value="visitor"';
+    if(in_array('visitor', $roles)) $output .= ' selected="selected"';
+    $output .= '>'.__('Visitor/Register', UMM_SLUG).'</option>
+    </select>  
     </div>';
     
     $hidden = ($type == 'select' || $type == 'radio' || $type == 'checkbox_group') ? '' : ' hidden';
     
+    $multi_hidden = ($type == 'select') ? '' : ' hidden';
+    
     $output .= '
+    <div class="umm-select-multi-options' . $multi_hidden . ' umm-profile-field-options">
+    <strong>'.__('Allow Multiple Selections', UMM_SLUG).':</strong> <select size="1" name="umm_allow_multi" title="' . __('Allow the user to select multiple items.', UMM_SLUG) . '">
+	<option value="yes"';
+    if($allow_multi == 'yes') $output .= ' selected="selected"';
+    $output .= '>'.__('Yes', UMM_SLUG).'</option>
+    <option value="no"';
+    if($allow_multi == 'no' || $allow_multi == '') $output .= ' selected="selected"';
+    $output .= '>'.__('No', UMM_SLUG).'</option>	
+    </select><br />
+    <strong>'.__('Size', UMM_SLUG).':</strong> <input title="' . __('The number of options to display for multi-select menus.', UMM_SLUG) . '" type="number" name="umm_multi_size" min="1" value="' . $size . '">
+    </div>
+    
     <div class="umm-select-options' . $hidden . ' umm-profile-field-options">
     <h3>'.__('Options', UMM_SLUG).'</h3>
     <ul class="umm-select-options-table">
@@ -1144,6 +1209,99 @@ $output .= '</ul>
     </div>
     </div>';   
     return $output;
+}
+
+function umm_query_shortcode($atts, $content){
+    global $wpdb;
+    $query = (!isset($atts['query'])) ? false : $atts['query'];
+    $query_type = (!isset($atts['type'])) ? 'select' : $atts['type'];
+    $where = (!isset($atts['where'])) ? ' WHERE users.ID=usermeta.user_id' : ' WHERE users.ID=usermeta.user_id and ' . $atts['where'];
+    $before_result = (!isset($atts['before_result'])) ? '<section class="umm-query-result">' : $atts['before_result'];
+    $after_result = (!isset($atts['after_result'])) ? '</section>' : $atts['after_result'];
+    $before_item = (!isset($atts['before_item'])) ? '<ul class="umm-query-user">' : $atts['before_item'];
+    $after_item = (!isset($atts['after_item'])) ? '</ul>' : $atts['after_item'];
+    $item = (!isset($atts['item'])) ? '<li class="umm-query-item"><strong>%k:</strong> %v</li>' : $atts['item'];
+    $key_format = (!isset($atts['key_format'])) ? 'ucwords' : $atts['key_format'];
+    $value_format = (!isset($atts['value_format'])) ? 'none' : $atts['value_format'];
+    $list = (!isset($atts['list'])) ? false : explode(',', $atts['list']);
+    $labels = (!isset($atts['labels'])) ? '' : explode(',', $atts['labels']);
+    $output = '';
+    $error = false;
+    
+    if(!$query):
+       $query = "SELECT usermeta.*, users.* FROM " . $wpdb->usermeta . " usermeta, " . $wpdb->users . " users" . $where;
+       if($data = $wpdb->get_results($query) === FALSE):
+          $error = true;
+       endif;
+       
+    else:
+       
+       switch ($query_type):
+          case 'insert':
+          if($data = $wpdb->insert($query) === FALSE):
+             $error = true;
+          endif;          
+          break;
+          
+          case 'update':
+          if($data = $wpdb->update($query) === FALSE):
+             $error = true;
+          endif;
+          break;
+          
+          case 'delete':
+          if($data = $wpdb->delete($query) === FALSE):
+             $error = true;
+          endif;
+          break;
+          
+          default:
+          // select
+          if($data = $wpdb->get_results($wpdb->prepare($query)) === FALSE):
+             $error = true;
+          endif;
+       endswitch;
+        
+    endif;
+    
+    if($error):
+       $output = __('An error occurred. The query failed.', UMM_SLUG);
+    else:
+       if(empty($data) || !$data || !is_array($data)):
+          $output = __('Query successful. No results to display.', UMM_SLUG);
+       else:
+          $output .= $before_result;
+          foreach($data as $d):
+             $output .= $before_item;
+             $x = 0;
+             
+             if(!$list):
+                $list = array();
+                foreach($d as $key => $value):
+                   array_push($list, $key);
+                endforeach;
+             endif;
+             foreach($list as $key):
+                $k = trim($key);
+                $formatted_key = umm_format_text(str_replace('_', ' ', $k), $key_format);
+                $formatted_value = umm_format_text($d->$k, $value_format);
+                $i = str_replace('%v', $formatted_value, $item);
+                if(isset($labels[$x]) && !empty($labels[$x])):
+                   $output .= str_replace('%k', $labels[$x], $i);
+                else:
+                   $output .= str_replace('%k', $formatted_key, $i);
+                endif;
+                $x++;
+             endforeach;
+             $output .= $after_item;
+          endforeach;
+       $output .= $after_result;
+       endif;
+    endif; // $error
+    
+    $content = do_shortcode($output);
+    
+    return $content;
 }
 
 function umm_random_str($number_of_digits = 1, $type = 3){
@@ -1275,9 +1433,21 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
 <table class="form-table umm-custom-fields">
    <tbody>' : stripslashes(htmlspecialchars_decode($umm_settings['html_before_' . $mode]));
     $output .= $html_before;
-
+ 
+    $current_user = wp_get_current_user();
+    
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
-    if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes') || ($show_fields && array_key_exists($profile_field_name, $umm_data))):
+    $user_can_view = false;
+    if(isset($profile_field_settings['roles']) && is_array($profile_field_settings['roles'])):
+       foreach($profile_field_settings['roles'] as $role):
+          if((is_array($current_user->caps) && array_key_exists($role, $current_user->caps)) || (empty($current_user->caps) && $role == 'visitor') || $role == 'all'):
+            $user_can_view = true; 
+          endif;
+       endforeach;    
+    else:
+       $user_can_view = true;
+    endif;
+    if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes' && $user_can_view) || ($show_fields && array_key_exists($profile_field_name, $umm_data) && $user_can_view)):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
       $v = get_user_meta($the_user, $profile_field_name, true);
@@ -1369,16 +1539,19 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             break;
             
             case 'select':
-            $field_html .= '<select name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
+            $multi = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? '[]' : '';
+            $multiple = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? ' multiple="multiple"' : '';
+            $size = (!isset($profile_field_settings['size']) || $profile_field_settings['size'] < 1) ? ' size="1"' : ' size="' . $profile_field_settings['size'] . '"';
+            $field_html .= '<select name="' . $profile_field_name . $multi . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ">\n";
+            $field_html .= $multiple . $size . ">\n";
             foreach($profile_field_settings['options'] as $option => $option_settings):
             if(!empty($option_settings['label'])):
             $field_html .= '<option value="' . stripslashes($option_settings['value']) . '"';
-              if($option_settings['value'] == $value) $field_html .= ' selected="selected"';
+              if((!is_array($value) && $option_settings['value'] == $value) || (is_array($value) && in_array($option_settings['value'], $value))) $field_html .= ' selected="selected"';
             $field_html .= '>'.stripslashes($option_settings['label']).'</option>
             ';
             endif;
@@ -1606,8 +1779,8 @@ function umm_update_profile_fields($user_id=false){
     if($user_id) $the_user = $user_id;
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
        foreach($saved_profile_fields as $field_name => $field_settings):
-         if(isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name]) && $field_settings['type'] == 'checkbox_group'):
-            // This is a checkbox group array
+         if((isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name])) && ($field_settings['type'] == 'checkbox_group' || ($field_settings['type'] == 'select' && (isset($field_settings['allow_multi']) && $field_settings['allow_multi'] == 'yes')))):
+            // This is a checkbox group array or multi-select menu
             $field_value = array();
             $x = 0;
             foreach($field_settings['options'] as $option => $option_settings):
@@ -1651,6 +1824,10 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
                                        'required' => $_POST['umm_profile_field_required'],
                                        'allow_tags' => $_POST['umm_allow_tags'],
                                        'add_to_profile' => $_POST['umm_add_to_profile'],
+                                       'allow_multi' => $_POST['umm_allow_multi'],
+                                       'size' => $_POST['umm_multi_size'],
+                                       'roles' => $_POST['umm_roles'],
+                                       // TODO: 'category' => $_POST['umm_category'],
                                        'options' => $options);                   
        // add or update field
        $saved_profile_fields[$meta_key] = $new_profile_field_data;
@@ -2022,7 +2199,7 @@ function umm_usermeta_shortcode($atts, $content) {
           if(array_key_exists($field_name, $umm_data)):
              $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
              if($posted_value != ""):
-                $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+                $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
              else:
                 $val = "";
              endif;
@@ -2061,12 +2238,12 @@ function umm_usermeta_shortcode($atts, $content) {
              if(array_key_exists($field_name, $umm_data)):
                 $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
                 if($posted_value != "" && !is_array($posted_value)):
-                   $val = (is_numeric($posted_value)) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+                   $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
                 elseif(is_array($posted_value)):
                    // This is a checkbox group
                    $val = array();
                    foreach($posted_value  as $key => $value):
-                      $save_value = (is_numeric($value)) ? sprintf("%d", $value) : sprintf("%s", $value);
+                      $save_value = (is_numeric($value) && floor($value) == $value) ? sprintf("%d", $value) : sprintf("%s", $value);
                       $val[$key] = $save_value;
                    endforeach;
                 else:
@@ -2230,6 +2407,7 @@ add_action('wp_ajax_umm_switch_action','umm_switch_action');
 
 add_shortcode('usermeta', 'umm_usermeta_shortcode');
 add_shortcode('useraccess', 'umm_useraccess_shortcode');
+add_shortcode('ummquery', 'umm_query_shortcode');
 
 add_filter('contextual_help', 'umm_help', 10, 3);
 add_filter('registration_errors', 'umm_validate_registration_fields', 10, 3);

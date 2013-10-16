@@ -322,9 +322,15 @@
             break;
                        
             case 'radio':
-            case 'select':
             case 'checkbox_group':
             $(".umm-input-options").show('slow');
+            $(".umm-select-options").show('slow');
+            $(".umm-remove-option:first").hide();
+            break;
+            
+            case 'select':
+            $(".umm-input-options").show('slow');
+            $(".umm-select-multi-options").show('slow');
             $(".umm-select-options").show('slow');
             $(".umm-remove-option:first").hide();
             break;
@@ -355,9 +361,15 @@
             break;
                       
             case 'radio':
-            case 'select':
             case 'checkbox_group':
             $(".umm-input-options").show('slow');
+            $(".umm-select-options").show('slow');
+            $(".umm-remove-option:first").hide();
+            break;
+            
+            case 'select':
+            $(".umm-input-options").show('slow');
+            $(".umm-select-multi-options").show('slow');
             $(".umm-select-options").show('slow');
             $(".umm-remove-option:first").hide();
             break;

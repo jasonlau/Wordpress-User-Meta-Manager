@@ -9,6 +9,7 @@
 if(!defined("UMM_PATH")) die();
 
 function umm_help($contextual_help, $screen_id, $screen) {
+    global $wpdb;
     if($screen->id != 'users_page_user-meta-manager')
     return;
     $umm_settings = umm_get_option('settings');
@@ -241,7 +242,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
 </tr>
 <tr class="alternate">
 	<th>' . __('Required', UMM_SLUG) . '</th>
-	<td>' . __('Adds the HTML5 <a title="W3Schools HTML5 Required Attribute Reference" href="http://www.w3schools.com/html5/att_input_required.asp" target="_blank">required</a> attribute to the field. Some older browsers may not support this. Not recommended for use with <em>Radio Button Group</em>.', UMM_SLUG) . '</td>
+	<td>' . __('Adds the HTML5 <a title="W3Schools HTML5 Required Attribute Reference" href="http://www.w3schools.com/html5/att_input_required.asp" target="_blank">required</a> attribute to the field. Some older browsers may not support this. Not recommended for use with <em>Radio Button Group</em> or <em>Checkbox Group</em>.', UMM_SLUG) . '</td>
 </tr>
 <tr>
 	<th>' . __('Allow Tags', UMM_SLUG) . '</th>
@@ -249,11 +250,23 @@ function umm_help($contextual_help, $screen_id, $screen) {
 </tr>
 <tr class="alternate">
 	<th>' . __('Add To Profile', UMM_SLUG) . '</th>
-	<td>' . __('Appends this field to the user profile editor. Otherwise, the field can still be displayed using the form short code. (See <em>Short Codes</em>)', UMM_SLUG) . '</td>
+	<td>' . __('Appends this field to the user profile editor, registration, and administrative screens. Otherwise, the field can still be displayed using the form short code. (See <em>Short Codes</em>)', UMM_SLUG) . '</td>
 </tr>
-<tr class="alternate">
+<tr>
 	<th>' . __('Unique Value', UMM_SLUG) . '</th>
 	<td>' . __('Require users to input a unique value. A user cannot enter the same value as another user.', UMM_SLUG) . '</td>
+</tr>
+<tr class="alternate">
+	<th>' . __('Roles', UMM_SLUG) . '</th>
+	<td>' . __('Select which user roles can view this field. Either select <em>All</em> for all roles or select multiple and specific roles.', UMM_SLUG) . '</td>
+</tr>
+<tr>
+	<th>' . __('Allow Multiple Selections', UMM_SLUG) . '</th>
+	<td>' . __('For Select Menus only. Make this field accept multiple selections.', UMM_SLUG) . '</td>
+</tr>
+<tr class="alternate">
+	<th>' . __('Size', UMM_SLUG) . '</th>
+	<td>' . __('For Select Menus only. The number of options visible to the user. Overflow will scroll.', UMM_SLUG) . '</td>
 </tr>
 <tr>
 	<th>' . __('Options - Label', UMM_SLUG) . '</th>
@@ -286,8 +299,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
     array(
         __('Short Codes', UMM_SLUG),
         '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
-        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.<br /><br />
-        <strong>Display a single meta key, or core user data for a particular user:</strong>
+        <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.</p>
+    <h2>Display User Meta Data</h2>
+    <p><strong>Display a single meta key, or core user data for a particular user:</strong>
     <pre>[usermeta key="meta key" user="user id"]</pre><br />
     Additionally, the following core user data can also be used instead of a meta key: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
     <br /><br />
@@ -302,9 +316,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <br />
     <strong>Display multiple meta keys for a particular user:</strong>
     <pre>[usermeta keys="key1, key2, key3" user="user id"]</pre><br />
-    Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.
-    <br /><br />
-    <strong>Restrict access to content based on meta key and value:</strong>
+    Additionally, the following core user data can also be used: ID, user_login, user_nicename, user_email, user_url, user_registered, display_name.</p>
+    <h2>Restrict User Access To Content</h2>
+    <p><strong>Restrict access to content based on meta key and value:</strong>
     <pre>[useraccess key="meta key" value="meta value" message="You do not have permission to view this content."]Restricted content.[/useraccess]</pre>
     Allowed users will have a matching meta value.<br /><br /><br />
     <strong>Restrict access to content based on user ID:</strong>
@@ -322,8 +336,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
     JSON formatting -
     <pre>{"meta_key":"meta_value", "meta_key":"meta_value", "meta_key":"meta_value"}</pre>
     Additionally, you could repeat the same meta key multiple times.
-    <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre><br /><br />
-    <strong>Display a form in a Post or Page:</strong><br />
+    <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre></p>
+    <h2>User Meta Forms</h2>
+    <p><strong>Display a form in a Post or Page:</strong><br />
     Display a form which allows members to update meta data. The updated data is saved and optionally emailed to a set address. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. Use the <strong>Form Short Code Builder</strong> tab on the left to easily generate the short code.
     <pre>[usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"]</pre>
     <strong>Form Short Code Attributes</strong><br />
@@ -338,14 +353,33 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <li><strong>email_from:</strong> (Used with email_to) An email address as the sender.</li>
     <li><strong>subject:</strong> (Used with email_to) An email subject.</li>
     <li><strong>message:</strong> (Required with email_to) A message to send in the email. <strong>\n</strong> = line break. <strong>%s</strong> = contents of the form submission. <strong>Important:</strong> You must add <strong>%s</strong> where you want the form submission results displayed in the message.</li>
+</ul></p>
+<h2>Query The Database</h2>
+You can query the wp_users and wp_usermeta tables and display results in a Post or Page with the <strong>ummquery</strong> short code.
+<pre>[ummquery before_result="&lt;section class=\'umm-query-result\'&gt;" after_result="&lt;/section&gt;" before_item="&lt;ul class=\'umm-query-user\'&gt;" after_item="&lt;/ul>" item="&lt;li class=\'umm-query-item\'&gt;&lt;strong&gt;%k&lt;/strong&gt;: %v&lt;/li&gt;" key_format="ucwords" value_format="ucfirst" list="user_nicename, meta_value" where="usermeta.meta_key=\'my_custom_key\'"]</pre>
+The above example produces a list of users, displaying the meta keys listed in the <strong><em>list</em></strong> attribute.<br /><br />
+<strong>ummquery Short Code Attributes</strong><br />
+    <ul>
+    <!-- TODO
+<li><strong>query:</strong> (Optional) Run a basic database query. Omit this to automatically join the ' . $wpdb->users . ' and  ' . $wpdb->usermeta . ' table in a query.</li>
+-->
+	<li><strong>before_result:</strong> HTML to display before the set of results.</li>
+    <li><strong>after_result:</strong> HTML to display after the set of results.</li>
+    <li><strong>before_item:</strong> HTML to display before each item.</li>
+    <li><strong>after_item:</strong> HTML to display after each item.</li>
+    <li><strong>item:</strong> HTML to display with each item. <strong>%k</strong> is replaced by the item key. <strong>%v</strong> is replaced by the item value.</li>
+    <li><strong>key_format:</strong> (Optional) Strips the underscore from and automatically formats the item key. <strong>lc</strong> = All lowercase. <strong>uc</strong> = All uppercase. <strong>ucfirst</strong> = Uppercase the first word. <strong>ucwords</strong> = Uppercase the first letter in each word.
+    For example, using key_format <strong>ucwords</strong> on the key <strong>my_custom_key</strong> would produce <strong>My Custom Key</strong>.</li>
+    <li><strong>list:</strong> A comma-delimited list of database keys to list in the results.</li>
+    <li><strong>where:</strong> (Optional) MySQL WHERE statement. Prefix wp_usermeta columns with <strong><em>usermeta</em></strong> and wp_users columns with <strong><em>users</em></strong>.
+    <pre>where="usermeta.meta_key=\'my_custom_key\' AND usermeta.meta_value=\'abc123\' AND users.user_url!=\'\'"</pre>
+    </li>
 </ul>
-<br />
-<strong>Nested Short Codes:</strong><br />
-You can use short codes inside of short codes to restrict access to meta data forms.
+<h2>Nested Short Codes</h2>
+<p>You can use short codes inside of short codes to restrict access to meta data forms.
 <pre>[useraccess users="1 22 301" message="You do not have permission to view this content."][usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"][/useraccess]</pre>
-In the above example, only members with a matching user id can access the meta data form.
-<br /><br />
-    </p>', UMM_SLUG)
+In the above example, only members with a matching user id can access the meta data form.</p>
+    ', UMM_SLUG)
     ),
     
     array(
