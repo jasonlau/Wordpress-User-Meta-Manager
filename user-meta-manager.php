@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: http://websitedev.biz
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.6
+ * Version: 3.0.7
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.6');
+define('UMM_VERSION', '3.0.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -41,7 +41,7 @@ include(UMM_PATH . 'includes/umm-contextual-help.php');
 
 function umm_add_custom_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['u'];
+    $user_id = $_REQUEST['umm_user'];
     $output = umm_fyi('<p>'.__('Insert a key and default value in the fields below.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
@@ -52,7 +52,7 @@ function umm_add_custom_meta(){
     $output .= umm_profile_field_editor();
     $output .= '<br />
     <input id="umm_add_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_custom_meta&u=0" />
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="add" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_custom_meta&umm_user=0" />
     </form>  
     ';
     print $output;
@@ -119,7 +119,7 @@ function umm_add_user_fields(){
 
 function umm_add_user_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['u'];
+    $user_id = $_REQUEST['umm_user'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Adding Meta Data For %s', UMM_SLUG));
     $output .= umm_fyi('<p>'.__('Insert a meta key and default value and press <em>Submit</em>.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -129,7 +129,7 @@ function umm_add_user_meta(){
     <textarea cols="30" name="umm_meta_value[]" placeholder="'.__('Default Value', UMM_SLUG).'"></textarea>';
     $output .= '<br />
     <input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="add" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="add" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_user_meta&umm_user=' . $user_id . '" />
     </form>  
     ';   
     print $output;
@@ -154,7 +154,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : $_REQUEST['tofile'];
     $tofile = (empty($tofile)) ? $to_file : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
-    $back_button = umm_button("umm_backup_page&u=1", null, "umm-back-button");
+    $back_button = umm_button("umm_backup_page&umm_user=1", null, "umm-back-button");
     switch($mode){
         case "sql":
         $data = $wpdb->get_results("SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
@@ -257,11 +257,11 @@ function umm_backup_page(){
     $fields2 = umm_usermeta_keys_menu(true, true, true, 'csv', 'umm-csv-builder-keys', false);
     $output = umm_fyi('<p>'.__('Use the following links to backup and restore user meta data.', UMM_SLUG).'</p>');  
     $output .= '<div class="umm-backup-page-container">';
-    $output .= '<ul><li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;u=1" title="'.__('Backup', UMM_SLUG).'" class="umm-subpage">'.__('Backup', UMM_SLUG).'</a> <strong>'.__('Last Backup:', UMM_SLUG). '</strong> ' . $budate . '</li>';  
-    $output .= '<li><a href="#" data-subpage="' . UMM_AJAX . 'umm_restore_confirm&amp;u=1" title="'.__('Restore', UMM_SLUG).'" class="umm-subpage">'.__('Restore', UMM_SLUG).'</a></li>
-    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=sql&amp;u=1" title="'.__('Generate SQL', UMM_SLUG).'" class="umm-subpage">'.__('Generate SQL', UMM_SLUG).'</a></li>
-    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=php&amp;u=1" title="'.__('Generate PHP', UMM_SLUG).'" class="umm-subpage">'.__('Generate PHP', UMM_SLUG).'</a></li>
-    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=php&amp;tofile=yes&amp;u=1" title="'.__('Generate PHP Restoration File', UMM_SLUG).'" class="umm-subpage">'.__('Generate PHP Restoration File', UMM_SLUG).'</a></li>
+    $output .= '<ul><li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;umm_user=1" title="'.__('Backup', UMM_SLUG).'" class="umm-subpage">'.__('Backup', UMM_SLUG).'</a> <strong>'.__('Last Backup:', UMM_SLUG). '</strong> ' . $budate . '</li>';  
+    $output .= '<li><a href="#" data-subpage="' . UMM_AJAX . 'umm_restore_confirm&amp;umm_user=1" title="'.__('Restore', UMM_SLUG).'" class="umm-subpage">'.__('Restore', UMM_SLUG).'</a></li>
+    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=sql&amp;umm_user=1" title="'.__('Generate SQL', UMM_SLUG).'" class="umm-subpage">'.__('Generate SQL', UMM_SLUG).'</a></li>
+    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=php&amp;umm_user=1" title="'.__('Generate PHP', UMM_SLUG).'" class="umm-subpage">'.__('Generate PHP', UMM_SLUG).'</a></li>
+    <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_backup&amp;mode=php&amp;tofile=yes&amp;umm_user=1" title="'.__('Generate PHP Restoration File', UMM_SLUG).'" class="umm-subpage">'.__('Generate PHP Restoration File', UMM_SLUG).'</a></li>
     <li><a href="#" data-subpage="' . UMM_AJAX . 'umm_delete_backup_files" title="'.__('Delete All Backup Files', UMM_SLUG).'" class="umm-subpage">'.__('Delete All Backup Files', UMM_SLUG).'</a></li>
     </ul>';
     $output .= '<div class="umm-csv-builder"><strong class="umm-csv-builder">'.__('Generate CSV', UMM_SLUG).'</strong>'
@@ -346,7 +346,7 @@ function umm_deactivate(){
 }
 
 function umm_delete_backup_files(){
-    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', UMM_SLUG), "umm-back-button");
+    $back_button = umm_button("umm_backup_page&umm_user=1", __('<< Back', UMM_SLUG), "umm-back-button");
     if(!empty($_REQUEST['umm_confirm_backups_delete'])):
     $backups_folder = WP_PLUGIN_DIR . "/user-meta-manager/backups";    
     chmod($backups_folder, 0755);
@@ -402,7 +402,7 @@ function umm_delete_custom_meta(){
        endforeach; 
     endif;   
 
-    $output .= '</select> <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Submit', UMM_SLUG).'" /><input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_custom_meta&u=0" />
+    $output .= '</select> <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Submit', UMM_SLUG).'" /><input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_custom_meta&umm_user=0" />
     </form>  
     ';
     else:
@@ -411,9 +411,9 @@ function umm_delete_custom_meta(){
     <p class="umm-warning">
     '.__('Are you sure you want to delete that item?', UMM_SLUG).'<br />
     <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Yes', UMM_SLUG).'" /> ';
-    $output .= umm_button("umm_delete_custom_meta&u=0", __('Cancel', UMM_SLUG));
+    $output .= umm_button("umm_delete_custom_meta&umm_user=0", __('Cancel', UMM_SLUG));
     $output .= '<input name="umm_edit_key" type="hidden" value="' . $delete_key . '" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_custom_meta&u=0" /><input name="sub_mode" type="hidden" value="confirm" /></p>
+    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="delete" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_custom_meta&umm_user=0" /><input name="sub_mode" type="hidden" value="confirm" /></p>
     </form>';   
     endif;
     else: // !empty($data)
@@ -443,7 +443,7 @@ function umm_delete_single_key($key){
 
 function umm_delete_user_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['u'];
+    $user_id = $_REQUEST['umm_user'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Deleting Meta Data For %s', UMM_SLUG));
     
@@ -468,7 +468,7 @@ function umm_delete_user_meta(){
 	<option value="true">'.__('Yes', UMM_SLUG).'</option>
 </select><br />
     <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&umm_user=' . $user_id . '" />
     </form>  
     ';
     else:
@@ -477,9 +477,9 @@ function umm_delete_user_meta(){
     <p class="umm-warning">
     '.__('Are you sure you want to delete that item?', UMM_SLUG).'<br />
     <input id="umm_delete_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary button-delete" type="submit" value="'.__('Yes', UMM_SLUG).'" /> ';
-    $output .= umm_button("umm_delete_user_meta&u=" . $user_id, __('Cancel', UMM_SLUG));
+    $output .= umm_button("umm_delete_user_meta&umm_user=" . $user_id, __('Cancel', UMM_SLUG));
     $output .= '<input name="umm_edit_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
-    <input name="mode" type="hidden" value="delete" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&u=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
+    <input name="mode" type="hidden" value="delete" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&umm_user=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
     </form>';
     endif;
     print $output;
@@ -568,7 +568,7 @@ function umm_edit_custom_meta(){
         endforeach;    
             $output .= '</table>';
             $output .= '<input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" /> 
+    <input name="mode" type="hidden" value="" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" /> 
     </form> 
     ';
     
@@ -595,7 +595,7 @@ function umm_edit_custom_meta(){
     $output .= '<strong>' . __('Update Value For All Current Users', UMM_SLUG) . ':</strong><br /><input type="checkbox" name="all_users" value="1" title="' . __('Check the box to update the value for all current users. Leave blank to update the value for future registrations only.', UMM_SLUG) . '" /> ' . __('Yes', UMM_SLUG) . ''; 
     $output .= umm_profile_field_editor($edit_key);
     $output .= '<input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Update', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" />
+    <input name="mode" type="hidden" value="edit" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" />
     </form>  
     ';
     endif; // edit_key
@@ -607,13 +607,13 @@ function umm_edit_custom_meta(){
 function umm_edit_user_meta(){  
     global $wpdb;
     $profile_fields = umm_get_option('profile_fields');
-    $user_id = $_REQUEST['u'];
+    $user_id = $_REQUEST['umm_user'];
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     sort($data);
     $umm_settings = umm_get_option('settings');
     $shortcut_editing = empty($umm_settings['shortcut_editing']) ? 'no' : $umm_settings['shortcut_editing'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Editing Meta Data For %s', UMM_SLUG));
-    $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_edit_custom_meta&u=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', UMM_SLUG).'</p>');
+    $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_edit_custom_meta&umm_user=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', UMM_SLUG).'</p>');
     $edit_key = (isset($_REQUEST['umm_edit_key']) && !empty($_REQUEST['umm_edit_key'])) ? $_REQUEST['umm_edit_key'] : '';
     if($edit_key == "" && $shortcut_editing == 'no'):
         $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -626,7 +626,7 @@ function umm_edit_user_meta(){
         endforeach;    
             $output .= '</select> 
     <input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="edit" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_user_meta&umm_user=' . $user_id . '" />
     </form> 
     ';
         
@@ -663,7 +663,7 @@ function umm_edit_user_meta(){
       $output .= '<input name="umm_edit_key" type="hidden" value="all" />';
     endif;
     $output .= '<input id="umm_update_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Update', UMM_SLUG).'" />
-    <input name="mode" type="hidden" value="edit" /><input name="u" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_user_meta&u=' . $user_id . '" />
+    <input name="mode" type="hidden" value="edit" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_user_meta&umm_user=' . $user_id . '" />
     </form>  
     ';
     endif;
@@ -1378,7 +1378,7 @@ function umm_restore(){
     global $wpdb, $table_prefix;
     $wpdb->query("DELETE FROM " . $wpdb->usermeta);
     $wpdb->query("INSERT INTO " . $wpdb->usermeta . "  SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
-    $back_button = umm_button("umm_backup_page&u=1", __('<< Back', UMM_SLUG), "umm-back-button");
+    $back_button = umm_button("umm_backup_page&umm_user=1", __('<< Back', UMM_SLUG), "umm-back-button");
     $output = $back_button . '<p class="umm-message">' . __("User meta data successfully restored.", UMM_SLUG) . "</p>";
     print $output;
     exit;
@@ -1389,8 +1389,8 @@ function umm_restore_confirm(){
     if($budate == ""): 
       $output = __('No backup data to restore!', UMM_SLUG);
     else:
-      $back_button = umm_button("umm_backup_page&u=1", __('<< Back', UMM_SLUG), "umm-back-button");
-      $output = $back_button . '<p class="umm-warning"><strong>' . __('Restore all user meta data to the backup version?', UMM_SLUG) . '</strong><br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_restore&u=1" title="' . __('Restore', UMM_SLUG) . '" class="umm-subpage">' . __('Yes', UMM_SLUG) . '</a> <a href="#" data-subpage="' . UMM_AJAX . 'umm_backup_page&u=1" title="' . __('Cancel', UMM_SLUG) . '" class="umm-subpage">' . __('Cancel', UMM_SLUG) . '</a></p>';
+      $back_button = umm_button("umm_backup_page&umm_user=1", __('<< Back', UMM_SLUG), "umm-back-button");
+      $output = $back_button . '<p class="umm-warning"><strong>' . __('Restore all user meta data to the backup version?', UMM_SLUG) . '</strong><br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_restore&umm_user=1" title="' . __('Restore', UMM_SLUG) . '" class="umm-subpage">' . __('Yes', UMM_SLUG) . '</a> <a href="#" data-subpage="' . UMM_AJAX . 'umm_backup_page&umm_user=1" title="' . __('Cancel', UMM_SLUG) . '" class="umm-subpage">' . __('Cancel', UMM_SLUG) . '</a></p>';
     endif;
     print $output;
     exit;
@@ -1850,7 +1850,7 @@ function umm_update_user_meta(){
     global $wpdb;    
     $mode = $_POST['mode'];
     $all_users = (isset($_REQUEST['all_users']) && !empty($_POST['all_users'])) ? true : false;
-    $u = (isset($_REQUEST['u']) && !empty($_REQUEST['u'])) ? $_REQUEST['u'] : 'all';
+    $u = (isset($_REQUEST['umm_user']) && !empty($_REQUEST['umm_user'])) ? $_REQUEST['umm_user'] : 'all';
     $meta_value = !empty($_POST['umm_meta_value']) ? $_POST['umm_meta_value'] : array();
     $meta_key = (!empty($_POST['umm_meta_key'])) ? $_POST['umm_meta_key'] : array();
     $meta_key_exists = false;
@@ -2010,7 +2010,7 @@ function umm_update_user_meta(){
             endif; // array_key_exists
          endif; // array_key_exists            
         else: // all_users
-            delete_user_meta($_POST['u'], $_POST['umm_edit_key']);
+            delete_user_meta($_POST['umm_user'], $_POST['umm_edit_key']);
         endif;
         $output = __('Meta data successfully deleted.', UMM_SLUG);
         else:

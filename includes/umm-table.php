@@ -36,9 +36,9 @@ class UMM_UI extends WP_List_Table {
     
     function column_user_login($item){
         $actions = array(
-        'add_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Add Meta', 'user-meta-manager') . '</a>',$item->ID),
-            'edit_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_user_meta&u=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Edit Meta', 'user-meta-manager') . '</a>',$item->ID),
-            'delete_user_meta' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_user_meta&u=%s" title="'.__('Delete User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Delete Meta', 'user-meta-manager') . '</a>',$item->ID)
+        'add_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_user_meta&umm_user=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Add Meta', 'user-meta-manager') . '</a>',$item->ID),
+            'edit_meta_data' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_user_meta&umm_user=%s" title="'.__('Edit User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Edit Meta', 'user-meta-manager') . '</a>',$item->ID),
+            'delete_user_meta' => sprintf('<a href="#" data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_user_meta&umm_user=%s" title="'.__('Delete User Meta', 'user-meta-manager').'" class="umm-subpage umm-table-link">' . __('Delete Meta', 'user-meta-manager') . '</a>',$item->ID)
         );
 
         return sprintf('%1$s %2$s',
@@ -157,11 +157,11 @@ class UMM_UI extends WP_List_Table {
   <div class="umm-nav-wrapper">
     <div class="umm-nav">
       <button title="<?php _e('Home', 'user-meta-manager'); ?>" class="umm-homelink umm-subpage-go umm-active-link button-primary umm-nav-button"><?php _e('Home', 'user-meta-manager'); ?></button><!-- .umm-homelink .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Add Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Add Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Edit Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_custom_meta&amp;width=600&amp;u=1" title="<?php _e('Delete Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Delete Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_columns&width=600&height=500&amp;u=1" title="<?php _e('Edit Columns', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Columns', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
-      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_backup_page&width=600&height=500&amp;u=1" title="<?php _e('Backup &amp; Restore', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Backup &amp; Restore', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_add_custom_meta&amp;width=600&amp;umm_user=1" title="<?php _e('Add Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Add Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_custom_meta&amp;width=600&amp;umm_user=1" title="<?php _e('Edit Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_delete_custom_meta&amp;width=600&amp;umm_user=1" title="<?php _e('Delete Custom Meta', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Delete Custom Meta', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_edit_columns&width=600&height=500&amp;umm_user=1" title="<?php _e('Edit Columns', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Edit Columns', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
+      <button data-subpage="admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=umm_backup_page&width=600&height=500&amp;umm_user=1" title="<?php _e('Backup &amp; Restore', 'user-meta-manager'); ?>" class="umm-subpage-go button-secondary umm-nav-button"><?php _e('Backup &amp; Restore', 'user-meta-manager'); ?></button><!-- .umm-nav-button -->
     </div><!-- .umm-nav -->
   </div><!-- .umm-nav-wrapper -->
   <div class="umm-message hidden"></div><!-- .umm-message -->    
