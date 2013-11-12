@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name: User Meta Manager
- * Plugin URI: http://websitedev.biz
+ * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.7
+ * Version: 3.0.9
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.7');
+define('UMM_VERSION', '3.0.9');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -41,7 +41,6 @@ include(UMM_PATH . 'includes/umm-contextual-help.php');
 
 function umm_add_custom_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['umm_user'];
     $output = umm_fyi('<p>'.__('Insert a key and default value in the fields below.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
@@ -60,16 +59,16 @@ function umm_add_custom_meta(){
 }
 
 function umm_add_registration_fields(){
-    $content = umm_show_profile_fields(false, false, 'register');
+    $content = umm_show_profile_fields(false, false, 'register', 'registerform');
     echo $content;
 }
 
 function umm_add_user_fields(){
-    $umm_content = umm_show_profile_fields(false, false, 'adduser');
+    $umm_content = umm_show_profile_fields(false, false, 'adduser', 'createuser');
     $umm_output = '<div id="umm-add-user-fields" style="display:none;">' . $umm_content . '</div>
     <script type="text/javascript">
        jQuery(function($){
-	      $("form#createuser p.submit").before($("div#umm-add-user-fields").html());
+	      $("form#createuser p.submit").before(\'<input type="hidden" name="umm_form" value="createuser" />\' + $("div#umm-add-user-fields").html());
           var is_duplicate = function(obj, key, value){
             var request = $.ajax({
                 url: \'admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_is_duplicate&echo=true&umm_key=\' + key + \'&umm_value=\' + value,
@@ -1396,7 +1395,7 @@ function umm_restore_confirm(){
     exit;
 }
 
-function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $debug=false){
+function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $form_id=false, $debug=false){
    global $current_user;
    $umm_options = umm_get_option();
    $umm_settings = $umm_options['settings'];
@@ -1427,6 +1426,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
        $new_array[$profile_field_name] = $profile_fields[$profile_field_name];
       endforeach;
       $profile_fields = $new_array;   
+    endif;
+    
+    if(!$form_id):
+       $form_id = 'your-profile';
     endif;
     
     $html_before = (!isset($umm_settings['html_before_' . $mode]) || empty($umm_settings['html_before_' . $mode])) ? '<h3 class="umm-custom-fields">[section-title]</h3>
@@ -1477,7 +1480,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= " />";
+            $field_html .= " form=\"" . $form_id . "\" />";
             break;
             
             case 'textarea':
@@ -1486,7 +1489,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= '>' . $value . '</textarea>' . "\n";
+            $field_html .= ' form="' . $form_id . '">' . $value . '</textarea>' . "\n";
             break;
             
             case 'checkbox':                    
@@ -1498,7 +1501,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
               $field_html .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' />' . "\n";
+            $field_html .= ' form="' . $form_id . '" />' . "\n";
             break;
             
             case 'checkbox_group':
@@ -1513,7 +1516,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
               $field_html .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' />' . stripslashes($option_settings['label']) . "</span> \n";
+            $field_html .= ' form="' . $form_id . '" />' . stripslashes($option_settings['label']) . "</span> \n";
             endif;
             $x++;
             endforeach;            
@@ -1532,7 +1535,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
               $field_html .= ' checked="checked"';
               if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-              $field_html .= ' /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
+              $field_html .= ' form="' . $form_id . '" /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
               endif;
               $i++;
             endforeach; 
@@ -1547,7 +1550,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= $multiple . $size . ">\n";
+            $field_html .= $multiple . $size . ' form="' . $form_id . '">' . "\n";
             foreach($profile_field_settings['options'] as $option => $option_settings):
             if(!empty($option_settings['label'])):
             $field_html .= '<option value="' . stripslashes($option_settings['value']) . '"';
@@ -1556,7 +1559,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             ';
             endif;
             endforeach; 
-            $field_html .= "<select>\n";           
+            $field_html .= "</select>\n";           
             break;
             
             default:
@@ -1565,7 +1568,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= " />";
+            $field_html .= ' form="' . $form_id . '" />';
         }
     
     if(!empty($profile_field_settings['after'])):
@@ -1584,8 +1587,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $de
     endforeach;
     $html_after = (!isset($umm_settings['html_after_' . $mode]) || empty($umm_settings['html_after_' . $mode])) ? '</tbody>
 </table>' : stripslashes(htmlspecialchars_decode($umm_settings['html_after_' . $mode]));
-    $umm_nonce = wp_nonce_field('umm_wp_nonce', 'umm_nonce');
-    $output .= $html_after . "\n" . $umm_nonce . "\n"; 
+    $umm_nonce = wp_create_nonce('umm_wp_nonce');
+    $output .= $html_after . "\n" . '<input type="hidden" name="umm_nonce" value="' . $umm_nonce . '" form="' . $form_id . '" />' . "\n"; 
     endif; // !empty($profile_fields)
 
     if(isset($output) && !empty($output)):
@@ -2131,6 +2134,7 @@ function umm_usermeta_shortcode($atts, $content) {
     $user = !empty($atts['user']) ? $atts['user'] : $current_user->ID;
     $core = array('ID', 'user_login', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'display_name');
     $content = '';
+    $form = false;
     if(isset($atts['key']) && !empty($atts['key'])):
        // Display a single key
        $key = $atts['key'];
@@ -2173,7 +2177,9 @@ function umm_usermeta_shortcode($atts, $content) {
        $subject = (!empty($atts['subject'])) ? $atts['subject'] : false;
        $message = (!empty($atts['message'])) ? $atts['message'] : false;
        $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
-       $content = '<form action="#" method="post" class="' . $class .  '">';
+       $form_id = 'umm_form_' . rand(100,1000);
+       $content = '<form id="' . $form_id . '" action="#" method="post" class="' . $class .  '">
+       <input type="hidden" name="umm_form" value="' . $form_id . '" />';
        $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
        $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
        $umm_error = false;
@@ -2196,13 +2202,25 @@ function umm_usermeta_shortcode($atts, $content) {
     */
     
        foreach($show_fields as $field => $field_name):
-          if(array_key_exists($field_name, $umm_data)):
-             $posted_value = addslashes(htmlspecialchars(trim($_POST[$field_name])));
-             if($posted_value != ""):
-                $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
-             else:
-                $val = "";
-             endif;
+          if(array_key_exists($field_name, $umm_data) && isset($_POST[$field_name])):
+             $form = $_POST['umm_form'];
+             
+             $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
+                if($posted_value != "" && !is_array($posted_value)):
+                   $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
+                elseif(is_array($posted_value)):
+                   // This is a checkbox group
+                   $val = array();
+                   foreach($posted_value  as $key => $value):
+                      $save_value = (is_numeric($value) && floor($value) == $value) ? sprintf("%d", $value) : sprintf("%s", $value);
+                      $val[$key] = $save_value;
+                   endforeach;
+                else:
+                   $val = "";
+                endif;
+                $val = (is_array($val)) ? implode(', ', $val) : $val;
+             
+             
              if($profile_fields[$field_name]['unique'] == 'yes' && $val != ""):
                 if(umm_is_duplicate($field_name, $val, $current_user->ID)):
                    $umm_error = true;
@@ -2235,7 +2253,7 @@ function umm_usermeta_shortcode($atts, $content) {
     
        if(!$umm_error):
           foreach($show_fields as $field => $field_name):
-             if(array_key_exists($field_name, $umm_data)):
+             if(array_key_exists($field_name, $umm_data) && isset($_POST[$field_name])):
                 $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
                 if($posted_value != "" && !is_array($posted_value)):
                    $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
@@ -2279,9 +2297,9 @@ function umm_usermeta_shortcode($atts, $content) {
     
     */
     
-    if($umm_error):
+    if($umm_error && $form == $_POST['umm_form']):
        $content .= '<div class="umm-error-message">' . $error . '</div>' . "\n";
-    else:
+    elseif($form == $_POST['umm_form']):
        $content .= '<div class="umm-success-message">' . $success . '</div>' . "\n";
     endif;
     
@@ -2294,16 +2312,16 @@ function umm_usermeta_shortcode($atts, $content) {
     
     */
     
-    $content .= umm_show_profile_fields(false, $atts['fields'], 'shortcode') . '
-    <button type="submit">' . $submit .  '</button>' . "\n";
+    $content .= umm_show_profile_fields(false, $atts['fields'], 'shortcode', $form_id) . '
+    <button type="submit" form="' . $form_id . '">' . $submit .  '</button>' . "\n";
  
     foreach($vars as $var):
       $v = split('=', $var);
       if(!empty($v[0]))
-      $content .=  '<input type="hidden" name="' . $v[0] . '" value="' . $v[1] . '" />' . "\n";  
+      $content .=  '<input type="hidden" name="' . $v[0] . '" value="' . $v[1] . '" form="' . $form_id . '" />' . "\n";  
     endforeach;
-    $content .=  '<input type="hidden" name="umm_update_usermeta" value="' . $umm_user . '" />
-    <input type="hidden" name="' . $bot_field . '" value="" /></form>' . "\n";
+    $content .=  '<input type="hidden" name="umm_update_usermeta" value="' . $umm_user . '" form="' . $form_id . '" />
+    <input type="hidden" name="' . $bot_field . '" value="" form="' . $form_id . '" /></form>' . "\n";
     endif;
     
     $content = do_shortcode($content);
