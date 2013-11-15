@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.0.9
+ * Version: 3.1.0
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.0.9');
+define('UMM_VERSION', '3.1.0');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -2134,7 +2134,7 @@ function umm_usermeta_shortcode($atts, $content) {
     $user = !empty($atts['user']) ? $atts['user'] : $current_user->ID;
     $core = array('ID', 'user_login', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'display_name');
     $content = '';
-    $form = false;
+    $form = (isset($_POST['umm_form'])) ? $_POST['umm_form'] : false;
     if(isset($atts['key']) && !empty($atts['key'])):
        // Display a single key
        $key = $atts['key'];
@@ -2177,10 +2177,12 @@ function umm_usermeta_shortcode($atts, $content) {
        $subject = (!empty($atts['subject'])) ? $atts['subject'] : false;
        $message = (!empty($atts['message'])) ? $atts['message'] : false;
        $vars = (!empty($atts['vars'])) ? explode('&', htmlspecialchars_decode($atts['vars'])) : array();
+       $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
        $form_id = 'umm_form_' . rand(100,1000);
        $content = '<form id="' . $form_id . '" action="#" method="post" class="' . $class .  '">
+       <input type="hidden" name="umm_fields" value="' . $atts['fields'] . '" />
        <input type="hidden" name="umm_form" value="' . $form_id . '" />';
-       $show_fields = (!empty($atts['fields'])) ?  explode(",", str_replace(", ", ",", $atts['fields'])) : array();
+       
        $umm_user = md5($_POST["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]);
        $umm_error = false;
        $output = "";
@@ -2192,8 +2194,8 @@ function umm_usermeta_shortcode($atts, $content) {
     
        */
     
-       if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && $_POST[$bot_field] == ''):
-       if(wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta']):
+       if((isset($_POST['umm_update_usermeta']) && isset($_POST['umm_nonce'])) && ($_POST[$bot_field] == '') && (isset($_POST['umm_fields']) && $_POST['umm_fields'] == $atts['fields'])):
+       if((wp_verify_nonce($_POST['umm_nonce'], 'umm_wp_nonce') && $umm_user == $_POST['umm_update_usermeta'])):
       
     /*
     
@@ -2202,10 +2204,9 @@ function umm_usermeta_shortcode($atts, $content) {
     */
     
        foreach($show_fields as $field => $field_name):
-          if(array_key_exists($field_name, $umm_data) && isset($_POST[$field_name])):
-             $form = $_POST['umm_form'];
-             
-             $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
+          if(array_key_exists($field_name, $umm_data)):
+             $posted_field = (isset($_POST[$field_name])) ? $_POST[$field_name] : '';
+             $posted_value = (!is_array($posted_field)) ? addslashes(htmlspecialchars(trim($posted_field))) : $posted_field;
                 if($posted_value != "" && !is_array($posted_value)):
                    $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
                 elseif(is_array($posted_value)):
@@ -2241,7 +2242,7 @@ function umm_usermeta_shortcode($atts, $content) {
              endif;
           else:
           $umm_error = true;
-          $error .= __('An error occurred. The submission was terminated. ', UMM_SLUG);
+          $error .= __('Error: ' . $field_name . ' is not a valid custom field. The submission was terminated. ', UMM_SLUG);
           endif;
        endforeach;
     
@@ -2253,8 +2254,9 @@ function umm_usermeta_shortcode($atts, $content) {
     
        if(!$umm_error):
           foreach($show_fields as $field => $field_name):
-             if(array_key_exists($field_name, $umm_data) && isset($_POST[$field_name])):
-                $posted_value = (!is_array($_POST[$field_name])) ? addslashes(htmlspecialchars(trim($_POST[$field_name]))) : $_POST[$field_name];
+             if(array_key_exists($field_name, $umm_data)):
+                $posted_field = (isset($_POST[$field_name])) ? $_POST[$field_name] : '';
+                $posted_value = (!is_array($posted_field)) ? addslashes(htmlspecialchars(trim($posted_field))) : $posted_field;
                 if($posted_value != "" && !is_array($posted_value)):
                    $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
                 elseif(is_array($posted_value)):
