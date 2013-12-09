@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.0
+ * Version: 3.1.1
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.0');
+define('UMM_VERSION', '3.1.1');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -647,7 +647,7 @@ function umm_edit_user_meta(){
     foreach($data as $d):
     $class = ($x%2) ? ' class="alternate"' : '';
     if($d->meta_key == $edit_key || $shortcut_editing == 'yes'):
-        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="umm_meta_key[]" type="hidden" value="' . $d->meta_key . '" /><textarea name="umm_meta_value[]" value="" cols="40" rows="1">' . htmlspecialchars($d->meta_value) . '</textarea>';
+        $output .= '<tr' . $class . '><td width="25%">' . $d->meta_key . '</td><td><input name="umm_meta_key[]" type="hidden" value="' . $d->meta_key . '" /><textarea name="umm_meta_value[]" value="" cols="40" rows="1">' . stripslashes(htmlspecialchars($d->meta_value)) . '</textarea>';
         if(array_key_exists($d->meta_key, $profile_fields) && $profile_fields[$d->meta_key]['unique'] == 'yes'):
            $output .= ' <small>*'.__('Unique Value Required', UMM_SLUG).'</small>';
                
@@ -1229,45 +1229,39 @@ function umm_query_shortcode($atts, $content){
     
     if(!$query):
        $query = "SELECT usermeta.*, users.* FROM " . $wpdb->usermeta . " usermeta, " . $wpdb->users . " users" . $where;
-       if($data = $wpdb->get_results($query) === FALSE):
-          $error = true;
-       endif;
-       
+       $data = $wpdb->get_results($query);
+             
     else:
        
        switch ($query_type):
           case 'insert':
-          if($data = $wpdb->insert($query) === FALSE):
-             $error = true;
-          endif;          
+          $data = $wpdb->insert($query);         
           break;
           
           case 'update':
-          if($data = $wpdb->update($query) === FALSE):
-             $error = true;
-          endif;
+          $data = $wpdb->update($query);
           break;
           
           case 'delete':
-          if($data = $wpdb->delete($query) === FALSE):
-             $error = true;
-          endif;
+          $data = $wpdb->delete($query);
           break;
           
           default:
           // select
-          if($data = $wpdb->get_results($wpdb->prepare($query)) === FALSE):
-             $error = true;
-          endif;
+          $data = $wpdb->get_results($wpdb->prepare($query));
        endswitch;
         
+    endif;
+    
+    if($data === FALSE):
+       $error = true;
     endif;
     
     if($error):
        $output = __('An error occurred. The query failed.', UMM_SLUG);
     else:
        if(empty($data) || !$data || !is_array($data)):
-          $output = __('Query successful. No results to display.', UMM_SLUG);
+          $output = __('Query successful. No results to display. ', UMM_SLUG) . $query;
        else:
           $output .= $before_result;
           foreach($data as $d):
@@ -1283,7 +1277,7 @@ function umm_query_shortcode($atts, $content){
              foreach($list as $key):
                 $k = trim($key);
                 $formatted_key = umm_format_text(str_replace('_', ' ', $k), $key_format);
-                $formatted_value = umm_format_text($d->$k, $value_format);
+                $formatted_value = umm_format_text(stripslashes($d->$k), $value_format);
                 $i = str_replace('%v', $formatted_value, $item);
                 if(isset($labels[$x]) && !empty($labels[$x])):
                    $output .= str_replace('%k', $labels[$x], $i);

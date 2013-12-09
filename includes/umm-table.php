@@ -31,7 +31,7 @@ class UMM_UI extends WP_List_Table {
     }
 
     function column_default($item, $column_name){
-        return $item->$column_name;
+        return stripslashes($item->$column_name);
     }
     
     function column_user_login($item){
