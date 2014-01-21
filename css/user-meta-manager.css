@@ -1,6 +1,6 @@
 /**
  * @author Jason Lau
- * @copyright 2012
+ * @copyright 2012+
  * @package user-meta-manager
  */
  
@@ -10,6 +10,15 @@
     padding: 20px;
     border: 1px solid #808080;  
     box-shadow: 5px 5px 5px #DFDFDF;
+}
+
+.umm-icon{
+    width: 60px;
+    height: 60px;
+}
+
+.icon16.umm-icon:before {
+    font: 400 60px/1.1 dashicons;
 }
 
 .umm-slogan{

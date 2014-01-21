@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.1
+ * Version: 3.1.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.1');
+define('UMM_VERSION', '3.1.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -670,6 +670,20 @@ function umm_edit_user_meta(){
     exit;
 }
 
+function umm_first_run(){
+    global $wpdb, $table_prefix;
+    $umm_data = get_option('user_meta_manager_data');
+    $settings = umm_get_option('settings');
+    // Backup clone wp_usermeta table
+    $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
+    $wpdb->query("CREATE TABLE " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
+    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
+    $settings['first_run'] = 'no';
+    umm_update_option('settings', $settings);
+    $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
+    update_option('user_meta_manager_data', $umm_data);
+    }
+
 function umm_format_text($text, $format){
     switch ($format):
        case 'ucfirst':
@@ -763,16 +777,12 @@ function umm_get_users(){
 }
 
 function umm_install(){
-    global $wpdb, $table_prefix;
     $default_html_before = '<h3 class="umm-custom-fields">[section-title]</h3>
 <table class="form-table umm-custom-fields">
    <tbody>';
    $default_html_during = '<tr><th>[label]</th><td>[field]</td></tr>';
    $default_html_after = '</tbody>
 </table>';
-    $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
-    $wpdb->query("CREATE TABLE " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
-    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
     $umm_data = array();
     $original_data = get_option('user_meta_manager_data');
     
@@ -881,8 +891,6 @@ function umm_install(){
       $umm_data['sort_order'] = $original_data['sort_order'];
    endif;
    
-   $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
-   
    /* 
    
    v2.2.9+ Upgrades 
@@ -935,7 +943,6 @@ function umm_install(){
    // v2.2.9 adds version number to settings array
    $umm_data['settings']['version'] = UMM_VERSION;
    update_option('user_meta_manager_data', $umm_data);
-   umm_backup('php', 'yes', false);
 }
 
 function umm_is_duplicate($key=false, $value=false, $user=false, $echo=false){
@@ -1776,6 +1783,10 @@ function umm_update_profile_fields($user_id=false){
     if($user_id) $the_user = $user_id;
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
        foreach($saved_profile_fields as $field_name => $field_settings):
+       
+         // Check if user role matches
+         if(umm_user_can_edit_field($field_settings)):
+       
          if((isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name])) && ($field_settings['type'] == 'checkbox_group' || ($field_settings['type'] == 'select' && (isset($field_settings['allow_multi']) && $field_settings['allow_multi'] == 'yes')))):
             // This is a checkbox group array or multi-select menu
             $field_value = array();
@@ -1790,6 +1801,8 @@ function umm_update_profile_fields($user_id=false){
          endif;      
              
          update_user_meta($the_user, $field_name, $field_value);
+         
+         endif; // $user_can_edit_field
        endforeach;
     endif;
 }
@@ -2072,6 +2085,21 @@ function umm_useraccess_shortcode($atts, $content) {
     $content = do_shortcode($content);
         
     return $content;         
+}
+
+function umm_user_can_edit_field($field_settings){
+    global $current_user;
+    $user_can_edit_field = false;
+    if(isset($field_settings['roles']) && is_array($field_settings['roles'])):
+        foreach($field_settings['roles'] as $role):
+            if((is_array($current_user->caps) && array_key_exists($role, $current_user->caps)) || (empty($current_user->caps) && $role == 'visitor') || $role == 'all'):
+                 $user_can_edit_field = true;
+            endif;
+        endforeach;
+    else:
+        $user_can_edit_field = true;
+    endif;
+    return $user_can_edit_field;
 }
 
 function umm_usermeta_data($criteria="ORDER BY umeta_id ASC"){
