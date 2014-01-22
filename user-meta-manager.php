@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.2
+ * Version: 3.1.3
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.2');
+define('UMM_VERSION', '3.1.3');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1605,6 +1605,122 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     endif;   
 }
 
+function umm_shortcode($atts, $content){
+    // This function can handle all of the shortcodes
+    global $current_user;
+    if(is_array($atts)):
+        $redirect = (isset($atts['redirect']) && !empty($atts['redirect'])) ? $atts['redirect'] : home_url($_SERVER['REQUEST_URI']);
+        $loading = (isset($atts['loading']) && !empty($atts['loading'])) ? $atts['loading'] : __('Loading Profile ...', UMM_SLUG);
+        $profile_link = (isset($atts['link']) && !empty($atts['link'])) ? $atts['link'] : home_url('/wp-admin/profile.php');
+        $login_form_args = array(
+            'echo' => false,
+            'redirect' => $redirect,
+            'form_id' => 'loginform',
+            'label_username' => __( 'Username' ),
+            'label_password' => __( 'Password' ),
+            'label_remember' => __( 'Remember Me' ),
+            'label_log_in' => __( 'Log In' ),
+            'id_username'  => 'user_login',
+            'id_password'  => 'user_pass',
+            'id_remember' => 'rememberme',
+            'id_submit' => 'wp-submit',
+            'remember' => true,
+            'value_username' => NULL,
+            'value_remember' => false
+            );
+        if(in_array('profile', $atts)):
+        if($current_user->ID > 0):
+            // Use jQuery to load the profile form
+            wp_enqueue_script('jquery');
+            $content .= '
+            <!-- User Meta Manager -->
+            <div class="umm-userprofile" style="display:none"></div>
+            <div class="umm-userprofile-loading">' . $loading . '</div>';
+            $content .= '<script type="text/javascript">
+	jQuery(function($){
+	   var fetch_profile = function(ele, page, obj, callback){
+	       $(ele).load(page + \' \' + obj, callback);
+       },
+       activate_form = function(){
+           ';
+           if(isset($atts['hide'])):
+            $content .= '$("' . $atts['hide'] . '").hide();';
+           endif;
+           $content .= '
+	       $(document).on("submit", "form#your-profile", function(event){
+	           event.preventDefault();
+               var original_val = $("form#your-profile input#submit").val();
+               $("form#your-profile input#submit").prop("disabled", true).val("' . __('Please Wait...', UMM_SLUG) . '");
+               $.post("' . $profile_link . '", $("form#your-profile").serialize(), function(data){
+                   var success = $(data).find("div.updated"),
+                   error = $(data).find("div.error");                  
+                   if(error.html()){
+                       $("p.submit").after(error);
+                       $("form#your-profile input#submit").val(original_val).prop("disabled", false);
+                       $("body").find("div.error").delay(5000).hide("slow", function(){});
+                   } else if(success.html()){
+                       $("p.submit").after(success);
+                       $("form#your-profile input#submit").val(original_val).prop("disabled", false);
+                       $("body").find("div.updated").delay(5000).hide("slow", function(){});
+                   } else {
+                    try{ console.log("' . __('An error occurred.', UMM_SLUG) . '"); }catch(e){}
+                   }
+                });
+            });
+            $("div.umm-userprofile-loading").fadeOut("slow");
+            $("div.umm-userprofile").fadeIn("slow");
+       };
+       fetch_profile("div.umm-userprofile", "' . $profile_link . '", "form#your-profile", activate_form);
+	});
+</script>
+<!-- /User Meta Manager -->
+';
+            $content = do_shortcode($content);
+    
+            return $content;  
+        else:
+            if(isset($atts['bounce']) && !empty($atts['bounce'])):
+               // Redirect with JS?
+               $content .= '<script type="text/javascript">
+            location.href="' . $atts['bounce'] . '";
+            </script>';
+            endif;
+            
+            $content .= wp_login_form($login_form_args);
+            $content = do_shortcode($content);
+            return $content;
+        endif;
+        endif;
+        
+        if(in_array('access', $atts)):
+            return umm_useraccess_shortcode($atts, $content);
+        endif;
+        
+        if(in_array('meta', $atts)):
+            return umm_usermeta_shortcode($atts, $content);
+        endif;
+        
+        if(in_array('query', $atts)):
+            return umm_query_shortcode($atts, $content);
+        endif;
+        
+        if(in_array('loginout', $atts)):
+            $content .= wp_loginout($redirect, false);
+            $content = do_shortcode($content);
+            return $content; 
+        endif;
+        
+        if(in_array('login', $atts)):            
+            $content .= wp_login_form($login_form_args);
+            $content = do_shortcode($content);
+            return $content;  
+        endif;
+    else:
+        return $content;
+    endif;
+    
+}
+
 function umm_shortcode_builder(){
     $fields = umm_get_profile_fields('select');
        $output = "<table class='umm-shortcode-builder widefat umm-rounded-corners'>
@@ -1796,7 +1912,7 @@ function umm_update_profile_fields($user_id=false){
                $x++;           
             endforeach;          
          else:
-            $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+            $field_value = (isset($_REQUEST[$field_name])) ? htmlspecialchars(trim($_REQUEST[$field_name])) : '';
             if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value); 
          endif;      
              
@@ -2228,7 +2344,7 @@ function umm_usermeta_shortcode($atts, $content) {
        foreach($show_fields as $field => $field_name):
           if(array_key_exists($field_name, $umm_data)):
              $posted_field = (isset($_POST[$field_name])) ? $_POST[$field_name] : '';
-             $posted_value = (!is_array($posted_field)) ? addslashes(htmlspecialchars(trim($posted_field))) : $posted_field;
+             $posted_value = (!is_array($posted_field)) ? htmlspecialchars(trim($posted_field)) : $posted_field;
                 if($posted_value != "" && !is_array($posted_value)):
                    $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
                 elseif(is_array($posted_value)):
@@ -2278,7 +2394,7 @@ function umm_usermeta_shortcode($atts, $content) {
           foreach($show_fields as $field => $field_name):
              if(array_key_exists($field_name, $umm_data)):
                 $posted_field = (isset($_POST[$field_name])) ? $_POST[$field_name] : '';
-                $posted_value = (!is_array($posted_field)) ? addslashes(htmlspecialchars(trim($posted_field))) : $posted_field;
+                $posted_value = (!is_array($posted_field)) ? htmlspecialchars(trim($posted_field)) : $posted_field;
                 if($posted_value != "" && !is_array($posted_value)):
                    $val = (is_numeric($posted_value) && floor($posted_value) == $posted_value) ? sprintf("%d", $posted_value) : sprintf("%s", $posted_value);
                 elseif(is_array($posted_value)):
@@ -2385,7 +2501,7 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
        foreach($saved_profile_fields as $field_name => $field_settings):      
-         $field_value = (isset($_REQUEST[$field_name])) ? addslashes(htmlspecialchars(trim($_REQUEST[$field_name]))) : '';
+         $field_value = (isset($_REQUEST[$field_name])) ? htmlspecialchars(trim($_REQUEST[$field_name])) : '';
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
          if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value)):
             $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
@@ -2450,6 +2566,7 @@ add_action('wp_ajax_umm_switch_action','umm_switch_action');
 add_shortcode('usermeta', 'umm_usermeta_shortcode');
 add_shortcode('useraccess', 'umm_useraccess_shortcode');
 add_shortcode('ummquery', 'umm_query_shortcode');
+add_shortcode('umm', 'umm_shortcode');
 
 add_filter('contextual_help', 'umm_help', 10, 3);
 add_filter('registration_errors', 'umm_validate_registration_fields', 10, 3);

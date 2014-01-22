@@ -2,7 +2,7 @@
 
 /**
  * @author Jason Lau
- * @copyright 2013
+ * @copyright 2013+
  * @package user-meta-manager
  */
  
@@ -110,7 +110,8 @@ function umm_help($contextual_help, $screen_id, $screen) {
 </tr>
 
 <tr class="alternate">
-	<td><strong>' . __('HTML Markup', UMM_SLUG) . '</strong><br />
+	<td><strong>' . __('HTML Markup', UMM_SLUG) . '</strong>
+    <p>Here you can customize the HTML markup User Meta Manager uses while displaying custom meta fields. Each of the following tabs controls the HTML markup for specific screens.</p>
     
     <div id="umm-tabs">
   <ul>
@@ -120,6 +121,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <li><a href="#umm-tabs-4">Add User</a></li>
   </ul>
   <div id="umm-tabs-1">
+  <p>User registration form markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
         <textarea class="umm-settings-textarea" name="html_before_register">' . stripslashes($umm_settings['html_before_register']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
@@ -128,6 +130,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <textarea class="umm-settings-textarea" name="html_after_register">' . stripslashes($umm_settings['html_after_register']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-2">
+  <p>Profile and Edit User forms markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
         <textarea class="umm-settings-textarea" name="html_before_profile">' . stripslashes($umm_settings['html_before_profile']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
@@ -136,6 +139,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <textarea class="umm-settings-textarea" name="html_after_profile">' . stripslashes($umm_settings['html_after_profile']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-3">
+  <p>Short Codes markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
         <textarea class="umm-settings-textarea" name="html_before_shortcode">' . stripslashes($umm_settings['html_before_shortcode']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
@@ -144,6 +148,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <textarea class="umm-settings-textarea" name="html_after_shortcode">' . stripslashes($umm_settings['html_after_shortcode']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-4">
+  <p>Add User form markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
         <textarea class="umm-settings-textarea" name="html_before_adduser">' . stripslashes($umm_settings['html_before_adduser']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
@@ -379,6 +384,35 @@ The above example produces a list of users, displaying the meta keys listed in t
 <p>You can use short codes inside of short codes to restrict access to meta data forms.
 <pre>[useraccess users="1 22 301" message="You do not have permission to view this content."][usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"][/useraccess]</pre>
 In the above example, only members with a matching user id can access the meta data form.</p>
+<h2>One Code To Rule Them All!</h2>
+<p>Version 3.1.3 adds the <strong>[umm]</strong> short code, which can replace any of the above short codes.</p> 
+<pre>[umm meta]</pre>
+The <strong>meta</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[usermeta]</strong> short code, and accepts the same arguments also.
+<pre>[umm access]</pre>
+The <strong>access</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[useraccess]</strong> short code, and accepts the same arguments also.
+<pre>[umm query]</pre>
+The <strong>query</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[ummquery]</strong> short code, and accepts the same arguments also.
+<p>Additionally, the <strong>[umm]</strong> short code will perform the following functions -</p> 
+<h3>Display User Profile Editor</h3>
+<p>The <strong>[umm]</strong> short code can be used to display the entire user profile editor anyplace a short code can be used.</p>
+<pre>[umm profile]</pre>
+<p>The above example displays the entire user profile editor.</p> 
+<p>Using the <strong>hide</strong> attribute, you can hide any part of the page. The hide attribute accepts any <a href="http://api.jquery.com/category/selectors/" target="_blank">selectors jQuery accepts</a>. You can list any number of objects to hide. The list must be comma-delimited.</p>
+<pre>[umm profile hide="h3:contains(\'Personal Options\'), table:contains(\'Admin Color Scheme\'), h3:contains(\'Name\'), table:contains(\'Username\'), h3:contains(\'Contact Info\'), table:contains(\'Website\'), tr:contains(\'Password\')"]</pre>
+<p>The example above hides several sections of the profile editor.</p>
+<p>If the user is not logged in, a login form will be displayed instead of the profile editor. The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login/logout.</p>
+ <pre>[umm profile redirect="http://homeurl"]</pre>
+ <p>Alternatively the <strong>bounce</strong> attribute can be used to send a visitor to a specific URL address. If the user is not logged in, JavaScript redirect the user to a different page.</p>
+ <pre>[umm profile bounce="http://homeurl"]</pre>
+<p><strong>Note:</strong> JavaScript is used to load and post the form. This may not work well for some themes.</p>
+<h3>Display A Login Form</h3>
+<pre>[umm login]</pre>
+The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login.
+<pre>[umm login redirect="http://homeurl"]</pre>
+<h3>Display A Login/Logout Link</h3>
+<pre>[umm loginout]</pre>
+The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login/logout.
+<pre>[umm loginout redirect="http://homeurl"]</pre>
     ', UMM_SLUG)
     ),
     
@@ -445,7 +479,9 @@ if(umm_value_is($meta_key_to_test, $string_to_match)){
     
     array(
         __('Donate', UMM_SLUG),
-        __( '<h2>Every Little-Bit Helps!</h2><p>Developing this plugin takes a lot of time, and as we all know, time equals money.</p>
+        __( '<h2>Every Little-Bit Helps!</h2>
+        <p>I have a confession - I\'ve never used <strong>User Meta Manager</strong>, except to test it during development. Honestly, I only developed <strong>User Meta Manager</strong> for other people to use and (hopefully) enjoy.</p>
+        <p>Developing this plugin takes a lot of time, and as we all know, time equals money.</p>
         <p>I\'ve given a lot to you, and perhaps you would like to return the favor with a modest donation?</p>
         <p>Use the following PayPal button to make a donation. Your donations help pay for past and future development of this plugin.</p>
         <p>Thanks in advance!</p>
