@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.4
+ * Version: 3.1.5
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.4');
+define('UMM_VERSION', '3.1.5');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1671,7 +1671,7 @@ function umm_shortcode($atts, $content){
                        $("form#your-profile input#submit").val(original_val).prop("disabled", false);
                        $("body").find("div.updated").delay(5000).hide("slow", function(){});
                    } else {
-                    try{ console.log("' . __('An error occurred.', UMM_SLUG) . '"); }catch(e){}
+                    try{ console.log("' . __('An error occurred. ', UMM_SLUG) . '"); }catch(e){}
                    }
                 });
             });
@@ -2505,6 +2505,22 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
     return $output; 
 }
 
+function umm_validate_profile_fields($errors, $update, $user) {
+    $error = false;
+	$saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
+    if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
+       foreach($saved_profile_fields as $field_name => $field_settings):      
+         $field_value = (isset($_REQUEST[$field_name])) ? htmlspecialchars(trim($_REQUEST[$field_name])) : '';
+         if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
+         if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value, $user->ID)):
+            $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
+            $error = true;
+         endif;   
+       endforeach;
+    endif;
+    return $errors;
+}
+
 function umm_validate_registration_fields($errors, $sanitized_user_login, $user_email) {
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
@@ -2559,14 +2575,9 @@ add_action('admin_init', 'umm_admin_init');
 add_action('user_register', 'umm_default_keys');
 add_action('createuser', 'umm_default_keys');
 add_action('register_form', 'umm_add_registration_fields');
-
-if(isset($_REQUEST['user_id'])):
-  add_action('edit_user_profile', 'umm_show_profile_fields');
-else:
-  add_action('show_user_profile', 'umm_show_profile_fields');  
-endif;
-
-add_action('profile_update', 'umm_update_profile_fields');
+add_action('edit_user_profile', 'umm_show_profile_fields');
+add_action('show_user_profile', 'umm_show_profile_fields');
+add_action('profile_update', 'umm_update_profile_fields', 10, 2);
 
 // All ajax admin-ajax calls pipe through umm_switch_action()
 add_action('wp_ajax_umm_switch_action','umm_switch_action');
@@ -2578,6 +2589,7 @@ add_shortcode('umm', 'umm_shortcode');
 
 add_filter('contextual_help', 'umm_help', 10, 3);
 add_filter('registration_errors', 'umm_validate_registration_fields', 10, 3);
+add_filter('user_profile_update_errors', 'umm_validate_profile_fields', 10, 3);
 
 register_activation_hook(__FILE__, 'umm_install');
 register_deactivation_hook(__FILE__, 'umm_deactivate');

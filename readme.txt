@@ -54,6 +54,9 @@ Yes I do. Check my website at JasonLau.biz.
 
 == Changelog ==
 
+= 3.1.5 =
+Fixed a bug in the Unique Value feature.
+
 = 3.1.4 =
 Made some changes to the UI. A pro extension is now available to extend this plugin. Due to some complaints I received, the free version is now limited to 100 users.
 
@@ -409,3 +412,6 @@ Added some new short codes for displaying the user profile editor, login form, a
 
 = 3.1.4 =
 Made some changes to the UI. A pro extension is now available to extend this plugin. Due to some complaints I received, the free version is now limited to 100 users.
+
+= 3.1.5 =
+Fixed a bug in the Unique Value feature.

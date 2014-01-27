@@ -568,9 +568,5 @@
     });
     
     $('#umm-tabs').tabs();
-    
-    if($("div.credits").html() != ''){
-        $("span#footer-thankyou").append($("div.credits").html());
-    }
        
 }); // jQuery
