@@ -4,13 +4,6 @@
  * @package user-meta-manager
  */
  
- .umm-wrapper{
-    position: relative;
-    margin: 10px 15px 10px 5px;
-    padding: 20px;
-    border: 1px solid #808080;  
-    box-shadow: 5px 5px 5px #DFDFDF;
-}
 
 .umm-icon{
     width: 60px;
@@ -30,7 +23,6 @@
 .umm-nav{
     padding: 5px 20px;
     margin: 10px 0px 5px 0px;
-    background-color: #F5F5F5;
 }
 
 .umm-message, .umm-update-settings-result{
@@ -85,10 +77,6 @@ input:focus, textarea:focus, button:hover, input[type=submit]:hover{
 
 .umm-secondary-wrapper{
     width: 100% !important;   
-}
-
-.umm-subpage-wrapper{
-    background-color: #F5F5F5;  
 }
 
 .umm-nav button{
@@ -186,15 +174,6 @@ div#contextual-help-link-wrap{
 .umm-fyi
 {
     padding: 10px 10px 10px 10px;
-}
-
-.umm-wrapper,
-.umm-subpage form,
-.umm-backup-page-container,
-#umm-home,
-.umm-fyi
-{
-   background-color: #FFFFFF; 
 }
 
 code,
@@ -312,4 +291,12 @@ strong.umm-method{
 
 .umm-select-option-row textarea{
     margin-top: 2px;
+}
+
+.umm-credits{
+    
+}
+
+.umm-subpage-loading{
+    position: absolute;
 }

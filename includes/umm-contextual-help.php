@@ -13,6 +13,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     if($screen->id != 'users_page_user-meta-manager')
     return;
     $umm_settings = umm_get_option('settings');
+    $pro = umm_get_option('pro');
     $retain_data = $umm_settings['retain_data'];
     switch($retain_data){
         case 'no':
@@ -24,6 +25,8 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $retain_yes = ' selected="selected"';
         $retain_no = '';
     }
+    
+    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>UMM_MAX_USERS) ? UMM_MAX_USERS : $umm_settings['max_users'];
     
     $shortcut_editing = $umm_settings['shortcut_editing'];
     switch($shortcut_editing){
@@ -63,11 +66,23 @@ function umm_help($contextual_help, $screen_id, $screen) {
     $bot_field = $umm_settings['bot_field'];
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes', 'bot_field' => 'umm_forbots');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
+    
+    $pro_message = (isset($pro) && $pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG); 
+    
     $tabs = array(array(
-        __('Introduction', UMM_SLUG),
-        $backup_notice . 
-        '<h2>' . __('What is <em>User Meta</em>?', UMM_SLUG) . '</h2>
-        <p>' . __('<em>User Meta</em> is user-specific data which is stored in the <em>wp_usermeta</em> database table. This data is stored by WordPress and various and sundry plugins, and can consist of anything from profile information to membership levels.', UMM_SLUG) . '</p>'
+        __('Donate/Extend', UMM_SLUG),
+        __( '<h2>Every Little Bit Helps!</h2>
+        <p>Developing this plugin takes a lot of time, and as we all know, time equals money.</p>
+        <p>I\'ve given a lot to you, and perhaps you would like to return the favor with a modest donation?</p>
+        <p>Use the following PayPal button to make a donation. Your donations help pay for past and future development of this plugin.</p>
+        <p>Thanks in advance!</p>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="X5Y2R65973XZ6">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form><h2>User Meta Manager Pro Extension</h2><p>User Meta Manager Pro is a premium extension for the User Meta Manager plugin. User Meta Manager Pro extends the capabilities of this plugin.</p>
+        <p><a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Get the Pro Plugin!</a></p>', UMM_SLUG)
     ),
     
     array(
@@ -83,14 +98,24 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<option value="' . __('no', UMM_SLUG) . '"' . $retain_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Select <em>No</em> to remove all traces of this plugin from the database when uninstalled. All saved custom meta data will be lost.', UMM_SLUG) . '</span></td>
 </tr>
+
 <tr class="alternate">
+	<td>
+        <strong>' . __('Maximum Number Of Users To Query', UMM_SLUG) . '</strong><br />
+        <input type="number" name="max_users" min="1" max="' . UMM_MAX_USERS . '" value="' . $max_users . '"><br />
+        <span>' . __('This is the maximum number of users this plugin will handle.', UMM_SLUG) . $pro_message . '</span>
+        </td>
+</tr>
+
+<tr>
 	<td><strong>' . __('Meta Editor Shortcut', UMM_SLUG) . '</strong><br />
         <select size="1" name="shortcut_editing">
 	<option value="' . __('yes', UMM_SLUG) . '"' . $shortcut_editing_yes . '>' . __('Yes', UMM_SLUG) . '</option>
 	<option value="' . __('no', UMM_SLUG) . '"' . $shortcut_editing_no . '>' . __('No', UMM_SLUG) . '</option>
 </select><br /><span>' . __('Skips step 1 in the single-member meta data editor, and displays the entire list of meta keys and values for the selected member. Otherwise, you will have to select a single key to edit.', UMM_SLUG) . '</span></td>
 </tr>
-<tr>
+
+<tr class="alternate">
 	<td><strong>' . __('Duplicate Meta Key Check Override', UMM_SLUG) . '</strong><br />
         <select size="1" name="duplicate_check_override">
 	<option value="' . __('yes', UMM_SLUG) . '"' . $duplicate_check_override_yes . '>' . __('Yes', UMM_SLUG) . '</option>
@@ -99,17 +124,17 @@ function umm_help($contextual_help, $screen_id, $screen) {
 </tr>
 
 
-<tr class="alternate">
+<tr>
 	<td><strong>' . __('Bot Field Name', UMM_SLUG) . '</strong><br />
         <input type="text" name="bot_field" value="' . $bot_field . '"><br /><span>' . __('Name of the hidden form field used to test for spam-bots.', UMM_SLUG) . '</span></td>
 </tr>
 
-<tr>
+<tr class="alternate">
 	<td><strong>' . __('Custom Field Section Title', UMM_SLUG) . '</strong><br />
         <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the <em>HTML Markup</em> options below.', UMM_SLUG) . '</span></td>
 </tr>
 
-<tr class="alternate">
+<tr>
 	<td><strong>' . __('HTML Markup', UMM_SLUG) . '</strong>
     <p>Here you can customize the HTML markup User Meta Manager uses while displaying custom meta fields. Each of the following tabs controls the HTML markup for specific screens.</p>
     
@@ -186,7 +211,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     ),
     
     array(
-        __('Home', UMM_SLUG),
+        __('The Home Screen', UMM_SLUG),
         $backup_notice . 
         '<h2>' . __( 'The <em>Home</em> Screen', UMM_SLUG) . '</h2><p>' . __( 'The User Meta Manager <em>Home</em> screen displays a list of your website\'s users from which you may select a single user to edit.', UMM_SLUG) . '</p>
         <p>' . __( 'Locate from the list which User you wish to work with, place your mouse over that item, and the following links will appear as your mouse moves over each user -', UMM_SLUG) . '</p>
@@ -402,14 +427,18 @@ The <strong>query</strong> attribute causes the <strong>[umm]</strong> short cod
 <p>The example above hides several sections of the profile editor.</p>
 <p>If the user is not logged in, a login form will be displayed instead of the profile editor. The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login/logout.</p>
  <pre>[umm profile redirect="http://homeurl"]</pre>
- <p>Alternatively the <strong>bounce</strong> attribute can be used to send a visitor to a specific URL address. If the user is not logged in, JavaScript redirect the user to a different page.</p>
+ <p>Alternatively the <strong>bounce</strong> attribute can be used to send a visitor to a specific URL address. If the user is not logged in, JavaScript redirects the user to a different page.</p>
  <pre>[umm profile bounce="http://homeurl"]</pre>
+ <p>The <strong>loading</strong> attribute controls the message that is displayed while the profile editor is loading.</p>
+ <pre>[umm profile loading="Loading Profile ..."]</pre>
+ <p>Alternatively, the <strong>loading</strong> attribute accepts HTML, so an image can be displayed instead of text.</p>
+ <pre>[umm profile loading="&lt;img src=\'loading.gif\' /&gt;"]</pre>
 <p><strong>Note:</strong> JavaScript is used to load and post the form. This may not work well for some themes.</p>
 <h3>Display A Login Form</h3>
 <pre>[umm login]</pre>
 The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login.
 <pre>[umm login redirect="http://homeurl"]</pre>
-<h3>Display A Login/Logout Link</h3>
+<h3>Display A Login And Logout Link</h3>
 <pre>[umm loginout]</pre>
 The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login/logout.
 <pre>[umm loginout redirect="http://homeurl"]</pre>
@@ -465,33 +494,12 @@ if(umm_value_is($meta_key_to_test, $string_to_match)){
     array(
         __('License', UMM_SLUG),
         __( '<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty expressed or implied. Always backup your database before making changes.</p>
-        <p><strong>License:</strong><br/>&copy;2012 <a href="http://websitedev.biz" target="_blank">http://websitedev.biz</a> <a href="http://jasonlau.biz" target="_blank">http://jasonlau.biz</a></p>
+        <p><strong>License:</strong><br/>&copy;2012+ <a href="http://jasonlau.biz" target="_blank">http://jasonlau.biz</a></p>
         <p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</p>
         <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
         <p>See the GNU General Public License for more details.<br /><a href="http://www.gnu.org/licenses/gpl.html" target="_blank">http://www.gnu.org/licenses/gpl.html</a></p>', UMM_SLUG)
-    ),
-    
-    array(
-        __('Contribute Code', UMM_SLUG),
-        __( '<h2>You Can Help Make This Plugin Perfect!</h2><p>If you are a talented WordPress developer, who would like to contribute to the developement of this plugin, go to <a href="https://github.com/jasonlau/Wordpress-User-Meta-Manager" target="_blank">https://github.com/jasonlau/Wordpress-User-Meta-Manager</a>. There you will find the development package and <a href="https://github.com/" target="_blank">GitHub</a> repository.</p>
-        <p>Additionally, you can contact me at <a href="http://jasonlau.biz/home/contact-me" target="_blank">http://jasonlau.biz/home/contact-me</a>.</p>', UMM_SLUG)
-    ),
-    
-    array(
-        __('Donate', UMM_SLUG),
-        __( '<h2>Every Little-Bit Helps!</h2>
-        <p>I have a confession - I\'ve never used <strong>User Meta Manager</strong>, except to test it during development. Honestly, I only developed <strong>User Meta Manager</strong> for other people to use and (hopefully) enjoy.</p>
-        <p>Developing this plugin takes a lot of time, and as we all know, time equals money.</p>
-        <p>I\'ve given a lot to you, and perhaps you would like to return the favor with a modest donation?</p>
-        <p>Use the following PayPal button to make a donation. Your donations help pay for past and future development of this plugin.</p>
-        <p>Thanks in advance!</p>
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="X5Y2R65973XZ6">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>', UMM_SLUG)
     )
+        
     );
     
     $x = 1;

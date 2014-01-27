@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.3
+ * Version: 3.1.4
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -12,7 +12,7 @@
  * 
  * Always backup your database before making changes.
  * 
- * Copyright 2012-2013 http://jasonlau.biz http://americanbully.pro
+ * Copyright 2012+ http://jasonlau.biz
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,11 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.3');
+define('UMM_VERSION', '3.1.4');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
+define("UMM_MAX_USERS", 100);
 // error_reporting(E_ALL);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
@@ -671,18 +672,9 @@ function umm_edit_user_meta(){
 }
 
 function umm_first_run(){
-    global $wpdb, $table_prefix;
-    $umm_data = get_option('user_meta_manager_data');
-    $settings = umm_get_option('settings');
-    // Backup clone wp_usermeta table
-    $wpdb->query("DROP TABLE IF EXISTS " . $table_prefix . "umm_usermeta_backup");
-    $wpdb->query("CREATE TABLE " . $table_prefix . "umm_usermeta_backup (umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT '0', meta_key varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, meta_value longtext COLLATE utf8_unicode_ci, PRIMARY KEY (umeta_id), KEY user_id (user_id), KEY meta_key (meta_key))");
-    $wpdb->query("INSERT INTO " . $table_prefix . "umm_usermeta_backup SELECT * FROM " . $wpdb->usermeta);
     $settings['first_run'] = 'no';
     umm_update_option('settings', $settings);
-    $umm_data['backup_date'] = date("M d, Y") . ' ' . date("g:i A");
-    update_option('user_meta_manager_data', $umm_data);
-    }
+}
 
 function umm_format_text($text, $format){
     switch ($format):
@@ -758,16 +750,19 @@ function umm_get_profile_fields($output_type='array'){
     }   
 }
 
-function umm_get_users(){
-    global $wpdb, $current_site;
-    $query = "SELECT * FROM " . $wpdb->users;       
+function umm_get_users($query=false){
+    global $wpdb;
+    $umm_settings = umm_get_option('settings');
+    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>UMM_MAX_USERS) ? UMM_MAX_USERS : $umm_settings['max_users'];
+    if(!$query):
+       $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $max_users;
+    endif;     
     $data = $wpdb->get_results($query);   
     if(defined('MULTISITE') && MULTISITE):
+       $blog_id = get_current_blog_id();
        $user_data = array();
-       foreach($data as $d):
-          $user_blogs = get_blogs_of_user($d->ID);
-          $blog_id = get_current_blog_id();
-          if(array_key_exists($blog_id, $user_blogs)):
+       foreach($data as $d):         
+          if(is_user_member_of_blog($d->ID, $blog_id)):
              array_push($user_data, $d);
           endif;
        endforeach;
@@ -854,7 +849,8 @@ function umm_install(){
    if(!array_key_exists('settings', $original_data)):
       $umm_data['settings'] = get_option('umm_settings');
       if(!is_array($umm_data['settings'])):
-         $umm_data['settings'] = array('retain_data' => 'yes', 
+         $umm_data['settings'] = array('retain_data' => 'yes',
+                                       'max_users' => UMM_MAX_USERS,
                                        'first_run' => 'yes',
                                        'shortcut_editing' => 'no',
                                        'section_title' => '',
@@ -897,6 +893,9 @@ function umm_install(){
    
    */
    
+   if((!isset($umm_data['settings']['max_users']) || empty($umm_data['settings']['max_users'])) || (isset($umm_data['settings']['max_users']) && $umm_data['settings']['max_users'] > 1000)):
+    $umm_data['settings']['max_users'] = UMM_MAX_USERS;
+   endif;
    if(!isset($umm_data['settings']['html_before_adduser']) || empty($umm_data['settings']['html_before_adduser'])):
     $umm_data['settings']['html_before_adduser'] = $default_html_before;
    endif;
@@ -969,6 +968,15 @@ function umm_is_duplicate($key=false, $value=false, $user=false, $echo=false){
        endif;
     endif;
     exit; 
+}
+
+function umm_is_pro(){
+    $pro = umm_get_option('pro');
+    if(isset($pro) && $pro):
+       return true;
+    else:
+       return false;
+    endif;
 }
 
 function umm_key_exists($key=false){

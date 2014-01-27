@@ -33,13 +33,14 @@
            $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false).toggleClass('button-secondary', true);
            $(".umm-nav .umm-subpage-go:contains('" + d.nav_button + "')").toggleClass('button-primary', true); 
         }
-        $("div.umm-subpage-loading").show('slow');
-        $("div.umm-subpage").load(d.subpage, function(){
-            $("div.umm-subpage").show('slow');
-            $("div.umm-subpage-loading").hide('slow');
-            $("div#umm-home").hide('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
+        $("div.umm-subpage").load(d.subpage, function(){           
+            $("div.umm-subpage-loading").fadeOut('slow');
+            $("div#umm-home").fadeOut('slow', function(){
+             $("div.umm-subpage").fadeIn('slow');   
+            });
             if(d.message){
-                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+                $('div.umm-message').html(data.message).fadeIn('slow').delay(5000).fadeOut('slow');
             }         
         });
     });
@@ -49,18 +50,25 @@
         var obj = $(this),
         d = obj.data(),
         loading_image = '<img class="umm-loading" src="' + $("div.umm-wrapper").data().umm_loading_image + '" alt="..." />';
-        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         
         if(obj.hasClass('umm-homelink')){
-            $("div.umm-subpage").hide('slow');
-            $("div.umm-subpage-loading").hide('slow');
-            $("div#umm-home").show('slow');
+            
+            $("div.umm-subpage").fadeOut('slow', function(){
+                $("div.umm-subpage-loading").fadeOut('slow', function(){
+                $("div#umm-home").fadeIn('slow');
+                
+            });
+                
+            });
+            
+            
         } else {
            $("div.umm-subpage").load(d.subpage, function(){
-            $("div.umm-subpage-loading").hide('slow');
-            $("div.umm-subpage").show('slow'); 
+            $("div.umm-subpage-loading").fadeOut('slow');
+            $("div.umm-subpage").fadeIn('slow'); 
             if(d.message){
-                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+                $('div.umm-message').html(data.message).fadeIn('slow').delay(5000).fadeOut('slow');
             }
            }); 
         }      
@@ -75,9 +83,9 @@
         
         $(".umm-nav .umm-subpage-go").toggleClass('button-secondary', true);
         $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false);
-        $("div#umm-home").hide('slow');
-        $("div.umm-subpage").hide('slow');
-        $("div.umm-subpage-loading").show('slow');
+        $("div#umm-home").fadeOut('slow');
+        $("div.umm-subpage").fadeOut('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         if((obj.hasClass('button-primary') || obj.hasClass('button-secondary')) && !obj.hasClass('umm-go-back-button')){
             $(".umm-nav .umm-subpage-go").toggleClass('button-primary', false);
             $(".umm-nav .umm-subpage-go").toggleClass('button-secondary', true);
@@ -85,15 +93,19 @@
         }           
         obj.toggleClass('umm-active-link', true);
         if(obj.hasClass('umm-homelink')){
-            $("div.umm-subpage-loading").hide('slow');
-            $("div#umm-home").show('slow');
+            $("div.umm-subpage-loading").fadeOut('slow');
+            $("div.umm-subpage").fadeOut('slow', function(){
+                $("div.umm-subpage-loading").fadeOut('slow', function(){
+                $("div#umm-home").fadeIn('slow');
+              });  
+            });
         } else {
             
         $("div.umm-subpage").load(d.subpage, function(){
-            $("div.umm-subpage-loading").hide('slow');
-            $("div.umm-subpage").show('slow'); 
+            $("div.umm-subpage-loading").fadeOut('slow');
+            $("div.umm-subpage").fadeIn('slow'); 
             if(d.message){
-                $('div.umm-message').html(data.message).show('slow').delay(5000).hide('slow');
+                $('div.umm-message').html(data.message).fadeIn('slow').delay(5000).fadeOut('slow');
             }
             $(".umm-csv-builder-fields-add").hide();
             if($("table#umm_edit_key tbody").html()){
@@ -101,7 +113,7 @@
                 stop: function(event, ui){
                     $("table#umm_edit_key").before("<div class='umm-order-updated hidden' style='padding: 10px;margin: 10px auto 10px auto;background-color: #FFFFC1;border: 1px solid #B3B300;color: #000000;-moz-border-radius: 8px;-khtml-border-radius: 8px;-webkit-border-radius: 8px;border-radius: 8px;'></div>");
                     $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_update_custom_meta_order', $("form#umm_update_user_meta_form").serialize(), function(data){
-                        $('.umm-order-updated').html(data).show('slow').delay(3000).hide('slow',function(){
+                        $('.umm-order-updated').html(data).fadeIn('slow').delay(3000).hide('slow',function(){
                             $(this).remove();
                         });
                     });
@@ -129,15 +141,15 @@
         obj.prop('disabled',true).val(d.wait);
         $("div.umm-subpage").load(return_page, function(){
                 if(d.message){
-                    $('div.umm-message').html(d.message).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(d.message).fadeIn('slow').delay(5000).fadeOut('slow');
                 }
-                $("div.umm-subpage").show('slow');
-                $("div#umm-home").hide('slow');
+                $("div.umm-subpage").fadeIn('slow');
+                $("div#umm-home").fadeOut('slow');
                    
         });
         } else {
             var fdata = $("form#umm_update_user_meta_form").data();
-           $('div.umm-message').html(fdata.error_message).show('slow').delay(5000).hide('slow');
+           $('div.umm-message').html(fdata.error_message).fadeIn('slow').delay(5000).fadeOut('slow');
            $("input[name='umm_edit_key']").parent().effect('highlight',2500).css({'border':'1px dashed red'}); 
         }        
     });
@@ -154,7 +166,7 @@
         return_page = $("#" + d.form + " input[name='return_page']").val() + '&umm_edit_key=' + edit_key;
         obj.prop('disabled',true).val(d.wait);
         
-        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
@@ -166,11 +178,11 @@
             $("div.umm-subpage").load(return_page, function(){
                 
                 if(data){
-                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
                 } 
-               $("div.umm-subpage").show('slow'); 
-               $("div#umm-home").hide('slow');
-               $("div.umm-subpage-loading").hide('slow');          
+               $("div.umm-subpage").fadeIn('slow'); 
+               $("div#umm-home").fadeOut('slow');
+               $("div.umm-subpage-loading").fadeOut('slow');          
             });
         });
         } else {
@@ -189,7 +201,7 @@
         return_page = $("#" + d.form + " input[name='return_page']").val();
         obj.prop('disabled',true).val(d.wait);
         
-        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
@@ -200,11 +212,11 @@
             });
             $("div.umm-subpage").load(return_page, function(){
                 if(data){
-                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
                 } 
-               $("div.umm-subpage").show('slow'); 
-               $("div#umm-home").hide('slow');
-               $("div.umm-subpage-loading").hide('slow');          
+               $("div.umm-subpage").fadeIn('slow'); 
+               $("div#umm-home").fadeOut('slow');
+               $("div.umm-subpage-loading").fadeOut('slow');          
             });
         });
         } else {
@@ -227,7 +239,7 @@
         
         obj.prop('disabled',true).val(d.wait);
         
-        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
@@ -239,11 +251,11 @@
             $("div.umm-subpage").load(return_page, function(){
                 
                 if(data){
-                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
                 } 
-               $("div.umm-subpage").show('slow'); 
-               $("div#umm-home").hide('slow');
-               $("div.umm-subpage-loading").hide('slow');          
+               $("div.umm-subpage").fadeIn('slow'); 
+               $("div#umm-home").fadeOut('slow');
+               $("div.umm-subpage-loading").fadeOut('slow');          
             });
         });
         } else {
@@ -262,7 +274,7 @@
         
         obj.prop('disabled',true).val(d.wait);
         
-        $("div.umm-subpage-loading").show('slow');
+        $("div.umm-subpage-loading").fadeIn('slow');
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
@@ -274,11 +286,11 @@
             $("div.umm-subpage").load(return_page, function(){
                 
                 if(data){
-                    $('div.umm-message').html(data).show('slow').delay(5000).hide('slow');
+                    $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
                 } 
-               $("div.umm-subpage").show('slow'); 
-               $("div#umm-home").hide('slow');
-               $("div.umm-subpage-loading").hide('slow');          
+               $("div.umm-subpage").fadeIn('slow'); 
+               $("div#umm-home").fadeOut('slow');
+               $("div.umm-subpage-loading").fadeOut('slow');          
             });
         });
         } else {
@@ -294,13 +306,13 @@
         return_page = $("#" + d.form).attr('action');
         obj.prop('disabled', true).val(d.wait);
         $.post(return_page, $("#" + d.form).serialize(), function(data){
-            $('div.umm-update-settings-result').html(data).show('slow').delay(5000).hide('slow');
+            $('div.umm-update-settings-result').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
             obj.val(original_value).prop('disabled', false);  
         });        
     });
     
     $(document).on('change', "select.umm-profile-field-type", function(){
-        $(".umm-profile-field-options").hide('slow');
+        $(".umm-profile-field-options").fadeOut('slow');
         switch($(this).val()){
             case 'text':
             case 'color':
@@ -318,25 +330,25 @@
             case 'week':
             case 'textarea':
             case 'checkbox':
-            $(".umm-input-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
             break;
                        
             case 'radio':
             case 'checkbox_group':
-            $(".umm-input-options").show('slow');
-            $(".umm-select-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             case 'select':
-            $(".umm-input-options").show('slow');
-            $(".umm-select-multi-options").show('slow');
-            $(".umm-select-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-select-multi-options").fadeIn('slow');
+            $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             default:
-            $(".umm-profile-field-options").hide('slow');
+            $(".umm-profile-field-options").fadeOut('slow');
         }
     });
     
@@ -357,25 +369,25 @@
             case 'week':
             case 'textarea':
             case 'checkbox':
-            $(".umm-input-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
             break;
                       
             case 'radio':
             case 'checkbox_group':
-            $(".umm-input-options").show('slow');
-            $(".umm-select-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             case 'select':
-            $(".umm-input-options").show('slow');
-            $(".umm-select-multi-options").show('slow');
-            $(".umm-select-options").show('slow');
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-select-multi-options").fadeIn('slow');
+            $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             default:
-            $(".umm-profile-field-options").hide('slow');
+            $(".umm-profile-field-options").fadeOut('slow');
         }
     
     $(".umm-select-options-table").sortable();
@@ -429,11 +441,11 @@
             if(!$(".key-exists-warning").html()){
                 $("input#umm_update_user_meta_submit").prop("disabled","disabled");
             obj.after('<div class="umm-warning key-exists-warning hidden">' + page_data.key_exists + '</div>');
-            $(".key-exists-warning").show('slow');
+            $(".key-exists-warning").fadeIn('slow');
             }
         } else {
             if($(".key-exists-warning").html()){
-                $(".key-exists-warning").hide('slow').remove();
+                $(".key-exists-warning").fadeOut('slow').remove();
             }
             $("input#umm_update_user_meta_submit").prop("disabled","");
         }
@@ -444,11 +456,11 @@
         if(invalidChars.test(new_value)){
             if(!$(".invalid-chars-warning").html()){
             obj.after('<div class="umm-warning invalid-chars-warning hidden">' + page_data.invalid_chars_warning + '</div>');
-            $(".invalid-chars-warning").show('slow');
+            $(".invalid-chars-warning").fadeIn('slow');
             }
         } else {
             if($(".invalid-chars-warning").html()){
-                $(".invalid-chars-warning").hide('slow').remove();
+                $(".invalid-chars-warning").fadeOut('slow').remove();
             }
         check_if_exists();
            
@@ -499,12 +511,12 @@
         
         if($("table.umm-shortcode-builder input[data-for='email_to']").val() != ''){
             if(!$(".umm-shortcode-builder-email-field").is(':visible')){
-              $(".umm-shortcode-builder-email-field").show('slow').effect('highlight', 2000); 
+              $(".umm-shortcode-builder-email-field").fadeIn('slow').effect('highlight', 2000); 
               $(".umm-shortcode-builder-shortcode").toggleClass('alternate', true); 
             }
             
         } else {
-            $(".umm-shortcode-builder-email-field").hide('slow');
+            $(".umm-shortcode-builder-email-field").fadeOut('slow');
             $(".umm-shortcode-builder-shortcode").toggleClass('alternate', false);
         }
         
@@ -524,9 +536,9 @@
     $(document).on('change', "select.umm-csv-builder-keys", function(event){
         event.preventDefault();
         if($(this).val() != 'all'){
-           $(".umm-csv-builder-fields-add").show('slow'); 
+           $(".umm-csv-builder-fields-add").fadeIn('slow'); 
         } else {
-            $(".umm-csv-builder-fields-add").hide('slow');
+            $(".umm-csv-builder-fields-add").fadeOut('slow');
             $("div.umm-csv-builder-fields").not("div.umm-csv-builder-fields:last").not("div.umm-csv-builder-fields:first").remove();
         }
     });
@@ -556,5 +568,9 @@
     });
     
     $('#umm-tabs').tabs();
+    
+    if($("div.credits").html() != ''){
+        $("span#footer-thankyou").append($("div.credits").html());
+    }
        
 }); // jQuery
