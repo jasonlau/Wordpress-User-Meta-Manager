@@ -3,8 +3,8 @@
 /**
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
- * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages.
- * Version: 3.1.5
+ * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
+ * Version: 3.1.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,11 +31,10 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.5');
+define('UMM_VERSION', '3.1.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
-define("UMM_MAX_USERS", 100);
 // error_reporting(E_ALL);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
@@ -753,7 +752,7 @@ function umm_get_profile_fields($output_type='array'){
 function umm_get_users($query=false){
     global $wpdb;
     $umm_settings = umm_get_option('settings');
-    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>UMM_MAX_USERS) ? UMM_MAX_USERS : $umm_settings['max_users'];
+    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
     if(!$query):
        $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $max_users;
     endif;     
@@ -850,7 +849,7 @@ function umm_install(){
       $umm_data['settings'] = get_option('umm_settings');
       if(!is_array($umm_data['settings'])):
          $umm_data['settings'] = array('retain_data' => 'yes',
-                                       'max_users' => UMM_MAX_USERS,
+                                       'max_users' => 100,
                                        'first_run' => 'yes',
                                        'shortcut_editing' => 'no',
                                        'section_title' => '',
@@ -893,8 +892,8 @@ function umm_install(){
    
    */
    
-   if((!isset($umm_data['settings']['max_users']) || empty($umm_data['settings']['max_users'])) || (isset($umm_data['settings']['max_users']) && $umm_data['settings']['max_users'] > 1000)):
-    $umm_data['settings']['max_users'] = UMM_MAX_USERS;
+   if((!isset($umm_data['settings']['max_users']) || empty($umm_data['settings']['max_users'])) || (isset($umm_data['settings']['max_users']) && $umm_data['settings']['max_users'] > 100)):
+    $umm_data['settings']['max_users'] = 100;
    endif;
    if(!isset($umm_data['settings']['html_before_adduser']) || empty($umm_data['settings']['html_before_adduser'])):
     $umm_data['settings']['html_before_adduser'] = $default_html_before;
@@ -1189,8 +1188,14 @@ function umm_profile_field_editor($umm_edit_key=null){
     <option value="visitor"';
     if(in_array('visitor', $roles)) $output .= ' selected="selected"';
     $output .= '>'.__('Visitor/Register', UMM_SLUG).'</option>
-    </select>  
-    </div>';
+    </select>';
+    if(umm_is_pro()):
+            if(function_exists('umm_pro_profile_editor_fields')):
+               $output .= call_user_func('umm_pro_profile_editor_fields', $profile_fields[$umm_edit_key]);
+            endif; 
+         endif; 
+    $output .= '</div>';  
+    
     
     $hidden = ($type == 'select' || $type == 'radio' || $type == 'checkbox_group') ? '' : ' hidden';
     
@@ -1221,7 +1226,8 @@ $output .= '</ul>
  <li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor">-</button></td></tr></table></li>
 </ul>
     </div>
-    </div>';   
+    </div>';
+      
     return $output;
 }
 
@@ -1948,7 +1954,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
            endforeach;
        endif;
        // Assemble profile field settings into an array 
-       $new_profile_field_data = array('value' => $meta_value,
+       $_profile_field_data = array('value' => $meta_value,
                                        'unique' => $_POST['umm_unique_value'],
                                        'type' => $_POST['umm_profile_field_type'],
                                        'label' => htmlspecialchars($_POST['umm_profile_field_label']),
@@ -1962,7 +1968,14 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
                                        'size' => $_POST['umm_multi_size'],
                                        'roles' => $_POST['umm_roles'],
                                        // TODO: 'category' => $_POST['umm_category'],
-                                       'options' => $options);                   
+                                       'options' => $options);
+       if(umm_is_pro()):
+            if(function_exists('umm_pro_profile_field_data')):
+               $new_profile_field_data = call_user_func('umm_pro_profile_field_data', $_profile_field_data);
+            endif; 
+       else:
+          $new_profile_field_data = $_profile_field_data;
+       endif;                                                  
        // add or update field
        $saved_profile_fields[$meta_key] = $new_profile_field_data;
        umm_update_option('profile_fields', $saved_profile_fields);
@@ -1974,8 +1987,15 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
 }
 
 function umm_update_settings(){
-    umm_update_option('settings', $_POST);
-    $output = __('Settings successfully saved.', UMM_SLUG);
+    if(umm_is_pro()):
+       if(function_exists('umm_pro_update_settings')):
+          $output = call_user_func('umm_pro_update_settings', $_POST);
+       endif;     
+    else:
+       umm_update_option('settings', $_POST);
+       $output = __('Settings successfully saved.', UMM_SLUG);
+    endif;
+    
     print $output;
     exit; 
 }
@@ -2386,6 +2406,16 @@ function umm_usermeta_shortcode($atts, $content) {
                    $error .= sprintf(__('%s is already taken by another user.', UMM_SLUG), $profile_fields[$field_name]['label']) . '<script type="text/javascript"> jQuery(function($){ $("' . $type . '[name=\'' . $field_name . '\']").addClass("umm-error-field"); }); </script> ';  
                 endif;
              endif;
+             
+             if(umm_is_pro()):
+                if(function_exists('umm_pro_validate_profile_field')):              
+                   $error .= call_user_func('umm_pro_validate_profile_field', $field_name, $profile_fields[$field_name], $val, false);
+                   if(!empty($error)):
+                      $umm_error = true;
+                   endif;
+                endif;
+             endif;
+             
           else:
           $umm_error = true;
           $error .= __('Error: ' . $field_name . ' is not a valid custom field. The submission was terminated. ', UMM_SLUG);
@@ -2424,6 +2454,11 @@ function umm_usermeta_shortcode($atts, $content) {
            $email_message = sprintf($message, $output);
            mail($email_to, $subject, $email_message, "From: " . $email_from . "\n" . "X-Mailer: PHP/" . phpversion());
          endif;
+         if(umm_is_pro()):
+            if(function_exists('umm_pro_redirect')):
+               call_user_func('umm_pro_redirect', $atts);
+            endif; 
+       endif;
        endif; // !$umm_error
        
     else:
@@ -2506,7 +2541,6 @@ function umm_users_keys_menu($select=true, $optgroup=false, $include_used=false)
 }
 
 function umm_validate_profile_fields($errors, $update, $user) {
-    $error = false;
 	$saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
        foreach($saved_profile_fields as $field_name => $field_settings):      
@@ -2514,7 +2548,11 @@ function umm_validate_profile_fields($errors, $update, $user) {
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
          if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value, $user->ID)):
             $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
-            $error = true;
+         endif;
+         if(umm_is_pro()):
+            if(function_exists('umm_pro_validate_profile_field')):
+               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value, $errors);
+            endif; 
          endif;   
        endforeach;
     endif;
@@ -2529,7 +2567,12 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
          if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value)):
             $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
-         endif;   
+         endif; 
+         if(umm_is_pro()):
+            if(function_exists('umm_pro_validate_profile_field')):
+               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value);
+            endif; 
+         endif;  
        endforeach;
     endif;
     

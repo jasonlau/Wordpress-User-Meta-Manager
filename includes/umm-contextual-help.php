@@ -13,7 +13,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
     if($screen->id != 'users_page_user-meta-manager')
     return;
     $umm_settings = umm_get_option('settings');
-    $pro = umm_get_option('pro');
+    $pro_settings = '';
+    if(umm_is_pro()):
+       if(function_exists('umm_pro_settings')):
+          $pro_settings = call_user_func('umm_pro_settings', $umm_settings);
+          $pro = true;
+       endif; 
+    endif;
     $retain_data = $umm_settings['retain_data'];
     switch($retain_data){
         case 'no':
@@ -67,7 +73,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes', 'bot_field' => 'umm_forbots');
     $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     
-    $pro_message = (isset($pro) && $pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG); 
+    $pro_message = ($pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG); 
     
     $tabs = array(array(
         __('Donate/Extend', UMM_SLUG),
@@ -81,8 +87,22 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <input type="hidden" name="hosted_button_id" value="X5Y2R65973XZ6">
 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form><h2>User Meta Manager Pro Extension</h2><p>User Meta Manager Pro is a premium extension for the User Meta Manager plugin. User Meta Manager Pro extends the capabilities of this plugin.</p>
-        <p><a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Get the Pro Plugin!</a></p>', UMM_SLUG)
+</form><h2><i class="dashicons dashicons-awards"></i>User Meta Manager Pro Extension</h2><p>User Meta Manager Pro is a premium extension for the User Meta Manager plugin. User Meta Manager Pro extends the capabilities of this plugin.</p>
+<p><strong>Only the Pro plugin will be developed in the future.</strong> No additional features will be added to the free version.</p>
+        <p><a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Get the Pro Plugin!</a></p>
+        <h3>Pro Features</h3>
+        <ul>
+        <li>For websites with an unlimited number of users.</li>
+        <li>Advanced field validation using <em>match</em> or <em>search</em> methods.</li>
+        <li>Regular expressions matching.</li>
+        <li>Canned/saved regular expressions. Easily save and reuse your favorite regex patterns!</li>
+        <li>Case sensitive or insensitive validation search. Easily ban words or phrases from custom fields.</li>
+        <li>Custom error messages.</li>
+        <li>Redirect a user after custom form submission.</li>
+        <li>More to come ...</li>
+        </ul>
+        
+        ', UMM_SLUG)
     ),
     
     array(
@@ -185,7 +205,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <code><strong>[section-title]</strong> ' . __('Replaced by the <em>Custom Field Section Title</em> option.', UMM_SLUG) . '<br /><strong>[field]</strong> ' . __('Replaced by the field\'s HTML and HTML After option, if any.', UMM_SLUG) . '<br /><strong>[label]</strong> ' . __('Replaced by the field label. Example: My Field', UMM_SLUG) . '<br /><strong>[field-name]</strong> ' . __('Replaced by the field name. Example: my_field', UMM_SLUG) . '<br /><strong>[field-slug]</strong> ' . __('Replaced by the field slug. Example: my-field', UMM_SLUG) . '</code>
     </td>
 </tr>
-
+' . $pro_settings . '
 
 <tr class="alternate">
 	<td><input data-form="umm_update_settings_form" data-subpage="umm_update_settings" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Update Settings', UMM_SLUG) . '">
@@ -383,6 +403,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <li><strong>email_from:</strong> (Used with email_to) An email address as the sender.</li>
     <li><strong>subject:</strong> (Used with email_to) An email subject.</li>
     <li><strong>message:</strong> (Required with email_to) A message to send in the email. <strong>\n</strong> = line break. <strong>%s</strong> = contents of the form submission. <strong>Important:</strong> You must add <strong>%s</strong> where you want the form submission results displayed in the message.</li>
+    <li><i class="dashicons dashicons-awards"></i><strong>redirect:</strong> Insert a URL to redirect the user to a different page after the form is submitted. This method uses JavaScript to redirect the user.</li>
 </ul></p>
 <h2>Query The Database</h2>
 You can query the wp_users and wp_usermeta tables and display results in a Post or Page with the <strong>ummquery</strong> short code.

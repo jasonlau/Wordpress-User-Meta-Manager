@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.1.4
+Stable tag: 3.1.6
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -24,9 +24,7 @@ User Meta Manager is a handy plugin, with a simple interface, for managing user 
 *Edit which meta data is displayed in the User Meta Manager Home screen.
 *Backup and restore user meta data.
 
-This version is limited to 100 users. The Pro version is unlimited. Get the pro extension at http://jasonlau.biz/home/membership-options#umm-pro
-
-Contribute to the development of this plugin at https://github.com/jasonlau/Wordpress-User-Meta-Manager
+This version is limited to listing 100 users. The Pro version is unlimited, and has some additional features. Get the pro extension at http://jasonlau.biz/home/membership-options#umm-pro
 
 Please report bugs in the Support section, and not the Reviews section.
 
@@ -53,6 +51,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.1.6 =
+Further integrated the Pro extension. Pro users should update at this time also.
 
 = 3.1.5 =
 Fixed a bug in the Unique Value feature.
@@ -415,3 +416,6 @@ Made some changes to the UI. A pro extension is now available to extend this plu
 
 = 3.1.5 =
 Fixed a bug in the Unique Value feature.
+
+= 3.1.6 =
+Further integrated the Pro extension. Pro users should update at this time also.
