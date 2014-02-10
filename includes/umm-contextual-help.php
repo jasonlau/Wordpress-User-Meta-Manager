@@ -32,7 +32,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $retain_no = '';
     }
     
-    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>UMM_MAX_USERS) ? UMM_MAX_USERS : $umm_settings['max_users'];
+    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
     
     $shortcut_editing = $umm_settings['shortcut_editing'];
     switch($shortcut_editing){

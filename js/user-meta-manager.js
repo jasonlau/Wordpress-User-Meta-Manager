@@ -108,10 +108,10 @@
                 $('div.umm-message').html(data.message).fadeIn('slow').delay(5000).fadeOut('slow');
             }
             $(".umm-csv-builder-fields-add").hide();
-            if($("table#umm_edit_key tbody").html()){
-               $("table#umm_edit_key tbody").sortable({
+            if($("ul#umm_edit_key").html()){
+               $("ul#umm_edit_key").sortable({
                 stop: function(event, ui){
-                    $("table#umm_edit_key").before("<div class='umm-order-updated hidden' style='padding: 10px;margin: 10px auto 10px auto;background-color: #FFFFC1;border: 1px solid #B3B300;color: #000000;-moz-border-radius: 8px;-khtml-border-radius: 8px;-webkit-border-radius: 8px;border-radius: 8px;'></div>");
+                    $("ul#umm_edit_key").before("<div class='umm-order-updated hidden' style='padding: 10px;margin: 10px auto 10px auto;background-color: #FFFFC1;border: 1px solid #B3B300;color: #000000;-moz-border-radius: 8px;-khtml-border-radius: 8px;-webkit-border-radius: 8px;border-radius: 8px;'></div>");
                     $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=umm_update_custom_meta_order', $("form#umm_update_user_meta_form").serialize(), function(data){
                         $('.umm-order-updated').html(data).fadeIn('slow').delay(3000).hide('slow',function(){
                             $(this).remove();

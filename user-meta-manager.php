@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.1.6
+ * Version: 3.1.7
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.6');
+define('UMM_VERSION', '3.1.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -536,8 +536,8 @@ function umm_edit_custom_meta(){
     if($edit_key == ""):
         $output = umm_fyi('<p>'.__('Select from the list a meta key to edit, or drag and drop to sort.', UMM_SLUG).'</p>');
         $output .= '<form id="umm_update_user_meta_form" method="post" data-error_message="' . __('Select a meta key to edit.', UMM_SLUG). '">
-        <table id="umm_edit_key">
-        <tr class="alternate"><td colspan="2"><strong>'.__('Edit Key', UMM_SLUG).'</strong></td></tr>
+        <h2>'.__('Edit Key', UMM_SLUG).'</h2>
+        <ul id="umm_edit_key">
         ';
         $sort_order = umm_get_option('sort_order');
         if(empty($sort_order) || !is_array($sort_order)):
@@ -560,12 +560,12 @@ function umm_edit_custom_meta(){
         endif;
         $x = 1;
         foreach($data as $key => $value):
-            $class = ($x%2) ? ' class="alternate"' : '';
-            $output .= '<tr' . $class . '><td class="umm-edit-key-radio-cell"><input type="radio" name="umm_edit_key" value="'.$key.'" /><input name="umm_item[]" type="hidden" value="' . $key . '" /></td><td class="umm-draggable umm-edit-key-name-cell" style="cursor: move !important;">'.$key.'</td></tr>
+            $class = ($x%2) ? ' class="alternate"' : ' class="umm-draggable"';
+            $output .= '<li' . $class . ' title="'.__('Drag and drop to sort.', UMM_SLUG).'"><input type="radio" name="umm_edit_key" value="'.$key.'" title="'.__('Select a key to edit.', UMM_SLUG).'" /><input name="umm_item[]" type="hidden" value="' . $key . '" /> '.$key.'</li>
             ';
             $x++;
         endforeach;    
-            $output .= '</table>';
+            $output .= '</ul>';
             $output .= '<input id="umm_edit_custom_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
     <input name="mode" type="hidden" value="" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_custom_meta" /> 
     </form> 

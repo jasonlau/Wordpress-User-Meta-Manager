@@ -211,18 +211,22 @@ code,
     text-align: left;
 }
 
-table#umm_edit_key td{
+form#umm_update_user_meta_form h2{
+    margin: 0px 0px 0px 0px;
+}
+
+ul#umm_edit_key{
+    border: 1px solid #e5e5e5;
+-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    width: 250px;
+    margin: 20px 0px 20px 0px;
+}
+
+ul#umm_edit_key li{
     text-align: left !important;
-    
-}
-
-td.umm-edit-key-radio-cell{
-  max-width: 10% !important;  
-}
-
-td.umm-draggable.umm-edit-key-name-cell{
-    max-width: 90% !important;
-    cursor: move !important;
+    padding: 1em;
+    cursor: move;
 }
 
 strong.umm-csv-builder{

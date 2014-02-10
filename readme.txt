@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.1.6
+Stable tag: 3.1.7
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,18 +13,30 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 User Meta Manager is a handy plugin, with a simple interface, for managing user meta data.
 
-**Features:**
+= Features =
 
-*Add, edit, or delete meta data for individual members, or all members.
-*Add custom user meta fields to the user profile editor.
-*Create forms using short codes which allow members to update user meta data.
-*Short codes for restricting access to content based on meta data values.
-*Short codes for inserting user meta data into posts or pages.
-*Automatically assign a meta key and default value to new registrations.
-*Edit which meta data is displayed in the User Meta Manager Home screen.
-*Backup and restore user meta data.
+* Add, edit, or delete meta data for individual members, or all members.
+* Add custom user meta fields to the user profile editor.
+* Create forms using short codes which allow members to update user meta data.
+* Short codes for restricting access to content based on meta data values.
+* Short codes for inserting user meta data into posts or pages.
+* Automatically assign a meta key and default value to new registrations.
+* Edit which meta data is displayed in the User Meta Manager Home screen.
+* Backup and restore user meta data.
 
-This version is limited to listing 100 users. The Pro version is unlimited, and has some additional features. Get the pro extension at http://jasonlau.biz/home/membership-options#umm-pro
+The free version is limited to listing 100 users. The Pro version is unlimited, and has some advanced features. Get the Pro plugin at http://jasonlau.biz/home/membership-options#umm-pro
+
+= Pro Features =
+
+* For websites with an unlimited number of users.
+* Advanced field validation using match or search methods.
+* Regular expressions matching.
+* Canned/saved regular expressions. Easily save and reuse your favorite regex patterns!
+* Case sensitive or insensitive validation search. Easily ban words or phrases from custom fields.
+* Custom error messages.
+* Redirect a user after custom form submission.
+* More to come ...
+* No additional features will be added to the free version.
 
 Please report bugs in the Support section, and not the Reviews section.
 
@@ -51,6 +63,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.1.7 =
+Fixed a few minor glitches.
 
 = 3.1.6 =
 Further integrated the Pro extension. Pro users should update at this time also.
@@ -419,3 +434,6 @@ Fixed a bug in the Unique Value feature.
 
 = 3.1.6 =
 Further integrated the Pro extension. Pro users should update at this time also.
+
+= 3.1.7 =
+Fixed a few minor glitches.
