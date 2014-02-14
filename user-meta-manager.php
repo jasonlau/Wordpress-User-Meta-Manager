@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.1.7
+ * Version: 3.1.8
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -14,7 +14,7 @@
  * 
  * Copyright 2012+ http://jasonlau.biz
  * 
- * This program is free software; you can redistribute it and/or modify
+ * This free version of User Meta Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.1.7');
+define('UMM_VERSION', '3.1.8');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -147,9 +147,16 @@ function umm_admin_menu(){
 
 function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user, $table_prefix;
-    $backup_files = umm_get_option('backup_files');
     $mode = (!isset($_REQUEST['mode']) || empty($_REQUEST['mode'])) ? '' : $_REQUEST['mode'];
     $mode = (empty($backup_mode)) ? $mode : $backup_mode;
+    if(umm_is_pro() && $mode == 'pro'):
+       if(function_exists('umm_pro_backup')):
+          call_user_func('umm_pro_backup');
+          exit;
+       endif; 
+    endif;    
+    $backup_files = umm_get_option('backup_files');
+    
     $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : $_REQUEST['tofile'];
     $tofile = (empty($tofile)) ? $to_file : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
@@ -272,6 +279,11 @@ function umm_backup_page(){
 </table><div id='umm-csv-builder-fields-clone' class='umm-csv-builder-fields-clone umm-hidden'><div class='umm-csv-builder-fields'>" . $fields2 . " <input type='button' value=' + ' class='button-secondary umm-csv-builder-fields-add' /> <input type='button' value=' - ' class='button-secondary umm-csv-builder-remove' /></div></div>";
     
     $output .= '</div>';
+    if(umm_is_pro()):
+       if(function_exists('umm_pro_backup_page')):
+          $output .= call_user_func('umm_pro_backup_page');       
+       endif; 
+    endif;
     $output .= '</div>';
     print $output;
     exit;

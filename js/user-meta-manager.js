@@ -568,5 +568,14 @@
     });
     
     $('#umm-tabs').tabs();
+    
+    if((page_data.sub_action != '')){
+        $('button.' + page_data.sub_action).trigger('click');
+    }
+    
+    if(($('div.umm-message').html() != '')){
+        $('div.umm-message').fadeIn('slow').delay(5000).fadeOut('slow');
+    }
+    
        
 }); // jQuery
