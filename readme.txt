@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.1.8
+Stable tag: 3.1.9
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,7 +35,9 @@ The free version is limited to listing 100 users. The Pro version is unlimited, 
 * Case sensitive or insensitive validation search. Easily ban words or phrases from custom fields.
 * Custom error messages.
 * Redirect a user after custom form submission.
-* Backup, restore, export User Meta Manager settings.
+* Backup, restore, export/import User Meta Manager settings.
+* Restore/import wp_usermeta table from User Meta Manager CSV backup.
+* Backup, restore, export/import WordPress Users.
 * More to come ...
 * No additional features will be added to the free version.
 
@@ -64,6 +66,9 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.1.9 =
+Fixed a bug in the CSV export feature.
 
 = 3.1.8 =
 Further integrated the Pro extension.
@@ -444,3 +449,6 @@ Fixed a few minor glitches.
 
 = 3.1.8 =
 Further integrated the Pro extension.
+
+= 3.1.9 =
+Fixed a bug in the CSV export feature.

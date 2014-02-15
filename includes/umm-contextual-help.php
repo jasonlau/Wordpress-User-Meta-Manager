@@ -99,6 +99,9 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <li>Case sensitive or insensitive validation search. Easily ban words or phrases from custom fields.</li>
         <li>Custom error messages.</li>
         <li>Redirect a user after custom form submission.</li>
+        <li>Backup, restore, export/import User Meta Manager settings.</li>
+        <li>Restore/import wp_usermeta table from User Meta Manager CSV backup.</li>
+        <li>Backup, restore, export/import WordPress Users.</li>
         <li>More to come ...</li>
         </ul>
         

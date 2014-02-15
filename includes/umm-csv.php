@@ -19,7 +19,7 @@ function umm_get_csv(){
     $data = umm_usermeta_data();
     $output = '"umeta_id","user_id","meta_key","meta_value"' . "\n";			
       
-    header("Content-Type: text/x-csv");
+    header("Content-Type: application/octet-stream");
     header("Content-Disposition: attachment; filename=\"$filename\"");
     header("Expires: ".gmdate("D, d M Y H:i:s", mktime(date("H")+2, date("i"), date("s"), date("m"), date("d"), date("Y")))." GMT");
     header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
@@ -29,10 +29,10 @@ function umm_get_csv(){
       if(!empty($o->umeta_id)):
          if(isset($_REQUEST['umm_key']) && !empty($_REQUEST['umm_key'])):
             if(in_array($o->meta_key, $_REQUEST['umm_key']) || $_REQUEST['umm_key'][0] == 'all'):
-               $output .= '"' . $o->umeta_id . '","'  . $o->user_id . '","' . $o->meta_key . '","' . $o->meta_value .  '"' . "\n";
+               $output .= '"' . $o->umeta_id . '","'  . $o->user_id . '","' . $o->meta_key . '","' . addslashes($o->meta_value) .  '"' . "\n";
             endif;
          else:
-            $output .= '"' . $o->umeta_id . '","' . $o->user_id . '","' . $o->meta_key . '","' . $o->meta_value .  '"' . "\n";
+            $output .= '"' . $o->umeta_id . '","' . $o->user_id . '","' . $o->meta_key . '","' . addslashes($o->meta_value) .  '"' . "\n";
          endif;
       endif;
     endforeach;
