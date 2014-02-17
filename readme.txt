@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.1.9
+Stable tag: 3.2.1
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,6 +66,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.2.1 =
+Improved ummquery shortcode to better handle serialized results.
+
+= 3.2.0 =
+Fixed a bug in checkbox group validation.
 
 = 3.1.9 =
 Fixed a bug in the CSV export feature.
@@ -452,3 +458,9 @@ Further integrated the Pro extension.
 
 = 3.1.9 =
 Fixed a bug in the CSV export feature.
+
+= 3.2.0 =
+Fixed a bug in checkbox group validation.
+
+= 3.2.1 =
+Improved ummquery shortcode to better handle serialized results.
