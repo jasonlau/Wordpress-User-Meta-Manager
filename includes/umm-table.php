@@ -145,12 +145,8 @@ class UMM_UI extends WP_List_Table {
       $is_pro = false;
       if(umm_is_pro()):
          $is_pro = true;   
-         $pro_function = umm_get_option('pro_function');
-         if(isset($pro_function) && !is_array($pro_function) && !empty($pro_function) && function_exists($pro_function)):
-            // Backwards compatible         
-            $per_page = call_user_func($pro_function, $this);
-         elseif(isset($pro_function) && is_array($pro_function) && !empty($pro_function) && function_exists($pro_function['prepare_items'])):
-            $per_page = call_user_func($pro_function['prepare_items'], $this);
+         if(function_exists('umm_pro_prepare_items')):
+            $per_page = call_user_func('umm_pro_prepare_items', $this);
          else:
             $per_page = $this->prepare_items(); 
          endif;
