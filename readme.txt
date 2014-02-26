@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.2.2
+Stable tag: 3.2.4
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,6 +66,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.2.4 =
+Fixed a bug.
+
+= 3.2.3 =
+Arrays are now properly displayed on the Home screen.
 
 = 3.2.2 =
 Fixed a bug in the Home screen display.
@@ -470,3 +476,9 @@ Improved ummquery shortcode to better handle serialized results.
 
 = 3.2.2 =
 Fixed a bug in the Home screen display.
+
+= 3.2.3 =
+Arrays are now properly displayed on the Home screen.
+
+= 3.2.4 =
+Fixed a bug.

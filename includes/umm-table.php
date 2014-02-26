@@ -30,6 +30,17 @@ class UMM_UI extends WP_List_Table {
         $this->usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
     }
 
+    /*function column_default($item, $column_name){
+        $o = maybe_unserialize($item->$column_name);
+        if(is_array($o)):
+           $output = implode(', ', $o);
+        else:
+           $output = stripslashes($o);
+        endif;
+    
+        return $output."---";
+    }*/
+    
     function column_default($item, $column_name){
         return stripslashes($item->$column_name);
     }
@@ -116,7 +127,16 @@ class UMM_UI extends WP_List_Table {
         foreach($data as $d):
             foreach($this->usermeta_columns as $k => $v):
                  $f_data = get_user_meta($d->ID, $k, true);
-                 $data[$x]->$k = $f_data;             
+                 $fdata = maybe_unserialize($f_data);
+                 if(is_array($fdata)):
+                    $new_fdata = '';
+                    foreach($fdata as $field_data):
+                       if($field_data != '')
+                       $new_fdata .= $field_data . ', ';
+                    endforeach;
+                    $fdata = rtrim($new_fdata, ', ');
+                 endif;
+                 $data[$x]->$k = $fdata;             
             endforeach;
             $x++;
         endforeach;
