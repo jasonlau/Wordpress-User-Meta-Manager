@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.2.4
+ * Version: 3.2.5
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.2.4');
+define('UMM_VERSION', '3.2.5');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1697,6 +1697,7 @@ function umm_shortcode($atts, $content){
             });
             $("div.umm-userprofile-loading").fadeOut("slow");
             $("div.umm-userprofile").fadeIn("slow");
+            $(".hidden").hide();
        };
        fetch_profile("div.umm-userprofile", "' . $profile_link . '", "form#your-profile", activate_form);
 	});
