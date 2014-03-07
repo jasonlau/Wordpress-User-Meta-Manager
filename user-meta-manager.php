@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.2.5
+ * Version: 3.2.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.2.5');
+define('UMM_VERSION', '3.2.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1181,23 +1181,13 @@ function umm_profile_field_editor($umm_edit_key=null){
     <strong style="vertical-align:top;">'.__('Roles', UMM_SLUG).':</strong> <select size="3" name="umm_roles[]" title="' . __('User roles allowed to view this field.', UMM_SLUG) . '" multiple="multiple">
 	<option value="all"';
     if(in_array('all', $roles) || empty($roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('All', UMM_SLUG).'</option>
-    <option value="administrator"';
-    if(in_array('administrator', $roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('Administrator', UMM_SLUG).'</option>
-    <option value="editor"';
-    if(in_array('editor', $roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('Editor', UMM_SLUG).'</option>
-    <option value="author"';
-    if(in_array('author', $roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('Author', UMM_SLUG).'</option>
-    <option value="contributor"';
-    if(in_array('contributor', $roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('Contributor', UMM_SLUG).'</option>
-    <option value="subscriber"';
-    if(in_array('subscriber', $roles)) $output .= ' selected="selected"';
-    $output .= '>'.__('Subscriber', UMM_SLUG).'</option>
-    <option value="visitor"';
+    $output .= '>'.__('All', UMM_SLUG).'</option>';
+    foreach (get_editable_roles() as $role_name => $role_info):
+       $output .= '<option value="' . $role_name . '"';
+    if(in_array($role_name, $roles)) $output .= ' selected="selected"';
+    $output .= '>' . ucwords($role_name) . '</option>';
+    endforeach;
+    $output .= '<option value="visitor"';
     if(in_array('visitor', $roles)) $output .= ' selected="selected"';
     $output .= '>'.__('Visitor/Register', UMM_SLUG).'</option>
     </select>';
