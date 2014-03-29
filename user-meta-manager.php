@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.2.6
+ * Version: 3.2.8
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.2.6');
+define('UMM_VERSION', '3.2.8');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1494,7 +1494,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             case 'time':
             case 'url':
             case 'week':           
-            $field_html .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
+            $field_html .= '<input type="' . $profile_field_settings['type'] . '" name="' . $profile_field_name;
+            if($mode == 'adduser') $field_html .= '[]';
+            $field_html .= '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1503,7 +1505,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             break;
             
             case 'textarea':
-            $field_html .= '<textarea name="' . $profile_field_name . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
+            $field_html .= '<textarea name="' . $profile_field_name;
+            if($mode == 'adduser') $field_html .= '[]';
+            $field_html .= '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1513,6 +1517,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             
             case 'checkbox':                    
             $field_html .= '<input type="checkbox" name="' . $profile_field_name;
+            if($mode == 'adduser') $field_html .= '[]';
             $field_html .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
@@ -1561,7 +1566,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             break;
             
             case 'select':
-            $multi = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? '[]' : '';
+            $multi = ((isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') || ($mode == 'adduser')) ? '[]' : '';
             $multiple = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? ' multiple="multiple"' : '';
             $size = (!isset($profile_field_settings['size']) || $profile_field_settings['size'] < 1) ? ' size="1"' : ' size="' . $profile_field_settings['size'] . '"';
             $field_html .= '<select name="' . $profile_field_name . $multi . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
@@ -1582,7 +1587,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             break;
             
             default:
-            $field_html .= '<input type="text" name="' . $profile_field_name . '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
+            $field_html .= '<input type="text" name="' . $profile_field_name;
+            if($mode == 'adduser') $field_html .= '[]';
+            $field_html .= '" value="' . $value . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
@@ -1931,7 +1938,9 @@ function umm_update_profile_fields($user_id=false){
                $x++;           
             endforeach;          
          else:
-            $field_value = (isset($_REQUEST[$field_name])) ? htmlspecialchars(trim($_REQUEST[$field_name])) : '';
+            // If this is post'd from the Add User screen the value will always be an array.
+            $_val = (isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name])) ? $_REQUEST[$field_name][0] : $_REQUEST[$field_name];
+            $field_value = (isset($_REQUEST[$field_name])) ? htmlspecialchars(trim($_val)) : '';
             if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value); 
          endif;      
              
@@ -2576,7 +2585,7 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
          endif; 
          if(umm_is_pro()):
             if(function_exists('umm_pro_validate_profile_field')):
-               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value);
+               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value, $errors);
             endif; 
          endif;  
        endforeach;
