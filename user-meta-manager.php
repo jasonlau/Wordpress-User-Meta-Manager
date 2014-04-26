@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.2.8
+ * Version: 3.3.0
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.2.8');
+define('UMM_VERSION', '3.3.0');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1023,8 +1023,15 @@ function umm_load_scripts($hook) {
 function umm_profile_field_editor($umm_edit_key=null){
     $profile_fields = umm_get_option('profile_fields');
     $options_output = '';
-    $select_option_row = '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option">-</button></td></tr></table></li>
-';
+
+    if(umm_is_pro()):
+    $select_option_row = '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><select name="umm_profile_select_state[]" size="1"><option value="unchecked">'.__('Unchecked', UMM_SLUG).'</option><option value="checked">'.__('Checked', UMM_SLUG).'</option></select></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option">-</button></td></tr></table></li>
+'; 
+    else:
+      $select_option_row = '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button> <button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option">-</button></td></tr></table></li>
+';     
+    endif;
+    
     
     if(!empty($umm_edit_key) && array_key_exists($umm_edit_key, $profile_fields)):
           $value = stripslashes(htmlspecialchars_decode($profile_fields[$umm_edit_key]['value']));
@@ -1044,9 +1051,23 @@ function umm_profile_field_editor($umm_edit_key=null){
           $x = 1;          
           foreach($options as $option):
             $hide_button = ($x == 1) ? ' hidden' : '';
-            if(!empty($option['label'])):          
-            $options_output .= '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'">' . stripslashes($option['label']) . '</textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'">' . stripslashes(htmlspecialchars_decode($option['value'])) . '</textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option' . $hide_button . '">-</button></td></tr></table></li>
+            if(!empty($option['label'])):
+            
+            if(umm_is_pro()):
+      $options_output .= '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'">' . stripslashes($option['label']) . '</textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'">' . stripslashes(htmlspecialchars_decode($option['value'])) . '</textarea></td><td><select name="umm_profile_select_state[]" size="1">
+      <option value="unchecked"';
+    if($option['state'] == 'unchecked' || $option['state'] == '') $options_output .= ' selected="selected"';
+    $options_output .= '>'.__('Unchecked', UMM_SLUG).'</option>
+	<option value="checked"';
+    if($option['state'] == 'checked') $options_output .= ' selected="selected"';
+    $options_output .= '>'.__('Checked', UMM_SLUG).'</option>';
+    $options_output .= '</select></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option' . $hide_button . '">-</button></td></tr></table></li>
 ';
+    else:
+      $options_output .= '<li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'">' . stripslashes($option['label']) . '</textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'">' . stripslashes(htmlspecialchars_decode($option['value'])) . '</textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor umm-add-option">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor umm-remove-option' . $hide_button . '">-</button></td></tr></table></li>
+';    
+    endif;
+                      
           endif; //!empty($option['label'])
           $x++;
           endforeach;
@@ -1145,8 +1166,8 @@ function umm_profile_field_editor($umm_edit_key=null){
     <br />
     <strong>'.__('HTML After', UMM_SLUG).':</strong><br />
     <textarea rows="3" cols="40" name="umm_profile_field_after" placeholder="">' . $after . '</textarea>
-    <br />   
-    <strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required" title="' . __('Make this a required field. Not recommended for checkbox groups.', UMM_SLUG) . '">
+    <br />';  
+    $output .= '<strong>'.__('Required', UMM_SLUG).':</strong> <select size="1" name="umm_profile_field_required" title="' . __('Make this a required field. Not recommended for checkbox groups.', UMM_SLUG) . '">
 	<option value="no"';
     if($required == 'no' || $required == '') $output .= ' selected="selected"';
     $output .= '>'.__('No', UMM_SLUG).'</option>
@@ -1219,16 +1240,36 @@ function umm_profile_field_editor($umm_edit_key=null){
     <div class="umm-select-options' . $hidden . ' umm-profile-field-options">
     <h3>'.__('Options', UMM_SLUG).'</h3>
     <ul class="umm-select-options-table">
-<li><table style="width: 300px;"><tr><th>Label</th><th>Value</th><th></th></tr></table></li>
+<li>';
+    if(umm_is_pro()):
+       $output .= '<table style="width: 300px;"><tr><th>Label</th><th>Value</th><th>Initial State</th><th></th></tr></table>';
+    else:
+      $output .= '<table style="width: 300px;"><tr><th>Label</th><th>Value</th><th></th></tr></table>';      
+    endif;
+
+
+$output .= '</li>
 
 ';
 $output .= $options_output;
-$output .= '</ul>
+
+if(umm_is_pro()):
+      $output .= '</ul>
+<ul class="umm-select-options-clone hidden">
+ <li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><select name="umm_profile_select_state[]" size="1"><option value="unchecked">'.__('Unchecked', UMM_SLUG).'</option><option value="checked">'.__('Checked', UMM_SLUG).'</option></select></td><td><button class="umm-add-row button-secondary umm-profile-editor">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor">-</button></td></tr></table></li>
+</ul>
+    </div>
+    </div>'; 
+    else:
+      $output .= '</ul>
 <ul class="umm-select-options-clone hidden">
  <li class="umm-select-option-row"><table><tr><td><textarea rows="1" name="umm_profile_select_label[]" placeholder="'.__('Label', UMM_SLUG).'"></textarea></td><td><textarea rows="1" name="umm_profile_select_value[]" placeholder="'.__('Value', UMM_SLUG).'"></textarea></td><td><button class="umm-add-row button-secondary umm-profile-editor">+</button></td><td><button class="umm-remove-row button-secondary umm-profile-editor">-</button></td></tr></table></li>
 </ul>
     </div>
-    </div>';
+    </div>';     
+    endif;
+
+
       
     return $output;
 }
@@ -1472,8 +1513,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes' && $user_can_view) || ($show_fields && array_key_exists($profile_field_name, $umm_data) && $user_can_view)):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
       $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
-      $v = get_user_meta($the_user, $profile_field_name, true);
-      $value = (!is_array($v)) ? stripslashes(htmlspecialchars_decode($v)) : $v;
+      $existing_value = get_user_meta($the_user, $profile_field_name, true);
+      $value = (!is_array($existing_value)) ? stripslashes(htmlspecialchars_decode($existing_value)) : $existing_value;
       if($mode == 'register' || $mode == 'adduser') $value = $default_value;
       
       $label = stripslashes(htmlspecialchars_decode($profile_field_settings['label']));
@@ -1521,8 +1562,10 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= '" value="' . $profile_field_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
-            if($value != "" && !$register)
+              
+            if((($mode == 'register' || $mode == 'adduser') && $profile_field_settings['initial_state'] == 'checked') || $existing_value != ''):
               $field_html .= ' checked="checked"';
+            endif;
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
             $field_html .= ' form="' . $form_id . '" />' . "\n";
@@ -1536,7 +1579,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= '[]" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
             if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
-            if((is_array($value) && in_array($option_settings['value'], $value)) && !$register)
+            if(((is_array($value) && in_array($option_settings['value'], $value)) && !$register) || (($mode == 'register' || $mode == 'adduser') && ($option_settings['state'] == 'checked')))
               $field_html .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
@@ -1555,7 +1598,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
               $field_html .= '" value="' . $option_settings['value'] . '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
               if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
-              if($option_settings['value'] == $value)
+              if($option_settings['value'] == $value || (($mode == 'register' || $mode == 'adduser') && ($option_settings['state'] == 'checked')))
               $field_html .= ' checked="checked"';
               if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
@@ -1578,7 +1621,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             foreach($profile_field_settings['options'] as $option => $option_settings):
             if(!empty($option_settings['label'])):
             $field_html .= '<option value="' . stripslashes($option_settings['value']) . '"';
-              if((!is_array($value) && $option_settings['value'] == $value) || (is_array($value) && in_array($option_settings['value'], $value))) $field_html .= ' selected="selected"';
+              if((!is_array($value) && $option_settings['value'] == $value) || (is_array($value) && in_array($option_settings['value'], $value)) || (($mode == 'register' || $mode == 'adduser') && ($option_settings['state'] == 'checked'))) $field_html .= ' selected="selected"';
             $field_html .= '>'.stripslashes($option_settings['label']).'</option>
             ';
             endif;
@@ -1607,7 +1650,13 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     $html_during = str_replace('[field]', $field_html, $html_during);
     $html_during = str_replace('[field-name]', $profile_field_name, $html_during);
     $html_during = str_replace('[field-slug]', str_replace("_", "-", strtolower($profile_field_name)), $html_during);
-    $output .= $html_during;
+    if(umm_is_pro() && isset($profile_field_settings['display']) && is_array($profile_field_settings['display']) && in_array('profile', $profile_field_settings['display']) && $mode == 'profile'):
+       $output .= $html_during;
+    elseif(umm_is_pro() && isset($profile_field_settings['display']) && is_array($profile_field_settings['display']) && in_array('register', $profile_field_settings['display']) && $mode == 'register'):
+       $output .= $html_during;
+    elseif(!umm_is_pro() || (umm_is_pro() && !isset($profile_field_settings['display']) || $mode == 'shortcode')):
+       $output .= $html_during;
+    endif;
 
     endif; // $show_fields
     endforeach;
@@ -1869,6 +1918,22 @@ function umm_update_columns(){
     
                 case "usermeta":
                 $usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
+                $num_users_data = $wpdb->get_results("SELECT COUNT(*) AS total_users FROM " . $wpdb->users);
+                $num_users = $num_users_data[0]->total_users;
+                $num_users_meta = $wpdb->get_results("SELECT COUNT(*) AS total_meta_users FROM " . $wpdb->usermeta);
+                $num_meta_users = $num_users_meta[0]->total_meta_users;
+                // Check if all users have this meta_key, in case another plugin is managing user meta
+                if($num_users != $num_meta_users):
+                   // Sync - assign all users this meta key if it does not exist for all users
+                   $userdata = umm_get_users();
+                   foreach($userdata as $user):
+                      $test = get_user_meta($user->ID, $umm_column_key);
+                      if(!$test):
+                         update_user_meta($user->ID, $umm_column_key, '');
+                      endif;
+                   endforeach;
+                endif;
+                
                 $usermeta_columns[$umm_column_key] = $umm_column_label;
                 umm_update_option("usermeta_columns", $usermeta_columns);
                 break;
@@ -1962,7 +2027,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
            $x = 0;
            foreach($_POST['umm_profile_select_label'] as $option_label):
              if($option_label != ''):
-                $options[$x] = array('label' => $option_label, 'value' => $_POST['umm_profile_select_value'][$x]);
+                $options[$x] = array('label' => $option_label, 'value' => $_POST['umm_profile_select_value'][$x], 'state' => $_POST['umm_profile_select_state'][$x]);
                 $x++;
              endif; 
            endforeach;
@@ -2056,7 +2121,11 @@ function umm_update_user_meta(){
                // Insert new key for all users and add new profile field if needed
                $data = umm_get_users();
                foreach($data as $user):
-                  update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+                  // Don't overwrite any existing meta data if $duplicate_override is on.
+                  $exists = get_user_meta($user->ID, $meta_key[0], true);
+                  if(!$exists):
+                     update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+                  endif;
                endforeach;
                // Add new meta data to custom meta array
                $umm_data[$meta_key[0]] = $meta_value[0];
@@ -2069,8 +2138,12 @@ function umm_update_user_meta(){
             break;
             
             default:
-               // Insert key for single user - no profile field settings here
-               update_user_meta($u, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+               // Don't overwrite any existing meta data if $duplicate_override is on.
+               $exists = get_user_meta($u, $meta_key[0], true);
+               if(!$exists):
+                  // Insert key for single user - no profile field settings here
+                  update_user_meta($u, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+               endif;
                // Add key to singles array
                if(!in_array($meta_key[0], $umm_singles_data)):
                   array_push($umm_singles_data, $meta_key[0]);

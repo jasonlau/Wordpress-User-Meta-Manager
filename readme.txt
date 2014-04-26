@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.2.8
+Stable tag: 3.3.0
 Tested up to: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,6 +66,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.3.0 =
+Fixed a minor bug. Verified compatibility with WP 3.9
+
+= 3.2.9 =
+Fixed a bug in the Edit Columns process.
 
 = 3.2.8 =
 Fixed a bug in the Add User process.
@@ -506,3 +512,9 @@ Fixed a couple of bugs in the new user registration process.
 
 = 3.2.8 =
 Fixed a bug in the Add User process.
+
+= 3.2.9 =
+Fixed a bug in the Edit Columns process.
+
+= 3.3.0 =
+Fixed a minor bug. Verified compatibility with WP 3.9

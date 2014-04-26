@@ -329,26 +329,34 @@
             case 'url':
             case 'week':
             case 'textarea':
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-checkbox-options").fadeOut();
+            break;
+            
             case 'checkbox':
             $(".umm-input-options").fadeIn('slow');
+            $(".umm-checkbox-options").fadeIn('slow');
             break;
                        
             case 'radio':
             case 'checkbox_group':
             $(".umm-input-options").fadeIn('slow');
+            $(".umm-checkbox-options").fadeOut();
             $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             case 'select':
             $(".umm-input-options").fadeIn('slow');
+            $(".umm-checkbox-options").fadeOut();
             $(".umm-select-multi-options").fadeIn('slow');
             $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             default:
-            $(".umm-profile-field-options").fadeOut('slow');
+            $(".umm-checkbox-options").fadeOut();
+            $(".umm-profile-field-options").fadeOut('slow');         
         }
     });
     

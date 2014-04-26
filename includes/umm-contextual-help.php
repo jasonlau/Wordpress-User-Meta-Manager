@@ -518,8 +518,8 @@ if(umm_value_is($meta_key_to_test, $string_to_match)){
     array(
         __('License', UMM_SLUG),
         __( '<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty expressed or implied. Always backup your database before making changes.</p>
-        <p><strong>License:</strong><br/>&copy;2012+ <a href="http://jasonlau.biz" target="_blank">http://jasonlau.biz</a></p>
-        <p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</p>
+        <p><strong>License:</strong><br/>&copy;2014+ <a href="http://jasonlau.biz" target="_blank">http://jasonlau.biz</a></p>
+        <p>User Meta Manager (free version) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</p>
         <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
         <p>See the GNU General Public License for more details.<br /><a href="http://www.gnu.org/licenses/gpl.html" target="_blank">http://www.gnu.org/licenses/gpl.html</a></p>', UMM_SLUG)
     )
