@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.3.1
+ * Version: 3.3.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.3.1');
+define('UMM_VERSION', '3.3.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -45,13 +45,14 @@ function umm_add_custom_meta(){
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
     <input name="umm_meta_key[]" title="'.__('Letters, numbers, and underscores only', UMM_SLUG).'" type="text" value="" placeholder="'.__('Meta Key', UMM_SLUG).'" /><br />
-    <strong>'.__('Default Value', UMM_SLUG).':</strong><br />
+    <strong>'.__('Value', UMM_SLUG).':</strong><br />
     <textarea rows="3" cols="40" name="umm_meta_value[]"  placeholder=""></textarea>
     ';
+    $output .= '<br /><strong>' . __('Use This Value For All Current Users', UMM_SLUG) . ':</strong><br /><input type="checkbox" name="all_users" value="1" title="' . __('Check the box to add this value to all current users. Note: Using this option on a checkbox field will cause the checkbox to initially be checked for all current users.', UMM_SLUG) . '" /> ' . __('Yes', UMM_SLUG) . ''; 
     $output .= umm_profile_field_editor();
     $output .= '<br />
     <input id="umm_add_user_meta_submit" data-form="umm_update_user_meta_form" data-subpage="umm_update_user_meta" data-wait="'.__('Wait...', UMM_SLUG).'" class="button-primary" type="submit" value="'.__('Submit', UMM_SLUG).'" />
-    <input name="all_users" type="hidden" value="true" /><input name="mode" type="hidden" value="add" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_custom_meta&umm_user=0" />
+    <input name="mode" type="hidden" value="add" /><input name="umm_user" type="hidden" value="all" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_add_custom_meta&umm_user=0" />
     </form>  
     ';
     print $output;
@@ -1565,8 +1566,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             if($profile_field_settings['required'] == 'yes')
               $field_html .= ' required="required"';
               
-            if((($mode == 'register' || $mode == 'adduser') && $profile_field_settings['initial_state'] == 'checked') || $existing_value != ''):
-              $field_html .= ' checked="checked"';
+            if((($mode == 'register' || $mode == 'adduser') && $profile_field_settings['initial_state'] == 'checked') || ($value == $profile_field_settings['value'] && ($mode != 'register' && $mode != 'adduser'))):
+              $field_html .= ' checked="checked" data-mode="' . $existing_value . '"';
             endif;
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
@@ -2084,7 +2085,8 @@ function umm_update_settings(){
 function umm_update_user_meta(){
     global $wpdb;    
     $mode = $_POST['mode'];
-    $all_users = (isset($_REQUEST['all_users']) && !empty($_POST['all_users'])) ? true : false;
+    $all_users = (isset($_POST['all_users']) && !empty($_POST['all_users'])) ? true : false;
+    $field_type = (isset($_POST['umm_profile_field_type']) && !empty($_POST['umm_profile_field_type'])) ? $_POST['umm_profile_field_type'] : false;
     $u = (isset($_REQUEST['umm_user']) && !empty($_REQUEST['umm_user'])) ? $_REQUEST['umm_user'] : 'all';
     $meta_value = !empty($_POST['umm_meta_value']) ? $_POST['umm_meta_value'] : array();
     $meta_key = (!empty($_POST['umm_meta_key'])) ? $_POST['umm_meta_key'] : array();
@@ -2120,13 +2122,14 @@ function umm_update_user_meta(){
         else: // Key doesn't exist
            switch($u){
             case "all":
+               $val = ($all_users) ?  maybe_serialize(trim($meta_value[0])): '';
                // Insert new key for all users and add new profile field if needed
                $data = umm_get_users();
                foreach($data as $user):
                   // Don't overwrite any existing meta data if $duplicate_override is on.
                   $exists = get_user_meta($user->ID, $meta_key[0], true);
                   if(!$exists):
-                     update_user_meta($user->ID, $meta_key[0], maybe_unserialize(trim(stripslashes($meta_value[0]))), false);
+                     update_user_meta($user->ID, $meta_key[0], $val, false);
                   endif;
                endforeach;
                // Add new meta data to custom meta array
