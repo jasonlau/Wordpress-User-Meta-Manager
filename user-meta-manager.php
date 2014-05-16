@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.3.3
+ * Version: 3.3.4
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.3.3');
+define('UMM_VERSION', '3.3.4');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -275,7 +275,7 @@ function umm_backup_page(){
     . "<table class='umm-csv-builder'><tr>
 	<td><strong>" . __('Fields', UMM_SLUG) . ":</strong> <span>" . __("Assemble a list of meta keys to display in the CSV file.", UMM_SLUG) . "</span><input type='hidden' data-for='fields' /><div class='umm-csv-builder-fields'>" . $fields1 . " <input type='button' value=' + ' class='umm-csv-builder-fields-add  button-secondary' /></div></td>
 </tr>
-<tr><td><button class='umm-csv-builder-submit button-primary' data-csv_link='" . WP_PLUGIN_URL .  "/user-meta-manager/includes/umm-csv.php?umm_nonce=".$nonce."' title='".__('Get CSV', UMM_SLUG)."'>".__('Generate CSV', UMM_SLUG)."</button></td>
+<tr><td><button class='umm-csv-builder-submit button-primary' data-csv_link='" . esc_url(home_url('/')) . "wp-admin/users.php?page=user-meta-manager&amp;umm_output=csv' title='".__('Get CSV', UMM_SLUG)."'>".__('Generate CSV', UMM_SLUG)."</button></td>
 </tr>
 </table><div id='umm-csv-builder-fields-clone' class='umm-csv-builder-fields-clone umm-hidden'><div class='umm-csv-builder-fields'>" . $fields2 . " <input type='button' value=' + ' class='button-secondary umm-csv-builder-fields-add' /> <input type='button' value=' - ' class='button-secondary umm-csv-builder-remove' /></div></div>";
     
@@ -724,6 +724,32 @@ function umm_get_columns(){
     $users_columns = (!$umm_options["users_columns"] ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : $umm_options["users_columns"]);
     $usermeta_columns = (!$umm_options["usermeta_columns"]) ? array() : $umm_options["usermeta_columns"];
     return array_merge($users_columns, $usermeta_columns);
+}
+
+function umm_get_csv(){
+    $filename = 'user_meta_data_' . date('m-j-y-g-i-a') . '.csv';
+    $data = umm_usermeta_data();
+    $output = '"umeta_id","user_id","meta_key","meta_value"' . "\n";			
+      
+    header("Content-Type: application/octet-stream");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header("Expires: ".gmdate("D, d M Y H:i:s", mktime(date("H")+2, date("i"), date("s"), date("m"), date("d"), date("Y")))." GMT");
+    header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Pragma: no-cache");
+    foreach($data as $o):
+      if(!empty($o->umeta_id)):
+         if(isset($_REQUEST['umm_key']) && !empty($_REQUEST['umm_key'])):
+            if(in_array($o->meta_key, $_REQUEST['umm_key']) || $_REQUEST['umm_key'][0] == 'all'):
+               $output .= '"' . $o->umeta_id . '","'  . $o->user_id . '","' . $o->meta_key . '","' . addslashes($o->meta_value) .  '"' . "\n";
+            endif;
+         else:
+            $output .= '"' . $o->umeta_id . '","' . $o->user_id . '","' . $o->meta_key . '","' . addslashes($o->meta_value) .  '"' . "\n";
+         endif;
+      endif;
+    endforeach;
+    print($output);
+    exit;
 }
 
 function umm_get_profile_fields($output_type='array'){
@@ -1888,10 +1914,10 @@ function umm_sync_user_meta(){
 
 function umm_ui(){
     if(!current_user_can('edit_users')):
-    _e('You do not have the appropriate permission to view this content.', UMM_SLUG);
+      _e('You do not have the appropriate permission to view this content.', UMM_SLUG);
     else:
-    $_UMM_UI = new UMM_UI();
-    $_UMM_UI->display_module();
+       $_UMM_UI = new UMM_UI();
+       $_UMM_UI->display_module();   
     endif;
 }
 
@@ -2705,6 +2731,10 @@ $umm_x = explode("user-new.", $_SERVER["REQUEST_URI"]);
 if(isset($umm_x[1]) && $umm_x[1] == 'php'):
    // No known action for this, so we'll use JavaScript to inject the profile fields in the form.
    add_action('in_admin_footer', 'umm_add_user_fields');
+endif;
+
+if(isset($_REQUEST['umm_output']) && $_REQUEST['umm_output'] == 'csv'):
+   add_action('init', 'umm_get_csv');
 endif;
 
 add_action('admin_menu', 'umm_admin_menu');
