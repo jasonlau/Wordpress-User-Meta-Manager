@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.3.2
+ * Version: 3.3.3
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.3.2');
+define('UMM_VERSION', '3.3.3');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -1491,9 +1491,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
       $profile_fields = $new_array;   
     endif;
     
-    if(!$form_id):
-       $form_id = 'your-profile';
-    endif;
+    $form_tag = (!$form_id) ? '' : ' form="' . $form_id . '"';
     
     $html_before = (!isset($umm_settings['html_before_' . $mode]) || empty($umm_settings['html_before_' . $mode])) ? '<h3 class="umm-custom-fields">[section-title]</h3>
 <table class="form-table umm-custom-fields">
@@ -1545,7 +1543,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= " form=\"" . $form_id . "\" />";
+            $field_html .= $form_tag . " />";
             break;
             
             case 'textarea':
@@ -1556,7 +1554,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' form="' . $form_id . '">' . $value . '</textarea>' . "\n";
+            $field_html .= $form_tag . '>' . $value . '</textarea>' . "\n";
             break;
             
             case 'checkbox':                    
@@ -1571,7 +1569,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             endif;
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' form="' . $form_id . '" />' . "\n";
+            $field_html .= $form_tag . ' />' . "\n";
             break;
             
             case 'checkbox_group':
@@ -1586,7 +1584,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
               $field_html .= ' checked="checked"';
             if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' form="' . $form_id . '" />' . stripslashes($option_settings['label']) . "</span> \n";
+            $field_html .= $form_tag . ' />' . stripslashes($option_settings['label']) . "</span> \n";
             endif;
             $x++;
             endforeach;            
@@ -1605,7 +1603,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
               $field_html .= ' checked="checked"';
               if(!empty($profile_field_settings['attrs']))
               $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-              $field_html .= ' form="' . $form_id . '" /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
+              $field_html .= $form_tag . ' /><span class="' . str_replace(" ", "-", strtolower($profile_field_name)) . '">' . $option_settings['label'] . '</span> ';
               endif;
               $i++;
             endforeach; 
@@ -1620,7 +1618,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= $multiple . $size . ' form="' . $form_id . '">' . "\n";
+            $field_html .= $multiple . $size . $form_tag . '>' . "\n";
             foreach($profile_field_settings['options'] as $option => $option_settings):
             if(!empty($option_settings['label'])):
             $field_html .= '<option value="' . stripslashes($option_settings['value']) . '"';
@@ -1640,7 +1638,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
             $field_html .= ' required="required"';
             if(!empty($profile_field_settings['attrs']))
             $field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
-            $field_html .= ' form="' . $form_id . '" />';
+            $field_html .= $form_tag . ' />';
         }
     
     if(!empty($profile_field_settings['after'])):
@@ -1666,7 +1664,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     $html_after = (!isset($umm_settings['html_after_' . $mode]) || empty($umm_settings['html_after_' . $mode])) ? '</tbody>
 </table>' : stripslashes(htmlspecialchars_decode($umm_settings['html_after_' . $mode]));
     $umm_nonce = wp_create_nonce('umm_wp_nonce');
-    $output .= $html_after . "\n" . '<input type="hidden" name="umm_nonce" value="' . $umm_nonce . '" form="' . $form_id . '" />' . "\n"; 
+    $output .= $html_after . "\n" . '<input type="hidden" name="umm_nonce" value="' . $umm_nonce . '"' . $form_tag . ' />' . "\n"; 
     endif; // !empty($profile_fields)
 
     if(isset($output) && !empty($output)):
@@ -1988,10 +1986,13 @@ function umm_update_option($key, $value){
 
 function umm_update_profile_fields($user_id=false){
     global $current_user;
+    
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
     if($user_id) $the_user = $user_id;
+    
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
+    
        foreach($saved_profile_fields as $field_name => $field_settings):
        
          // Check if user role matches
