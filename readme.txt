@@ -4,7 +4,7 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.3.5
+Stable tag: 3.3.7
 Tested up to: 3.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,6 +66,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.3.7 =
+Fixed a bug that caused default values to be overwritten in non-profile fields.
+
+= 3.3.6 =
+Fixed a bug that prevented some custom fields from displaying in the Add User screen.
 
 = 3.3.5 =
 Removed user-meta-manager/includes/umm-csv.php
@@ -548,3 +554,9 @@ Changed how csv backup is called.
 
 = 3.3.5 =
 Removed user-meta-manager/includes/umm-csv.php
+
+= 3.3.6 =
+Fixed a bug that prevented some custom fields from displaying in the Add User screen.
+
+= 3.3.7 =
+Fixed a bug that caused default values to be overwritten in non-profile fields.

@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.3.5
+ * Version: 3.3.7
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.3.5');
+define('UMM_VERSION', '3.3.7');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -382,15 +382,17 @@ function umm_delete_backup_files(){
 function umm_default_keys(){
     // Sets default and posted values for custom meta upon new user registration.
     global $wpdb;
-    $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1"); // Gets the latest user id        
+    $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1"); // Gets the latest user id
+            
     $umm_options = umm_get_option();
     $umm_data = $umm_options['custom_meta'];
     $profile_fields = $umm_data['profile_fields'];
     // Set default values for custom meta
-    if($umm_data):
+    if(isset($umm_data)):
         foreach($umm_data as $key => $value):
-           if(isset($profile_fields[$key]) && $profile_fields[$key]['add_to_profile'] != 'yes')
-            update_user_meta($data[0]->user_id, $key, $value, false);
+           if((isset($profile_fields[$key]) && $profile_fields[$key]['add_to_profile'] != 'yes') || !isset($profile_fields[$key])):
+           update_user_meta($data[0]->user_id, $key, $value, false);
+           endif;
         endforeach;
     endif;
     // Set posted values for profile fields
@@ -1681,6 +1683,8 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
        $output .= $html_during;
     elseif(umm_is_pro() && isset($profile_field_settings['display']) && is_array($profile_field_settings['display']) && in_array('register', $profile_field_settings['display']) && $mode == 'register'):
        $output .= $html_during;
+    elseif($mode == 'adduser'):
+       $output .= $html_during;
     elseif(!umm_is_pro() || (umm_is_pro() && !isset($profile_field_settings['display']) || $mode == 'shortcode')):
        $output .= $html_during;
     endif;
@@ -2022,7 +2026,7 @@ function umm_update_profile_fields($user_id=false){
        foreach($saved_profile_fields as $field_name => $field_settings):
        
          // Check if user role matches
-         if(umm_user_can_edit_field($field_settings)):
+         if(umm_user_can_edit_field($field_settings) && $field_settings['add_to_profile'] == 'yes'):
        
          if((isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name])) && ($field_settings['type'] == 'checkbox_group' || ($field_settings['type'] == 'select' && (isset($field_settings['allow_multi']) && $field_settings['allow_multi'] == 'yes')))):
             // This is a checkbox group array or multi-select menu
