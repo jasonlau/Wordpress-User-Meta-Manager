@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.3.7
+ * Version: 3.3.8
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.3.7');
+define('UMM_VERSION', '3.3.8');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -2309,16 +2309,16 @@ function umm_useraccess_shortcode($atts, $content) {
     $json = (!isset($atts['json'])) ? false : $atts['json'];
     $redir = (!isset($atts['url'])) ? false : $atts['url'];
     if($json):
-    $access = false;
+    $access = true;
       $json = json_decode($json);
       foreach($json as $k => $v):
         if($k && $v):
           $meta_value = get_user_meta($current_user->ID, $k, true);
-          if($meta_value == trim($v)):        
-            $access = true;
+          if($meta_value != trim($v)):        
+            $access = false;
           endif;  
         endif;
-    endforeach; 
+    endforeach;
     elseif($key && $value):
         $meta_value = get_user_meta($current_user->ID, $key, true);
       if($meta_value != trim($value)):        

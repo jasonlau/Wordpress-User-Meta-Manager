@@ -8,11 +8,11 @@
 
 if(!defined("UMM_PATH")) die();
     
-    if(!class_exists('WP_List_Table')):
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+if(!class_exists('UMM_List_Table')):
+    require_once(UMM_PATH . '/includes/class-umm-list-table.php');
 endif;
 
-class UMM_UI extends WP_List_Table {  
+class UMM_UI extends UMM_List_Table {  
 
     function __construct(){
         global $status, $page;
@@ -29,17 +29,6 @@ class UMM_UI extends WP_List_Table {
         $this->users_columns = (!umm_get_option("users_columns") ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : umm_get_option("users_columns"));
         $this->usermeta_columns = (!umm_get_option("usermeta_columns")) ? array() : umm_get_option("usermeta_columns");
     }
-
-    /*function column_default($item, $column_name){
-        $o = maybe_unserialize($item->$column_name);
-        if(is_array($o)):
-           $output = implode(', ', $o);
-        else:
-           $output = stripslashes($o);
-        endif;
-    
-        return $output."---";
-    }*/
     
     function column_default($item, $column_name){
         return stripslashes($item->$column_name);

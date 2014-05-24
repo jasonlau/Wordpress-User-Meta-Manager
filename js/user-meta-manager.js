@@ -5,9 +5,17 @@
  */
  
  jQuery(function($){
-        var page_data = $("div.umm-wrapper").data();
+        var page_data = $("div.umm-wrapper").data(),
+        reload_home = function(){
+            /* v 3.3.8 */
+            $("div#umm-home").load(location.href + " div#umm-home", function(){                
+                $("div#umm-home div.tablenav.top div.actions").prepend($("div.umm-per-page-menu").html());
+                $("div#umm-search select.umm-search-mode").replaceWith($("div#umm-home select.umm-search-mode"));
+            });
+            
+        };
         $("div.actions").first().prepend($("div.umm-per-page-menu").html());
-        $("div.umm-per-page-menu").html('');
+        //$("div.umm-per-page-menu").html(''); // depreciated v 3.3.8
         $("#get-search-input").after($("div.umm-search-mode-menu").html());
        
        $(".umm-go").each(function(){
@@ -170,11 +178,8 @@
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
-            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
-                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
-                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
-                $("div.umm-result-container").html('');
-            });
+            reload_home(); /* v 3.3.8 */
+            
             $("div.umm-subpage").load(return_page, function(){
                 
                 if(data){
@@ -205,11 +210,8 @@
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
-            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
-                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
-                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
-                $("div.umm-result-container").html('');
-            });
+            reload_home(); /* v 3.3.8 */
+            
             $("div.umm-subpage").load(return_page, function(){
                 if(data){
                     $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
@@ -243,11 +245,8 @@
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
-            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
-                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
-                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
-                $("div.umm-result-container").html('');
-            });
+            reload_home(); /* v 3.3.8 */
+            
             $("div.umm-subpage").load(return_page, function(){
                 
                 if(data){
@@ -278,13 +277,9 @@
         
         $.post('admin-ajax.php?action=umm_switch_action&umm_sub_action=' + d.subpage, $("#" + d.form).serialize(), function(data){
             
-            $("div.umm-result-container").load(location.href + " div#umm-home", function(){                
-                $("table.umm-users").replaceWith($("div.umm-result-container table.umm-users"));
-                $("div#umm-search select.umm-search-mode").replaceWith($("div.umm-result-container select.umm-search-mode"));
-                $("div.umm-result-container").html('');
-            });
-            $("div.umm-subpage").load(return_page, function(){
-                
+            reload_home(); /* v 3.3.8 */
+            
+            $("div.umm-subpage").load(return_page, function(){               
                 if(data){
                     $('div.umm-message').html(data).fadeIn('slow').delay(5000).fadeOut('slow');
                 } 
