@@ -384,12 +384,12 @@ function umm_help($contextual_help, $screen_id, $screen) {
     <pre>[useraccess users="1 22 301" key="meta key" value="meta value" message="You do not have permission to view this content." url="http://jasonlau.biz"]</pre>
     In this example, allowed users are listed in the <strong>users</strong> attribute. However, allowed users must have a matching meta key and value, or they will be restricted also. Restricted users are redirected to the address contained in the <strong>url</strong> attribute. <strong>Important:</strong> This method does not hide restricted content. Use the previous method to hide restricted content from view.<br /><br /><br />
     <strong>Restrict access based on multiple meta keys and values:</strong>
-    <pre>[useraccess json=\'{"access_level":"gold","sub_level":"silver"}\' message="You need permission to view this content."]Restricted content.[/useraccess]</pre>
-    The <em>json</em> attribute is used to define a list of meta keys and values. The list must be JSON encoded, as seen in the example above. Users with matching meta keys and values will be granted access to restricted content.<br/><br/>
+    <pre>[useraccess json=\'{"access_level":"gold"},{"sub_level":"silver"}\' message="You need permission to view this content."]Restricted content.[/useraccess]</pre>
+    The <em>json</em> attribute is used to define a list of meta keys and values. The list must be JSON encoded, as seen in the example above. A user with a meta key and value that matches any one or more of those listed will be granted access to restricted content.<br/><br/>
     JSON formatting -
-    <pre>{"meta_key":"meta_value", "meta_key":"meta_value", "meta_key":"meta_value"}</pre>
+    <pre>{"meta_key":"meta_value"},{"meta_key":"meta_value"},{"meta_key":"meta_value"}</pre>
     Additionally, you could repeat the same meta key multiple times.
-    <pre>json=\'{"access_level":"gold", "sub_level":"silver", "sub_level":"bronze", "sub_level":"aluminum-foil"}\'</pre></p>
+    <pre>json=\'{"access_level":"gold"},{"sub_level":"silver"},{"sub_level":"bronze"},{"sub_level":"aluminum-foil"}\'</pre></p>
     <h2>User Meta Forms</h2>
     <p><strong>Display a form in a Post or Page:</strong><br />
     Display a form which allows members to update meta data. The updated data is saved and optionally emailed to a set address. Any Custom Meta keys can be added to the form. Only Custom Meta keys which were made using this plugin will work. Additionally, you must also set a Field Type for the field you wish to display. Use the <strong>Form Short Code Builder</strong> tab on the left to easily generate the short code.
