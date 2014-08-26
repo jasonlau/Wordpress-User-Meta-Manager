@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.4.0
+ * Version: 3.4.2
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,11 +31,11 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.4.0');
+define('UMM_VERSION', '3.4.2');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
-// error_reporting(E_ALL);
+//error_reporting(E_ALL);
 include(UMM_PATH . 'includes/umm-table.php');
 include(UMM_PATH . 'includes/umm-contextual-help.php');
 
@@ -152,7 +152,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     $mode = (empty($backup_mode)) ? $mode : $backup_mode;
     if(umm_is_pro() && $mode == 'pro'):
        if(function_exists('umm_pro_backup')):
-          call_user_func('umm_pro_backup');
+          umm_pro_backup();
           exit;
        endif; 
     endif;    
@@ -282,7 +282,7 @@ function umm_backup_page(){
     $output .= '</div>';
     if(umm_is_pro()):
        if(function_exists('umm_pro_backup_page')):
-          $output .= call_user_func('umm_pro_backup_page');       
+          $output .= umm_pro_backup_page();       
        endif; 
     endif;
     $output .= '</div>';
@@ -312,7 +312,8 @@ function umm_column_exists($key){
 function umm_get_option($which=false){
     if($umm_data = get_option('user_meta_manager_data')):
        if($which):
-          return $umm_data[$which];
+          $which_data = (isset($umm_data[$which])) ? $umm_data[$which] : '';
+          return $which_data;
        else:
          return $umm_data;
        endif;
@@ -386,11 +387,28 @@ function umm_default_keys(){
             
     $umm_options = umm_get_option();
     $umm_data = $umm_options['custom_meta'];
-    $profile_fields = $umm_data['profile_fields'];
+    $profile_fields = $umm_options['profile_fields'];
     // Set default values for custom meta
     if(isset($umm_data)):
         foreach($umm_data as $key => $value):
            if((isset($profile_fields[$key]) && $profile_fields[$key]['add_to_profile'] != 'yes') || !isset($profile_fields[$key])):
+           if(umm_is_pro()):
+              if($profile_fields[$key]['type'] == 'random_string'):
+                 $random_string_length = (isset($profile_fields[$key]['random_string_length']) && $profile_fields[$key]['random_string_length'] > 0) ? $profile_fields[$key]['random_string_length'] : 10;
+                 $random_string_type = (isset($profile_fields[$key]['random_string_type'])) ? $profile_fields[$key]['random_string_type'] : 'mixed';
+                 if($random_string_type == 'numbers'):
+                    $random_string_type = 1;
+                 elseif($random_string_type == 'letters'):
+                    $random_string_type = 2;
+                 elseif($random_string_type == 'all'):
+                    $random_string_type = 4;
+                 else:
+                    $random_string_type = 3;
+                 endif;              
+                 $value = umm_random_str($random_string_length, $random_string_type);                  
+              endif;
+           endif;
+           
            update_user_meta($data[0]->user_id, $key, $value, false);
            endif;
         endforeach;
@@ -795,10 +813,16 @@ function umm_get_profile_fields($output_type='array'){
 function umm_get_users($query=false){
     global $wpdb;
     $umm_settings = umm_get_option('settings');
-    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
-    if(!$query):
-       $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $max_users;
-    endif;     
+    if(umm_is_pro()):
+       if(!$query):
+          $query = "SELECT * FROM " . $wpdb->users;
+       endif;
+    else:
+       if(!$query):
+          $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $umm_settings['max_users'];
+       endif;
+    endif;
+         
     $data = $wpdb->get_results($query);   
     if(defined('MULTISITE') && MULTISITE):
        $blog_id = get_current_blog_id();
@@ -1079,6 +1103,8 @@ function umm_profile_field_editor($umm_edit_key=null){
           $allow_multi = $profile_fields[$umm_edit_key]['allow_multi'];
           $size = (!isset($profile_fields[$umm_edit_key]['size']) || empty($profile_fields[$umm_edit_key]['size'])) ? '1' : $profile_fields[$umm_edit_key]['size'];
           $roles = (!isset($profile_fields[$umm_edit_key]['roles']) || !is_array($profile_fields[$umm_edit_key]['roles'])) ? array() : $profile_fields[$umm_edit_key]['roles'];
+          $random_string_length = (isset($profile_fields[$umm_edit_key]['random_string_length'])) ? $profile_fields[$umm_edit_key]['random_string_length'] : 10;
+          $random_string_type = (isset($profile_fields[$umm_edit_key]['random_string_type'])) ? $profile_fields[$umm_edit_key]['random_string_type'] : 'mixed';
           $x = 1;          
           foreach($options as $option):
             $hide_button = ($x == 1) ? ' hidden' : '';
@@ -1114,10 +1140,16 @@ function umm_profile_field_editor($umm_edit_key=null){
     $label = (!isset($label) || empty($label)) ? '' : $label;
     $attrs = (!isset($attrs) || empty($attrs)) ? '' : $attrs;
     $after = (!isset($after) || empty($after)) ? '' : $after;
+    $allow_tags = (!isset($allow_tags) || empty($allow_tags)) ? 'yes' : $allow_tags;
+    $unique_value = (!isset($unique_value) || empty($unique_value)) ? 'no' : $unique_value;
+    $allow_multi = (!isset($allow_multi) || empty($allow_multi)) ? 'no' : $allow_multi;
+    $size = (!isset($size) || empty($size)) ? '' : $size;
     $required = (!isset($required) || empty($required)) ? '' : $required;
     $add_to_profile = (!isset($add_to_profile) || empty($add_to_profile)) ? '' : $add_to_profile;
     $class = (!isset($class) || empty($class)) ? '' : $class;
     $roles = (!isset($roles) || empty($roles) || !is_array($roles)) ? array() : $roles;
+    $random_string_length = (!isset($random_string_length)) ? 10 : $random_string_length;
+    $random_string_type = (!isset($random_string_type) || empty($random_string_type)) ? 'mixed' : $random_string_type;
     $output = '<div class="umm-profile-field-editor">
     <strong>'.__('Field <a title="W3Schools HTML5 Input Types Reference Page" href="http://www.w3schools.com/html/html5_form_input_types.asp" target="_blank">Type</a>', UMM_SLUG).' :</strong><br /><select class="umm-profile-field-type" size="1" name="umm_profile_field_type">
     <option value="" title="'.__('Do not add to user profile.', UMM_SLUG).'"';
@@ -1179,14 +1211,46 @@ function umm_profile_field_editor($umm_edit_key=null){
     $output .= '>'.__('Radio Button Group', UMM_SLUG).'</option>
     <option value="select"';
     if($type == 'select') $output .= ' selected="selected"';
-    $output .= '>'.__('Select Menu', UMM_SLUG).'</option>
-    </select>';
+    $output .= '>'.__('Select Menu', UMM_SLUG).'</option>';
+    
+    if(umm_is_pro()):
+       if(function_exists('umm_pro_field_types_options')):
+          $output .= umm_pro_field_types_options($type);        
+       endif; 
+    endif;
+    
+    $output .= '</select>';
     
     $hidden = (empty($type)) ? ' hidden' : '';
     
     $output .= '<div class="umm-input-options' . $hidden . ' umm-profile-field-options">
-    <h3>'.__('Settings', UMM_SLUG).'</h3>
-    <strong>'.__('Label', UMM_SLUG).':</strong><br />
+    <h3>'.__('Settings', UMM_SLUG).'</h3>';
+    $hidden = ($type == 'random_string' && umm_is_pro()) ? '' : ' hidden';
+    $output .= '<div class="umm-random-string-options' . $hidden . '">';
+    $output .= '<strong>'.__('Length', UMM_SLUG).':</strong><br />
+    <input type="number" name="umm_random_string_length" value="' . $random_string_length . '" />
+    <br />
+    <strong>'.__('Type', UMM_SLUG).':</strong><br />
+    <select size="1" name="umm_random_string_type">
+    <option value=""></option>
+    <option value="mixed"';
+    if($random_string_type == 'mixed' || $random_string_type == '') $output .= ' selected="selected"';
+    $output .= '>'.__('Mixed', UMM_SLUG).'</option>
+	<option value="numbers"';
+    if($random_string_type == 'numbers') $output .= ' selected="selected"';
+    $output .= '>'.__('Numbers Only', UMM_SLUG).'</option>
+	<option value="letters"';
+    if($random_string_type == 'letters') $output .= ' selected="selected"';
+    $output .= '>'.__('Letters Only', UMM_SLUG).'</option>
+    <option value="all"';
+    if($random_string_type == 'all') $output .= ' selected="selected"';
+    $output .= '>'.__('All Characters', UMM_SLUG).'</option>
+    </select>
+    <br />';
+    $output .= '</div>';
+    $hidden = ($type == 'random_string' && umm_is_pro()) ? ' hidden' : '';
+    $output .= '<div class="umm-input-options-sub' . $hidden . '">';
+    $output .= '<strong>'.__('Label', UMM_SLUG).':</strong><br />
     <textarea rows="3" cols="40" name="umm_profile_field_label"  placeholder="">' . $label . '</textarea>
     <br />
     <strong>'.__('Classes', UMM_SLUG).':</strong><br />
@@ -1244,10 +1308,11 @@ function umm_profile_field_editor($umm_edit_key=null){
     $output .= '>'.__('Visitor/Register', UMM_SLUG).'</option>
     </select>';
     if(umm_is_pro()):
-            if(function_exists('umm_pro_profile_editor_fields')):
-               $output .= call_user_func('umm_pro_profile_editor_fields', $profile_fields[$umm_edit_key]);
-            endif; 
-         endif; 
+       if(function_exists('umm_pro_profile_editor_fields')):
+          $edit_key = (isset($profile_fields[$umm_edit_key])) ? $profile_fields[$umm_edit_key] : false;
+          $output .= umm_pro_profile_editor_fields($edit_key);
+       endif; 
+    endif; 
     $output .= '</div>';  
     
     
@@ -1299,9 +1364,7 @@ if(umm_is_pro()):
     </div>
     </div>';     
     endif;
-
-
-      
+   $output .= '</div><!-- sub -->';   
     return $output;
 }
 
@@ -1529,6 +1592,9 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     $current_user = wp_get_current_user();
     
     foreach($profile_fields as $profile_field_name => $profile_field_settings):
+    if($profile_field_settings['type'] == 'random_string'):
+       continue;
+    endif;
     $user_can_view = false;
     if(isset($profile_field_settings['roles']) && is_array($profile_field_settings['roles'])):
        foreach($profile_field_settings['roles'] as $role):
@@ -2084,7 +2150,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
                                        'options' => $options);
        if(umm_is_pro()):
             if(function_exists('umm_pro_profile_field_data')):
-               $new_profile_field_data = call_user_func('umm_pro_profile_field_data', $_profile_field_data);
+               $new_profile_field_data = umm_pro_profile_field_data($_profile_field_data);
             endif; 
        else:
           $new_profile_field_data = $_profile_field_data;
@@ -2102,7 +2168,7 @@ function umm_update_profile_fields_settings($meta_key, $meta_value){
 function umm_update_settings(){
     if(umm_is_pro()):
        if(function_exists('umm_pro_update_settings')):
-          $output = call_user_func('umm_pro_update_settings', $_POST);
+          $output = umm_pro_update_settings($_POST);
        endif;     
     else:
        umm_update_option('settings', $_POST);
@@ -2128,6 +2194,17 @@ function umm_update_user_meta(){
     $umm_data = umm_get_option('custom_meta'); // Array of custom meta data for all users
     $umm_singles_data = umm_get_option('singles_data'); // Array of custom key names for single users
     $umm_singles_data = (empty($umm_singles_data) || !is_array($umm_singles_data)) ? array() : $umm_singles_data; // Backwards compatibility
+    $random_string_length = (isset($_POST['umm_random_string_length']) && $_POST['umm_random_string_length'] > 0) ? $_POST['umm_random_string_length'] : 10;
+    $random_string_type = (isset($_POST['umm_random_string_type']) && $_POST['umm_random_string_type'] != '') ? $_POST['umm_random_string_type'] : 'mixed';
+    if($random_string_type == 'numbers'):
+       $random_string_type = 1;
+    elseif($random_string_type == 'letters'):
+       $random_string_type = 2;
+    elseif($random_string_type == 'all'):
+       $random_string_type = 4;
+    else:
+       $random_string_type = 3;
+    endif;
     $sort_order = umm_get_option('sort_order');
     if(!is_array($sort_order)) $sort_order = array(); // Backwards compatibility
     if(empty($sort_order) || count($sort_order) < count($umm_data)):
@@ -2160,6 +2237,9 @@ function umm_update_user_meta(){
                   // Don't overwrite any existing meta data if $duplicate_override is on.
                   $exists = get_user_meta($user->ID, $meta_key[0], true);
                   if(!$exists):
+                     if(umm_is_pro() && $field_type == 'random_string'):
+                        $val = umm_random_str($random_string_length, $random_string_type);
+                     endif;
                      update_user_meta($user->ID, $meta_key[0], $val, false);
                   endif;
                endforeach;
@@ -2405,7 +2485,7 @@ function umm_usermeta_keys_menu($select=true, $optgroup=false, $include_used=fal
         break;
         
         default:
-        $output .= '<option value="' . $d->meta_key . '|usermeta">' . $d->meta_key . '</option>' . "\n";
+        //$output .= '<option value=""></option>' . "\n";
         break;
         
     }  
@@ -2545,7 +2625,7 @@ function umm_usermeta_shortcode($atts, $content) {
              
              if(umm_is_pro()):
                 if(function_exists('umm_pro_validate_profile_field')):              
-                   $error .= call_user_func('umm_pro_validate_profile_field', $field_name, $profile_fields[$field_name], $val, false);
+                   $error .= umm_pro_validate_profile_field($field_name, $profile_fields[$field_name], $val, false);
                    if(!empty($error)):
                       $umm_error = true;
                    endif;
@@ -2592,7 +2672,7 @@ function umm_usermeta_shortcode($atts, $content) {
          endif;
          if(umm_is_pro()):
             if(function_exists('umm_pro_redirect')):
-               call_user_func('umm_pro_redirect', $atts);
+               umm_pro_redirect($atts);
             endif; 
        endif;
        endif; // !$umm_error
@@ -2688,7 +2768,7 @@ function umm_validate_profile_fields($errors, $update, $user) {
          endif;
          if(umm_is_pro()):
             if(function_exists('umm_pro_validate_profile_field')):
-               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value, $errors);
+               umm_pro_validate_profile_field($field_name, $field_settings, $field_value, $errors);
             endif; 
          endif;   
        endforeach;
@@ -2707,7 +2787,7 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
          endif; 
          if(umm_is_pro()):
             if(function_exists('umm_pro_validate_profile_field')):
-               call_user_func('umm_pro_validate_profile_field', $field_name, $field_settings, $field_value, $errors);
+               umm_pro_validate_profile_field($field_name, $field_settings, $field_value, $errors);
             endif; 
          endif;  
        endforeach;

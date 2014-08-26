@@ -307,7 +307,7 @@
     });
     
     $(document).on('change', "select.umm-profile-field-type", function(){
-        $(".umm-profile-field-options").fadeOut('slow');
+        $(".umm-profile-field-options, .umm-input-options-sub").fadeOut('slow');
         switch($(this).val()){
             case 'text':
             case 'color':
@@ -324,33 +324,41 @@
             case 'url':
             case 'week':
             case 'textarea':
-            $(".umm-input-options").fadeIn('slow');
-            $(".umm-checkbox-options").fadeOut();
+            $(".umm-input-options, .umm-input-options-sub").fadeIn('slow');
+            $(".umm-checkbox-options, .umm-random-string-options").fadeOut();
             break;
             
             case 'checkbox':
-            $(".umm-input-options").fadeIn('slow');
+            $(".umm-input-options, .umm-input-options-sub").fadeIn('slow');
+            $(".umm-random-string-options").fadeOut();
             $(".umm-checkbox-options").fadeIn('slow');
             break;
                        
             case 'radio':
             case 'checkbox_group':
-            $(".umm-input-options").fadeIn('slow');
-            $(".umm-checkbox-options").fadeOut();
+            $(".umm-input-options, .umm-input-options-sub").fadeIn('slow');
+            $(".umm-checkbox-options, .umm-random-string-options").fadeOut();
             $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
             case 'select':
-            $(".umm-input-options").fadeIn('slow');
-            $(".umm-checkbox-options").fadeOut();
+            $(".umm-input-options, .umm-input-options-sub").fadeIn('slow');
+            $(".umm-checkbox-options, .umm-random-string-options").fadeOut();
             $(".umm-select-multi-options").fadeIn('slow');
             $(".umm-select-options").fadeIn('slow');
             $(".umm-remove-option:first").hide();
             break;
             
+            case 'random_string':
+            $(".umm-input-options").fadeIn('slow');
+            $(".umm-random-string-options").fadeIn('slow');
+            $(".umm-input-options-sub").fadeOut();
+            $("select[name='umm_add_to_profile'] option[value='no']").prop('selected', true);
+            break;
+            
             default:
-            $(".umm-checkbox-options").fadeOut();
+            $(".umm-checkbox-options, .umm-random-string-options").fadeOut();
             $(".umm-profile-field-options").fadeOut('slow');         
         }
     });

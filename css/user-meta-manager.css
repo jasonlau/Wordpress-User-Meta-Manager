@@ -312,3 +312,15 @@ strong.umm-method{
 .umm-pro-button i{
     line-height: inherit !important;
 }
+
+.users_page_user-meta-manager #contextual-help-link-wrap { 
+    display: block !important; 
+}
+
+.users_page_user-meta-manager #contextual-help-link { 
+    display: block !important; 
+}
+
+.users_page_user-meta-manager #screen-options-link-wrap { 
+    display: block !important; 
+}

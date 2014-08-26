@@ -14,13 +14,45 @@ function umm_help($contextual_help, $screen_id, $screen) {
     return;
     $umm_settings = umm_get_option('settings');
     $pro_settings = '';
+    
     if(umm_is_pro()):
        if(function_exists('umm_pro_settings')):
-          $pro_settings = call_user_func('umm_pro_settings', $umm_settings);
+          $pro_settings = umm_pro_settings($umm_settings);
           $pro = true;
        endif; 
     endif;
-    $retain_data = $umm_settings['retain_data'];
+    
+    $retain_data = (!isset($umm_settings['retain_data']) || empty($umm_settings['retain_data'])) ? 'yes' : $umm_settings['retain_data'];
+    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
+    $shortcut_editing = (!isset($umm_settings['shortcut_editing']) || empty($umm_settings['shortcut_editing'])) ? 'no' : $umm_settings['shortcut_editing'];
+    $pfields_position = (!isset($umm_settings['pfields_position']) || empty($umm_settings['pfields_position'])) ? 1 : $umm_settings['pfields_position'];
+    $duplicate_check_override = (!isset($umm_settings['duplicate_check_override']) || empty($umm_settings['duplicate_check_override'])) ? 'no' : $umm_settings['duplicate_check_override'];
+    $bot_field = (!isset($umm_settings['bot_field']) || empty($umm_settings['bot_field'])) ? $umm_settings['bot_field'] : $umm_settings['bot_field'];    
+    $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';  
+    $pro_message = ($pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG);
+    
+    $default_html_before = '<h3 class="umm-custom-fields">[section-title]</h3>
+<table class="form-table umm-custom-fields">
+   <tbody>';
+   $default_html_during = '<tr><th>[label]</th><td>[field]</td></tr>';
+   $default_html_after = '</tbody>';
+    
+    $html_before_register = (!isset($umm_settings['html_before_register'])) ? $default_html_before : $umm_settings['html_before_register'];
+    $html_during_register = (!isset($umm_settings['html_during_register'])) ? $default_html_during : $umm_settings['html_during_register'];
+    $html_after_register = (!isset($umm_settings['html_after_register'])) ? $default_html_after : $umm_settings['html_after_register'];
+    
+    $html_before_profile = (!isset($umm_settings['html_before_profile'])) ? $default_html_before : $umm_settings['html_before_profile'];
+    $html_during_profile = (!isset($umm_settings['html_during_profile'])) ? $default_html_during : $umm_settings['html_during_profile'];
+    $html_after_profile = (!isset($umm_settings['html_after_profile'])) ? $default_html_after : $umm_settings['html_after_profile'];
+    
+    $html_before_shortcode = (!isset($umm_settings['html_before_shortcode'])) ? $default_html_before : $umm_settings['html_before_shortcode'];
+    $html_during_shortcode = (!isset($umm_settings['html_during_shortcode'])) ? $default_html_during : $umm_settings['html_during_shortcode'];
+    $html_after_shortcode = (!isset($umm_settings['html_after_shortcode'])) ? $default_html_after : $umm_settings['html_after_shortcode'];
+    
+    $html_before_adduser = (!isset($umm_settings['html_before_adduser'])) ? $default_html_before : $umm_settings['html_before_adduser'];
+    $html_during_adduser = (!isset($umm_settings['html_during_adduser'])) ? $default_html_during : $umm_settings['html_during_adduser'];
+    $html_after_adduser = (!isset($umm_settings['html_after_adduser'])) ? $default_html_after : $umm_settings['html_after_adduser'];
+    
     switch($retain_data){
         case 'no':
         $retain_yes = '';
@@ -31,10 +63,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $retain_yes = ' selected="selected"';
         $retain_no = '';
     }
-    
-    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
-    
-    $shortcut_editing = $umm_settings['shortcut_editing'];
+     
     switch($shortcut_editing){
         case 'yes':
         $shortcut_editing_yes = ' selected="selected"';
@@ -46,7 +75,6 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $shortcut_editing_no = ' selected="selected"';
     }
     
-    $pfields_position = (!isset($umm_settings['pfields_position']) || empty($umm_settings['pfields_position'])) ? 1 : $umm_settings['pfields_position'];
     switch($pfields_position){
         case 0:
         $pfields_position_top = ' selected="selected"';
@@ -58,7 +86,6 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $pfields_position_bottom = ' selected="selected"';
     }
     
-    $duplicate_check_override = $umm_settings['duplicate_check_override'];
     switch($duplicate_check_override){
         case 'yes':
         $duplicate_check_override_yes = ' selected="selected"';
@@ -69,11 +96,6 @@ function umm_help($contextual_help, $screen_id, $screen) {
         $duplicate_check_override_yes = '';
         $duplicate_check_override_no = ' selected="selected"';
     }
-    $bot_field = $umm_settings['bot_field'];
-    if(empty($umm_settings)) $umm_settings = array('retain_data' => 'yes', 'bot_field' => 'umm_forbots');
-    $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
-    
-    $pro_message = ($pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG); 
     
     $tabs = array(array(
         __('Donate/Extend', UMM_SLUG),
@@ -125,7 +147,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <tr class="alternate">
 	<td>
         <strong>' . __('Maximum Number Of Users To Query', UMM_SLUG) . '</strong><br />
-        <input type="number" name="max_users" min="1" max="' . UMM_MAX_USERS . '" value="' . $max_users . '"><br />
+        <input type="number" name="max_users" min="1" max="500" value="' . $max_users . '"><br />
         <span>' . __('This is the maximum number of users this plugin will handle.', UMM_SLUG) . $pro_message . '</span>
         </td>
 </tr>
@@ -171,38 +193,38 @@ function umm_help($contextual_help, $screen_id, $screen) {
   <div id="umm-tabs-1">
   <p>User registration form markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_before_register">' . stripslashes($umm_settings['html_before_register']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_before_register">' . stripslashes($html_before_register) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_during_register">' . stripslashes($umm_settings['html_during_register']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_during_register">' . stripslashes($html_during_register) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_after_register">' . stripslashes($umm_settings['html_after_register']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+        <textarea class="umm-settings-textarea" name="html_after_register">' . stripslashes($html_after_register) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-2">
   <p>Profile and Edit User forms markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_before_profile">' . stripslashes($umm_settings['html_before_profile']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_before_profile">' . stripslashes($html_before_profile) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_during_profile">' . stripslashes($umm_settings['html_during_profile']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_during_profile">' . stripslashes($html_during_profile) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_after_profile">' . stripslashes($umm_settings['html_after_profile']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+        <textarea class="umm-settings-textarea" name="html_after_profile">' . stripslashes($html_after_profile) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-3">
   <p>Short Codes markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_before_shortcode">' . stripslashes($umm_settings['html_before_shortcode']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_before_shortcode">' . stripslashes($html_before_shortcode) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_during_shortcode">' . stripslashes($umm_settings['html_during_shortcode']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_during_shortcode">' . stripslashes($html_during_shortcode) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_after_shortcode">' . stripslashes($umm_settings['html_after_shortcode']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+        <textarea class="umm-settings-textarea" name="html_after_shortcode">' . stripslashes($html_after_shortcode) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
   <div id="umm-tabs-4">
   <p>Add User form markup.</p>
   <strong>' . __('HTML Before', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_before_adduser">' . stripslashes($umm_settings['html_before_adduser']) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_before_adduser">' . stripslashes($html_before_adduser) . '</textarea><br /><span>' . __('HTML before the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML During', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_during_adduser">' . stripslashes($umm_settings['html_during_adduser']) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
+        <textarea class="umm-settings-textarea" name="html_during_adduser">' . stripslashes($html_during_adduser) . '</textarea><br /><span>' . __('HTML during the loop.', UMM_SLUG) . '</span><br /><br />
         <strong>' . __('HTML After', UMM_SLUG) . '</strong><br />
-        <textarea class="umm-settings-textarea" name="html_after_adduser">' . stripslashes($umm_settings['html_after_adduser']) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
+        <textarea class="umm-settings-textarea" name="html_after_adduser">' . stripslashes($html_after_adduser) . '</textarea><br /><span>' . __('HTML after the loop.', UMM_SLUG) . '</span>
   </div>
 </div>
 <code><strong>[section-title]</strong> ' . __('Replaced by the <em>Custom Field Section Title</em> option.', UMM_SLUG) . '<br /><strong>[field]</strong> ' . __('Replaced by the field\'s HTML and HTML After option, if any.', UMM_SLUG) . '<br /><strong>[label]</strong> ' . __('Replaced by the field label. Example: My Field', UMM_SLUG) . '<br /><strong>[field-name]</strong> ' . __('Replaced by the field name. Example: my_field', UMM_SLUG) . '<br /><strong>[field-slug]</strong> ' . __('Replaced by the field slug. Example: my-field', UMM_SLUG) . '</code>

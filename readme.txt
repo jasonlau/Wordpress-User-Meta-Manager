@@ -4,8 +4,8 @@ Contributors: Jason Lau
 Donate link: http://jasonlau.biz
 Tags: user, users, meta, usermeta, wp_usermeta, data, table, database, edit, add, update, delete, save, saved, list, manage, manager, management, customize, custom, create, activate, register, registers, short, tag, short code, member, members, admin, administrate, administrator, administrative, tool, plugin, module, addon, jason, lau, jasonlau, jasonlau.biz, profile, field, fields, extra
 Requires at least: 3.3.1
-Stable tag: 3.4.0
-Tested up to: 3.9.1
+Stable tag: 3.4.2
+Tested up to: 3.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,12 @@ Yes I do. Check my website at JasonLau.biz.
 1. screenshot-1.png The User Meta Manager Home screen.
 
 == Changelog ==
+
+= 3.4.2 =
+Fixed a couple of bugs. Cleaned some code.
+
+= 3.4.1 =
+Fixed a bug. Added the field type Random String to the Pro version, in addition to some other features.
 
 = 3.4.0 =
 Fixed a bug in the json short code. View the documentation for the correct format for this short code option.
@@ -578,3 +584,9 @@ Fixed a bug in the json short code.
 
 = 3.4.0 =
 Fixed a bug in the json short code. View the documentation for the correct format for this short code option.
+
+= 3.4.1 =
+Fixed a bug. Added the field type Random String to the Pro version, in addition to some other features.
+
+= 3.4.2 =
+Fixed a couple of bugs. Cleaned some code.
