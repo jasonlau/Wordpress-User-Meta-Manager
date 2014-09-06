@@ -9,7 +9,7 @@
         reload_home = function(){
             /* v 3.3.8 */
             $("div#umm-home").load(location.href + " div#umm-home", function(){                
-                $("div#umm-home div.tablenav.top div.actions").prepend($("div.umm-per-page-menu").html());
+                $("div#umm-home div.tablenav.top div.actions").html($("div.umm-per-page-menu").html());
                 $("div#umm-search select.umm-search-mode").replaceWith($("div#umm-home select.umm-search-mode"));
             });
             
