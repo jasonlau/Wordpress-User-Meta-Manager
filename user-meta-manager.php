@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.4.3
+ * Version: 3.4.6
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.4.3');
+define('UMM_VERSION', '3.4.6');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -380,11 +380,13 @@ function umm_delete_backup_files(){
     return;
 }
 
-function umm_default_keys(){
+function umm_default_keys($user_id){
     // Sets default and posted values for custom meta upon new user registration.
     global $wpdb;
-    $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1"); // Gets the latest user id
-            
+    if(!isset($user_id) || empty($user_id)):
+       $data = umm_usermeta_data("ORDER BY user_id DESC LIMIT 1"); // Gets the latest user id
+       $user_id = $data[0]->user_id;
+    endif;   
     $umm_options = umm_get_option();
     $umm_data = $umm_options['custom_meta'];
     $profile_fields = $umm_options['profile_fields'];
@@ -409,12 +411,12 @@ function umm_default_keys(){
               endif;
            endif;
            
-           update_user_meta($data[0]->user_id, $key, $value, false);
+           update_user_meta($user_id, $key, $value, false);
            endif;
         endforeach;
     endif;
     // Set posted values for profile fields
-    umm_update_profile_fields($data[0]->user_id);
+    umm_update_profile_fields($user_id);
 }
 
 function umm_delete_custom_meta(){
@@ -813,13 +815,14 @@ function umm_get_profile_fields($output_type='array'){
 function umm_get_users($query=false){
     global $wpdb;
     $umm_settings = umm_get_option('settings');
+    $m = (isset($umm_settings['max_users']) && !empty($umm_settings['max_users'])) ? $umm_settings['max_users'] : 100;
     if(umm_is_pro()):
        if(!$query):
           $query = "SELECT * FROM " . $wpdb->users;
        endif;
     else:
        if(!$query):
-          $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $umm_settings['max_users'];
+          $query = "SELECT * FROM " . $wpdb->users . " LIMIT 0, " . $m;
        endif;
     endif;
          
@@ -1764,7 +1767,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     endif; // !empty($profile_fields)
 
     if(isset($output) && !empty($output)):
-       
+       $section_title = (isset($umm_settings['section_title']) && !empty($umm_settings['section_title'])) ? $umm_settings['section_title'] : ''; 
        $output = str_replace('[section-title]', stripslashes(htmlspecialchars_decode($umm_settings['section_title'])), $output);
        
        if($echo):
@@ -2790,7 +2793,7 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
          endif;
                    
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
-         if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value)):
+         if($field_settings['unique'] == 'yes' &&  umm_is_duplicate($field_name, $field_value)):
             $errors->add( $field_name, __('<strong>ERROR</strong>: <em>' . $field_settings['label'] . '</em> is already taken by another user. Please use a different selection.', UMM_SLUG) );
          endif;
          
@@ -2800,8 +2803,7 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
             endif; 
          endif;  
        endforeach;
-    endif;
-    
+    endif;  
     return $errors;
 }
 

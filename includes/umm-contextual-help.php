@@ -14,6 +14,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
     return;
     $umm_settings = umm_get_option('settings');
     $pro_settings = '';
+    $pro = false;
     
     if(umm_is_pro()):
        if(function_exists('umm_pro_settings')):
@@ -147,7 +148,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <tr class="alternate">
 	<td>
         <strong>' . __('Maximum Number Of Users To Query', UMM_SLUG) . '</strong><br />
-        <input type="number" name="max_users" min="1" max="500" value="' . $max_users . '"><br />
+        <input type="number" name="max_users" min="1" max="100" value="' . $max_users . '"><br />
         <span>' . __('This is the maximum number of users this plugin will handle.', UMM_SLUG) . $pro_message . '</span>
         </td>
 </tr>
