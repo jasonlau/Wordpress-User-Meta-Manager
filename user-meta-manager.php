@@ -4,7 +4,7 @@
  * Plugin Name: User Meta Manager
  * Plugin URI: https://github.com/jasonlau/Wordpress-User-Meta-Manager
  * Description: Add, edit, or delete user meta data with this handy plugin. Easily restrict access or insert user meta data into posts or pages and more. <strong>Get the Pro extension <a href="http://jasonlau.biz/home/membership-options#umm-pro">here</a>.</strong>
- * Version: 3.4.6
+ * Version: 3.4.8
  * Author: Jason Lau
  * Author URI: http://jasonlau.biz
  * Text Domain: user-meta-manager
@@ -31,7 +31,7 @@
     exit('Please don\'t access this file directly.');
 }
 
-define('UMM_VERSION', '3.4.6');
+define('UMM_VERSION', '3.4.8');
 define("UMM_PATH", plugin_dir_path(__FILE__) . '/');
 define("UMM_SLUG", "user-meta-manager");
 define("UMM_AJAX", "admin-ajax.php?action=umm_switch_action&amp;umm_sub_action=");
@@ -41,6 +41,7 @@ include(UMM_PATH . 'includes/umm-contextual-help.php');
 
 function umm_add_custom_meta(){
     global $wpdb;
+    if(current_user_can('edit_users')):
     $output = umm_fyi('<p>'.__('Insert a key and default value in the fields below.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     <strong>'.__('Key', UMM_SLUG).':</strong><br />
@@ -57,6 +58,11 @@ function umm_add_custom_meta(){
     ';
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_add_registration_fields(){
@@ -119,7 +125,8 @@ function umm_add_user_fields(){
 
 function umm_add_user_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['umm_user'];
+    if(current_user_can('edit_users')):
+    $user_id = sprintf("%d", $_REQUEST['umm_user']);
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Adding Meta Data For %s', UMM_SLUG));
     $output .= umm_fyi('<p>'.__('Insert a meta key and default value and press <em>Submit</em>.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -134,6 +141,11 @@ function umm_add_user_meta(){
     ';   
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_admin_init(){
@@ -148,7 +160,8 @@ function umm_admin_menu(){
 
 function umm_backup($backup_mode=false, $tofile=false, $print=true){
     global $wpdb, $current_user, $table_prefix;
-    $mode = (!isset($_REQUEST['mode']) || empty($_REQUEST['mode'])) ? '' : $_REQUEST['mode'];
+    if(current_user_can('export')):
+    $mode = (!isset($_REQUEST['mode']) || empty($_REQUEST['mode'])) ? '' : sprintf("%s", $_REQUEST['mode']);
     $mode = (empty($backup_mode)) ? $mode : $backup_mode;
     if(umm_is_pro() && $mode == 'pro'):
        if(function_exists('umm_pro_backup')):
@@ -158,7 +171,7 @@ function umm_backup($backup_mode=false, $tofile=false, $print=true){
     endif;    
     $backup_files = umm_get_option('backup_files');
     
-    $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : $_REQUEST['tofile'];
+    $to_file = (!isset($_REQUEST['tofile']) || empty($_REQUEST['tofile'])) ? '' : sprintf("%s", $_REQUEST['tofile']);
     $tofile = (empty($tofile)) ? $to_file : $tofile;
     $backup_files = (!$backup_files || $backup_files == '') ? array() : $backup_files;
     $back_button = umm_button("umm_backup_page&umm_user=1", null, "umm-back-button");
@@ -248,6 +261,10 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
         break;
     } 
     
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+    endif;
+    
     if($print):
       print '<div class="umm-backup-page-container">' . $back_button . $output . '</div>';
       exit;  
@@ -257,6 +274,7 @@ if(isset($_REQUEST[\'umm_confirm_restore\'])):
 
 function umm_backup_page(){   
     global $wpdb;
+    if(current_user_can('export')):
     $budate = umm_get_option('backup_date');
     if($budate == "") $budate = __("No backup", UMM_SLUG);
     $nonce = wp_create_nonce(md5($_SERVER["REMOTE_ADDR"].$_SERVER["HTTP_USER_AGENT"]));
@@ -288,6 +306,11 @@ function umm_backup_page(){
     $output .= '</div>';
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_button($go_to, $label=null, $css_class=null){
@@ -359,6 +382,7 @@ function umm_deactivate(){
 }
 
 function umm_delete_backup_files(){
+    if(current_user_can('export')):
     $back_button = umm_button("umm_backup_page&umm_user=1", __('<< Back', UMM_SLUG), "umm-back-button");
     if(!empty($_REQUEST['umm_confirm_backups_delete'])):
     $backups_folder = WP_PLUGIN_DIR . "/user-meta-manager/backups";    
@@ -377,6 +401,11 @@ function umm_delete_backup_files(){
     endif;
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
     return;
 }
 
@@ -421,10 +450,11 @@ function umm_default_keys($user_id){
 
 function umm_delete_custom_meta(){
     global $wpdb;
+    if(current_user_can('edit_users')):
     $data = umm_get_option('custom_meta');
     if(!empty($data)):    
-    $delete_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
-    $sub_mode = (!isset($_REQUEST['sub_mode']) || empty($_REQUEST['sub_mode'])) ? '' : $_REQUEST['sub_mode'];
+    $delete_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : sprintf("%s", $_REQUEST['umm_edit_key']);
+    $sub_mode = (!isset($_REQUEST['sub_mode']) || empty($_REQUEST['sub_mode'])) ? '' : sprintf("%s", $_REQUEST['sub_mode']);
     if($delete_key == "" && $sub_mode != "confirm"):
     $output = umm_fyi('<p>'.__('Select from the menu a meta key to delete.').'</p>');  
     $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -457,10 +487,16 @@ function umm_delete_custom_meta(){
     endif; // !empty($data)
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_delete_single_key($key){
     global $wpdb;
+    if(current_user_can('edit_users')):
     $umm_data = umm_get_option();
     $profile_fields = $umm_data['profile_fields'];
     $custom_meta = $umm_data['custom_meta'];    
@@ -475,16 +511,22 @@ function umm_delete_single_key($key){
     $output = "<p>" . __("Meta data successfully deleted.", UMM_SLUG) . "</p>";
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_delete_user_meta(){
     global $wpdb;
-    $user_id = $_REQUEST['umm_user'];
+    if(current_user_can('edit_users')):
+    $user_id = sprintf("%d", $_REQUEST['umm_user']);
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Deleting Meta Data For %s', UMM_SLUG));
     
-    $all_users = (isset($_REQUEST['all_users']) && !empty($_REQUEST['all_users'])) ? $_REQUEST['all_users'] : '';
-    $delete_key = (isset($_REQUEST['umm_edit_key']) && trim($_REQUEST['umm_edit_key']) != "" && trim($_REQUEST['umm_edit_key']) != "undefined") ? trim($_REQUEST['umm_edit_key']) : "";
+    $all_users = (isset($_REQUEST['all_users']) && !empty($_REQUEST['all_users'])) ? sprintf("%s", $_REQUEST['all_users']) : '';
+    $delete_key = (isset($_REQUEST['umm_edit_key']) && trim($_REQUEST['umm_edit_key']) != "" && trim($_REQUEST['umm_edit_key']) != "undefined") ? trim(sprintf("%s", $_REQUEST['umm_edit_key'])) : "";
     
     if($delete_key == ""):
     
@@ -517,6 +559,9 @@ function umm_delete_user_meta(){
     $output .= '<input name="umm_edit_key" type="hidden" value="' . $delete_key . '" /><input name="all_users" type="hidden" value="' . $all_users . '" />
     <input name="mode" type="hidden" value="delete" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_delete_user_meta&umm_user=' . $user_id . '" /><input name="sub_mode" type="hidden" value="confirm" /></p>
     </form>';
+    endif;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
     endif;
     print $output;
     exit;
@@ -565,11 +610,12 @@ function umm_edit_columns(){
 
 function umm_edit_custom_meta(){
     global $wpdb;
+    if(current_user_can('edit_users')):
     $data = umm_get_option('custom_meta');
     if(!$data):
        $output = __('No custom meta to edit.', UMM_SLUG); 
     else:
-    $edit_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : $_REQUEST['umm_edit_key'];
+    $edit_key = (!isset($_REQUEST['umm_edit_key']) || empty($_REQUEST['umm_edit_key'])) ? '' : sprintf("%s", $_REQUEST['umm_edit_key']);
     if($edit_key == ""):
         $output = umm_fyi('<p>'.__('Select from the list a meta key to edit, or drag and drop to sort.', UMM_SLUG).'</p>');
         $output .= '<form id="umm_update_user_meta_form" method="post" data-error_message="' . __('Select a meta key to edit.', UMM_SLUG). '">
@@ -611,7 +657,7 @@ function umm_edit_custom_meta(){
     else:
     $profile_fields = umm_get_option('profile_fields');
     if(!$profile_fields) $profile_fields = array();
-    $output = '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> <span class="umm-highlight">' . $_REQUEST['umm_edit_key'] . '</span>';
+    $output = '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> <span class="umm-highlight">' . sprintf("%s", $_REQUEST['umm_edit_key']) . '</span>';
     $output .= umm_fyi('<p>'.__('Editing custom meta data here will edit the value for all new users. The value you set will become the default value for all users. New registrations will receive the custom meta key and default value.', UMM_SLUG).'</p>');
     $output .= '<form id="umm_update_user_meta_form" method="post">
     ';
@@ -638,19 +684,25 @@ function umm_edit_custom_meta(){
     endif; // !$data
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_edit_user_meta(){  
     global $wpdb;
+    if(current_user_can('edit_users')):
     $profile_fields = umm_get_option('profile_fields');
-    $user_id = $_REQUEST['umm_user'];
+    $user_id = sprintf("%d", $_REQUEST['umm_user']);
     $data = umm_usermeta_data("WHERE user_id = $user_id");
     sort($data);
     $umm_settings = umm_get_option('settings');
     $shortcut_editing = empty($umm_settings['shortcut_editing']) ? 'no' : $umm_settings['shortcut_editing'];
     $output = umm_button('home', null, "umm-back-button") . umm_subpage_title($user_id, __('Editing Meta Data For %s', UMM_SLUG));
     $output .= umm_fyi('<p>'.__('Editing an item here will only edit the item for the selected user and not for all users.<br /><a href="#" data-subpage="' . UMM_AJAX . 'umm_edit_custom_meta&umm_user=1" data-nav_button="Edit Custom Meta" title="Edit Custom Meta" class="umm-subpage">Edit Custom Meta Data For All Users</a>', UMM_SLUG).'</p>');
-    $edit_key = (isset($_REQUEST['umm_edit_key']) && !empty($_REQUEST['umm_edit_key'])) ? $_REQUEST['umm_edit_key'] : '';
+    $edit_key = (isset($_REQUEST['umm_edit_key']) && !empty($_REQUEST['umm_edit_key'])) ? sprintf("%s", $_REQUEST['umm_edit_key']) : '';
     if($edit_key == "" && $shortcut_editing == 'no'):
         $output .= '<form id="umm_update_user_meta_form" method="post">
         <strong>Edit Key:</strong> <select id="umm_edit_key" name="umm_edit_key" title="' . __('Select a meta key to edit.', UMM_SLUG) . '">
@@ -668,7 +720,7 @@ function umm_edit_user_meta(){
         
     else:
     if($shortcut_editing == 'no'):
-       $output .= '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> ' . $_REQUEST['umm_edit_key'];
+       $output .= '<strong>' . __('Now Editing', UMM_SLUG) . ':</strong> ' . sprintf("%s", $_REQUEST['umm_edit_key']);
     endif;
     
     $output .= '<form id="umm_update_user_meta_form" method="post">
@@ -702,6 +754,9 @@ function umm_edit_user_meta(){
     <input name="mode" type="hidden" value="edit" /><input name="umm_user" type="hidden" value="' . $user_id . '" /><input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_edit_user_meta&umm_user=' . $user_id . '" />
     </form>  
     ';
+    endif;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
     endif;
     print $output;
     exit;
@@ -742,13 +797,16 @@ function umm_fyi($message){
 }
 
 function umm_get_columns(){
+    if(current_user_can('export')):
     $umm_options = umm_get_option();
     $users_columns = (!$umm_options["users_columns"] ? array('ID' => __('ID', UMM_SLUG), 'user_login' => __('User Login', UMM_SLUG), 'user_registered' => __('Date Registered', UMM_SLUG)) : $umm_options["users_columns"]);
     $usermeta_columns = (!$umm_options["usermeta_columns"]) ? array() : $umm_options["usermeta_columns"];
     return array_merge($users_columns, $usermeta_columns);
+    endif;
 }
 
 function umm_get_csv(){
+    if(current_user_can('export')):
     $filename = 'user_meta_data_' . date('m-j-y-g-i-a') . '.csv';
     $data = umm_usermeta_data();
     $output = '"umeta_id","user_id","meta_key","meta_value"' . "\n";			
@@ -772,6 +830,11 @@ function umm_get_csv(){
     endforeach;
     print($output);
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print($output);
+    exit;
+    endif;
 }
 
 function umm_get_profile_fields($output_type='array'){
@@ -814,6 +877,7 @@ function umm_get_profile_fields($output_type='array'){
 
 function umm_get_users($query=false){
     global $wpdb;
+    if(current_user_can('export')):
     $umm_settings = umm_get_option('settings');
     $m = (isset($umm_settings['max_users']) && !empty($umm_settings['max_users'])) ? $umm_settings['max_users'] : 100;
     if(umm_is_pro()):
@@ -838,6 +902,7 @@ function umm_get_users($query=false){
        $data = $user_data;   
     endif;
     return $data;
+    endif;
 }
 
 function umm_install(){
@@ -1016,9 +1081,9 @@ function umm_install(){
 function umm_is_duplicate($key=false, $value=false, $user=false, $echo=false){
     global $wpdb;
     
-    $key = (!$key && isset($_REQUEST['umm_key'])) ? $_REQUEST['umm_key'] : $key;
-    $value = (!$value && isset($_REQUEST['umm_value'])) ? $_REQUEST['umm_value'] : $value;
-    $echo = (!$echo && isset($_REQUEST['echo'])) ? $_REQUEST['echo'] : $echo;
+    $key = (!$key && isset($_REQUEST['umm_key'])) ? sprintf("%s", $_REQUEST['umm_key']) : $key;
+    $value = (!$value && isset($_REQUEST['umm_value'])) ? sprintf("%s", $_REQUEST['umm_value']) : $value;
+    $echo = (!$echo && isset($_REQUEST['echo'])) ? sprintf("%s", $_REQUEST['echo']) : $echo;
     $data = $wpdb->get_results("SELECT * FROM " . $wpdb->usermeta . " WHERE meta_key='" . $key . "' AND meta_value='" . $value . "'");
     
     if((!empty($data) && !$user) || (!empty($data) && $data[0]->user_id != $user)):
@@ -1050,7 +1115,7 @@ function umm_is_pro(){
 
 function umm_key_exists($key=false){
     global $wpdb;
-    $k = (empty($key)) ? $_REQUEST['umm_meta_key'] : $key;
+    $k = (empty($key)) ? sprintf("%s", $_REQUEST['umm_meta_key']) : $key;
     $data = $wpdb->get_results("SELECT * FROM " . $wpdb->usermeta . " WHERE meta_key='" . $k . "'");
     if(!empty($data)):
        $output = '{"key_exists":true}';
@@ -1532,15 +1597,20 @@ function umm_reset(){
 
 function umm_restore(){
     global $wpdb, $table_prefix;
+    if(current_user_can('import')):
     $wpdb->query("DELETE FROM " . $wpdb->usermeta);
     $wpdb->query("INSERT INTO " . $wpdb->usermeta . "  SELECT * FROM " . $table_prefix . "umm_usermeta_backup");
     $back_button = umm_button("umm_backup_page&umm_user=1", __('<< Back', UMM_SLUG), "umm-back-button");
     $output = $back_button . '<p class="umm-message">' . __("User meta data successfully restored.", UMM_SLUG) . "</p>";
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+    endif;
     print $output;
     exit;
 }
 
 function umm_restore_confirm(){
+    if(current_user_can('import')):
     $budate = umm_get_option('backup_date');
     if($budate == ""): 
       $output = __('No backup data to restore!', UMM_SLUG);
@@ -1550,6 +1620,10 @@ function umm_restore_confirm(){
     endif;
     print $output;
     exit;
+    $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+    print $output;
+    exit;
+    endif;
 }
 
 function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $form_id=false, $debug=false){
@@ -1610,7 +1684,7 @@ function umm_show_profile_fields($echo=true, $fields=false, $mode='profile', $fo
     endif;
     if((!$show_fields && $profile_field_settings['add_to_profile'] == 'yes' && $user_can_view) || ($show_fields && array_key_exists($profile_field_name, $umm_data) && $user_can_view)):
       $default_value = stripslashes(htmlspecialchars_decode($profile_field_settings['value']));
-      $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
+      $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? sprintf("%d", $_REQUEST['user_id']) : $current_user->ID;
       $existing_value = get_user_meta($the_user, $profile_field_name, true);
       $value = (!is_array($existing_value)) ? stripslashes(htmlspecialchars_decode($existing_value)) : $existing_value;
       if($mode == 'register' || $mode == 'adduser') $value = $default_value;
@@ -1964,8 +2038,11 @@ function umm_subpage_title($user_id, $text){
 }
 
 function umm_switch_action(){
-    if(function_exists($_REQUEST['umm_sub_action']))
-       call_user_func($_REQUEST['umm_sub_action']);
+    if(current_user_can('export')):
+       $sub_action = (isset($_REQUEST['umm_sub_action']) && !empty($_REQUEST['umm_sub_action'])) ? sprintf("%s", $_REQUEST['umm_sub_action']) : '';
+       if(function_exists($sub_action))
+          call_user_func($sub_action);
+    endif;
 }
 
 function umm_sync_user_meta(){
@@ -1996,12 +2073,13 @@ function umm_ui(){
 
 function umm_update_columns(){
     global $wpdb;
-    $umm_column = @explode("|", $_REQUEST['umm_column_key']);
+    $umm_column = @explode("|", sprintf("%s", $_REQUEST['umm_column_key']));
     $umm_column_key = $umm_column[0];
-    switch($_REQUEST['mode']){
+    $mode = sprintf("%s", $_REQUEST['mode']);
+    switch($mode){
         case "add_columns":        
         $umm_table = $umm_column[1];
-        $umm_column_label = $_REQUEST['umm_column_label'];
+        $umm_column_label = sprintf("%s", $_REQUEST['umm_column_label']);
         if($umm_column_key == '' || $umm_column_label == ''):
           $output = __('Key and label are both required. Try again.', UMM_SLUG);
         else:
@@ -2066,11 +2144,18 @@ function umm_update_columns(){
 }
 
 function umm_update_custom_meta_order(){
-    umm_update_option('sort_order', $_REQUEST['umm_item']);
+    if(current_user_can('edit_users')):
+    $umm_item = sprintf("%s", $_REQUEST['umm_item']);
+    umm_update_option('sort_order', $umm_item);
     $new_order = umm_get_option('sort_order');
     $output = __('Order successfully updated.', UMM_SLUG);
     print $output;
     exit;
+    else:
+       $output = '<p class="umm-message">' . __("You are not authorized to perform this operation.", UMM_SLUG) . '</p>' . "\n";
+       print $output;
+       exit;
+    endif;
 }
 
 function umm_update_option($key, $value){
@@ -2087,7 +2172,7 @@ function umm_update_profile_fields($user_id=false){
     global $current_user;
     
     $saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
-    $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? $_REQUEST['user_id'] : $current_user->ID;
+    $the_user = ((isset($_REQUEST['user_id']) && !empty($_REQUEST['user_id'])) && current_user_can('add_users')) ? sprintf("%d", $_REQUEST['user_id']) : $current_user->ID;
     if($user_id) $the_user = $user_id;
     
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
@@ -2102,12 +2187,12 @@ function umm_update_profile_fields($user_id=false){
             $field_value = array();
             $x = 0;
             foreach($field_settings['options'] as $option => $option_settings):
-               $field_value[$x] = (isset($_REQUEST[$field_name][$x])) ? $_REQUEST[$field_name][$x] : '';
+               $field_value[$x] = (isset($_REQUEST[$field_name][$x])) ? sprintf("%s", $_REQUEST[$field_name][$x]) : '';
                $x++;           
             endforeach;          
          else:
             // If this is post'd from the Add User screen the value will always be an array.
-            $f_value = (isset($_REQUEST[$field_name])) ? $_REQUEST[$field_name] : '';
+            $f_value = (isset($_REQUEST[$field_name])) ? sprintf("%s", $_REQUEST[$field_name]) : '';
             $_val = (is_array($f_value)) ? $f_value[0] : $f_value;
             $field_value = htmlspecialchars(trim($_val));
             if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value); 
@@ -2184,11 +2269,12 @@ function umm_update_settings(){
 }
 
 function umm_update_user_meta(){
-    global $wpdb;    
+    global $wpdb, $current_user;
+    if(current_user_can('edit_users')):   
     $mode = $_POST['mode'];
     $all_users = (isset($_POST['all_users']) && !empty($_POST['all_users'])) ? true : false;
     $field_type = (isset($_POST['umm_profile_field_type']) && !empty($_POST['umm_profile_field_type'])) ? $_POST['umm_profile_field_type'] : false;
-    $u = (isset($_REQUEST['umm_user']) && !empty($_REQUEST['umm_user'])) ? $_REQUEST['umm_user'] : 'all';
+    $u = (isset($_REQUEST['umm_user']) && !empty($_REQUEST['umm_user'])) ? sprintf("%d", $_REQUEST['umm_user']) : 'all';
     $meta_value = !empty($_POST['umm_meta_value']) ? $_POST['umm_meta_value'] : array();
     $meta_key = (!empty($_POST['umm_meta_key'])) ? $_POST['umm_meta_key'] : array();
     $meta_key_exists = false;
@@ -2227,7 +2313,7 @@ function umm_update_user_meta(){
              $meta_key_exists = true;
            endif;              
         endforeach;
-        if($_REQUEST['mode'] == 'add'):
+        if($mode == 'add'):
         if($meta_key_exists && $duplicate_override == 'no'):
            // Key already exists
            $output = '<span class="umm-error-message">' . __('Error: Meta key already existed. Choose a different name.', UMM_SLUG) . '</span>';
@@ -2379,6 +2465,9 @@ function umm_update_user_meta(){
         endif;
         break;
     }
+    else:
+       $output = __('You are not authorized to perform this operation.', UMM_SLUG);
+    endif;
     print $output;
     exit;
 }
@@ -2764,7 +2853,7 @@ function umm_validate_profile_fields($errors, $update, $user) {
 	$saved_profile_fields = (!umm_get_option('profile_fields')) ? array() : umm_get_option('profile_fields');
     if(isset($_REQUEST['umm_nonce']) && wp_verify_nonce($_REQUEST['umm_nonce'], 'umm_wp_nonce')):
        foreach($saved_profile_fields as $field_name => $field_settings):      
-         $field_value = (isset($_REQUEST[$field_name])) ? $_REQUEST[$field_name] : '';
+         $field_value = (isset($_REQUEST[$field_name])) ? sprintf("%s", $_REQUEST[$field_name]) : '';
          $field_value = (!is_array($field_value)) ? htmlspecialchars(trim($field_value)) : $field_value;
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
          if($field_settings['unique'] == 'yes' && umm_is_duplicate($field_name, $field_value, $user->ID)):
@@ -2791,6 +2880,8 @@ function umm_validate_registration_fields($errors, $sanitized_user_login, $user_
          elseif(isset($_REQUEST[$field_name]) && is_array($_REQUEST[$field_name])):
             $field_value = $_REQUEST[$field_name];            
          endif;
+         
+         $field_value = sprintf("%s", $field_value);
                    
          if(!$field_settings['allow_tags']) $field_value = wp_strip_all_tags($field_value);
          if($field_settings['unique'] == 'yes' &&  umm_is_duplicate($field_name, $field_value)):
