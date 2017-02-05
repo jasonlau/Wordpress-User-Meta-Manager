@@ -5,99 +5,100 @@
  * @copyright 2013+
  * @package user-meta-manager
  */
- 
+
 if(!defined("UMM_PATH")) die();
 
 function umm_help($contextual_help, $screen_id, $screen) {
     global $wpdb;
     if($screen->id != 'users_page_user-meta-manager')
-    return;
+        return;
     $umm_settings = umm_get_option('settings');
     $pro_settings = '';
     $pro = false;
-    
+
     if(umm_is_pro()):
-       if(function_exists('umm_pro_settings')):
-          $pro_settings = umm_pro_settings($umm_settings);
-          $pro = true;
-       endif; 
+        if(function_exists('umm_pro_settings')):
+            $pro_settings = umm_pro_settings($umm_settings);
+            $pro = true;
+        endif;
     endif;
-    
-    $retain_data = (!isset($umm_settings['retain_data']) || empty($umm_settings['retain_data'])) ? 'yes' : $umm_settings['retain_data'];
-    $max_users = (!isset($umm_settings['max_users']) || empty($umm_settings['max_users']) || $umm_settings['max_users']>100) ? 100 : $umm_settings['max_users'];
-    $shortcut_editing = (!isset($umm_settings['shortcut_editing']) || empty($umm_settings['shortcut_editing'])) ? 'no' : $umm_settings['shortcut_editing'];
-    $pfields_position = (!isset($umm_settings['pfields_position']) || empty($umm_settings['pfields_position'])) ? 1 : $umm_settings['pfields_position'];
-    $duplicate_check_override = (!isset($umm_settings['duplicate_check_override']) || empty($umm_settings['duplicate_check_override'])) ? 'no' : $umm_settings['duplicate_check_override'];
-    $bot_field = (!isset($umm_settings['bot_field']) || empty($umm_settings['bot_field'])) ? $umm_settings['bot_field'] : $umm_settings['bot_field'];    
-    $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';  
+
+    $retain_data = empty($umm_settings['retain_data']) ? 'yes' : $umm_settings['retain_data'];
+    $max_users = empty($umm_settings['max_users']) ? 100 : $umm_settings['max_users'];
+    $max_users = $max_users > 100 ? 100 : $max_users;
+    $shortcut_editing = empty($umm_settings['shortcut_editing']) ? 'no' : $umm_settings['shortcut_editing'];
+    $pfields_position = empty($umm_settings['pfields_position']) ? 1 : $umm_settings['pfields_position'];
+    $duplicate_check_override = empty($umm_settings['duplicate_check_override']) ? 'no' : $umm_settings['duplicate_check_override'];
+    $bot_field = empty($umm_settings['bot_field']) ? 'umm_forbots' : $umm_settings['bot_field'];
+    $backup_notice = '<div class="umm-warning">' . __('<strong>IMPORTANT:</strong> <ins>Always</ins> backup your data before making changes to your website.', UMM_SLUG) . '</div>';
     $pro_message = ($pro) ? __(' <strong>You are using the Pro version. This setting will not be used.</strong>', UMM_SLUG) : __(' The <a href="http://jasonlau.biz/home/membership-options#umm-pro" target="_blank">Pro Plugin</a> extends User Meta Manager\'s capabilities.', UMM_SLUG);
-    
+
     $default_html_before = '<h3 class="umm-custom-fields">[section-title]</h3>
 <table class="form-table umm-custom-fields">
    <tbody>';
-   $default_html_during = '<tr><th>[label]</th><td>[field]</td></tr>';
-   $default_html_after = '</tbody>';
-    
+    $default_html_during = '<tr><th>[label]</th><td>[field]</td></tr>';
+    $default_html_after = '</tbody>';
+
     $html_before_register = (!isset($umm_settings['html_before_register'])) ? $default_html_before : $umm_settings['html_before_register'];
     $html_during_register = (!isset($umm_settings['html_during_register'])) ? $default_html_during : $umm_settings['html_during_register'];
     $html_after_register = (!isset($umm_settings['html_after_register'])) ? $default_html_after : $umm_settings['html_after_register'];
-    
+
     $html_before_profile = (!isset($umm_settings['html_before_profile'])) ? $default_html_before : $umm_settings['html_before_profile'];
     $html_during_profile = (!isset($umm_settings['html_during_profile'])) ? $default_html_during : $umm_settings['html_during_profile'];
     $html_after_profile = (!isset($umm_settings['html_after_profile'])) ? $default_html_after : $umm_settings['html_after_profile'];
-    
+
     $html_before_shortcode = (!isset($umm_settings['html_before_shortcode'])) ? $default_html_before : $umm_settings['html_before_shortcode'];
     $html_during_shortcode = (!isset($umm_settings['html_during_shortcode'])) ? $default_html_during : $umm_settings['html_during_shortcode'];
     $html_after_shortcode = (!isset($umm_settings['html_after_shortcode'])) ? $default_html_after : $umm_settings['html_after_shortcode'];
-    
+
     $html_before_adduser = (!isset($umm_settings['html_before_adduser'])) ? $default_html_before : $umm_settings['html_before_adduser'];
     $html_during_adduser = (!isset($umm_settings['html_during_adduser'])) ? $default_html_during : $umm_settings['html_during_adduser'];
     $html_after_adduser = (!isset($umm_settings['html_after_adduser'])) ? $default_html_after : $umm_settings['html_after_adduser'];
-    
+
     switch($retain_data){
         case 'no':
-        $retain_yes = '';
-        $retain_no = ' selected="selected"';
-        break;
-        
+            $retain_yes = '';
+            $retain_no = ' selected="selected"';
+            break;
+
         default:
-        $retain_yes = ' selected="selected"';
-        $retain_no = '';
+            $retain_yes = ' selected="selected"';
+            $retain_no = '';
     }
-     
+
     switch($shortcut_editing){
         case 'yes':
-        $shortcut_editing_yes = ' selected="selected"';
-        $shortcut_editing_no = '';
-        break;
-        
+            $shortcut_editing_yes = ' selected="selected"';
+            $shortcut_editing_no = '';
+            break;
+
         default:
-        $shortcut_editing_yes = '';
-        $shortcut_editing_no = ' selected="selected"';
+            $shortcut_editing_yes = '';
+            $shortcut_editing_no = ' selected="selected"';
     }
-    
+
     switch($pfields_position){
         case 0:
-        $pfields_position_top = ' selected="selected"';
-        $pfields_position_bottom = '';
-        break;
-        
+            $pfields_position_top = ' selected="selected"';
+            $pfields_position_bottom = '';
+            break;
+
         default:
-        $pfields_position_top = '';
-        $pfields_position_bottom = ' selected="selected"';
+            $pfields_position_top = '';
+            $pfields_position_bottom = ' selected="selected"';
     }
-    
+
     switch($duplicate_check_override){
         case 'yes':
-        $duplicate_check_override_yes = ' selected="selected"';
-        $duplicate_check_override_no = '';
-        break;
-        
+            $duplicate_check_override_yes = ' selected="selected"';
+            $duplicate_check_override_no = '';
+            break;
+
         default:
-        $duplicate_check_override_yes = '';
-        $duplicate_check_override_no = ' selected="selected"';
+            $duplicate_check_override_yes = '';
+            $duplicate_check_override_no = ' selected="selected"';
     }
-    
+
     $tabs = array(array(
         __('Donate/Extend', UMM_SLUG),
         __( '<h2>Every Little Bit Helps!</h2>
@@ -127,13 +128,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <li>Backup, restore, export/import WordPress Users.</li>
         <li>More to come ...</li>
         </ul>
-        
+
         ', UMM_SLUG)
     ),
-    
-    array(
-        __('Plugin Settings', UMM_SLUG),
-        '<h2>' . __( 'User Meta Manager Settings', UMM_SLUG) . '</h2>
+
+        array(
+            __('Plugin Settings', UMM_SLUG),
+            '<h2>' . __( 'User Meta Manager Settings', UMM_SLUG) . '</h2>
         <div class="umm-update-settings-result hidden"></div>
         <form id="umm_update_settings_form" action="' . UMM_AJAX . 'umm_update_settings&amp;u=0" method="post"><table class="umm-settings-table widefat umm-rounded-corners">
 <tr>
@@ -177,13 +178,13 @@ function umm_help($contextual_help, $screen_id, $screen) {
 
 <tr class="alternate">
 	<td><strong>' . __('Custom Field Section Title', UMM_SLUG) . '</strong><br />
-        <input type="text" name="section_title" value="' . $umm_settings['section_title'] . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the <em>HTML Markup</em> options below.', UMM_SLUG) . '</span></td>
+        <input type="text" name="section_title" value="' . (isset($umm_settings['section_title']) ? $umm_settings['section_title'] : '' ) . '"><br /><span>' . __('Optional title for the section of custom fields. This option is utilized in the <em>HTML Markup</em> options below.', UMM_SLUG) . '</span></td>
 </tr>
 
 <tr>
 	<td><strong>' . __('HTML Markup', UMM_SLUG) . '</strong>
     <p>Here you can customize the HTML markup User Meta Manager uses while displaying custom meta fields. Each of the following tabs controls the HTML markup for specific screens.</p>
-    
+
     <div id="umm-tabs">
   <ul>
     <li><a href="#umm-tabs-1">Registration</a></li>
@@ -246,7 +247,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
 <form id="umm_sync_data_form" action="' . UMM_AJAX . 'umm_sync_user_meta&amp;u=0" method="post">
         <table class="umm-settings-table widefat umm-rounded-corners">
 <tr>
-	<td><strong>' . __('Sync Meta Data', UMM_SLUG) . '</strong><br />       
+	<td><strong>' . __('Sync Meta Data', UMM_SLUG) . '</strong><br />
         <input data-form="umm_sync_data_form" data-subpage="umm_sync_user_meta" data-wait="' . __('Wait...', UMM_SLUG) . '" class="button-primary umm-update-settings-submit" type="submit" value="' . __('Sync', UMM_SLUG) . '"><br /><span>' . __('If you use a plugin to import users instead of using the WP registration process, use this button to sync your saved custom meta with all new users.', UMM_SLUG) . '</span>
         <input name="first_run" type="hidden" value="no">
         <input name="return_page" type="hidden" value="' . UMM_AJAX . 'umm_update_settings&amp;u=0">
@@ -254,41 +255,41 @@ function umm_help($contextual_help, $screen_id, $screen) {
 </tr>
 </table>
 </form>'
-    ),
-    
-    array(
-        __('The Home Screen', UMM_SLUG),
-        $backup_notice . 
-        '<h2>' . __( 'The <em>Home</em> Screen', UMM_SLUG) . '</h2><p>' . __( 'The User Meta Manager <em>Home</em> screen displays a list of your website\'s users from which you may select a single user to edit.', UMM_SLUG) . '</p>
+        ),
+
+        array(
+            __('The Home Screen', UMM_SLUG),
+            $backup_notice .
+            '<h2>' . __( 'The <em>Home</em> Screen', UMM_SLUG) . '</h2><p>' . __( 'The User Meta Manager <em>Home</em> screen displays a list of your website\'s users from which you may select a single user to edit.', UMM_SLUG) . '</p>
         <p>' . __( 'Locate from the list which User you wish to work with, place your mouse over that item, and the following links will appear as your mouse moves over each user -', UMM_SLUG) . '</p>
         <ol start="1">
          <li>' . __('<strong>Add Meta:</strong> Add meta data for a single user. Insert a meta key and default value and press <em>Submit</em>. The new meta-data will be applied to this user only, and can only be managed via the <em>Home</em> table actions, and not via the Custom Meta actions.', UMM_SLUG) . '</li>
-    <li>' . __('<strong>Edit Meta:</strong> Edit existing meta-data values for each member.', UMM_SLUG) . '</li>   
+    <li>' . __('<strong>Edit Meta:</strong> Edit existing meta-data values for each member.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Delete Meta:</strong> Delete individual meta keys for a single user or for <em>All Users</em>. You can select which meta data to delete from the drop menu.', UMM_SLUG) . '</li>
     </ol>'
-    ),
-    
-    array(
-        __('Add Custom Meta', UMM_SLUG),
-        $backup_notice . 
-        '<h2>' . __( 'Custom Meta-Data For All Users', UMM_SLUG) . '</h2><p>' . __('Adding custom meta-data will add the  <strong><em>Key</em></strong> and <strong><em>Default Value</em></strong> to all existing users. The <strong><em>Default Value</em></strong> you set will become the default value for all users, and all future registrations. Optionally, select a <strong><em>Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page.', UMM_SLUG).'</p>'
-    ),
-    
-    array(
-        __('Edit Custom Meta', UMM_SLUG),
-        $backup_notice . 
-        '<h2>' . __( 'Edit Custom Meta-Data For All Users' ) . '</h2><p>' . __('Editing custom meta-data will edit the <strong><em>Key</em></strong> and default <strong><em>Value</em></strong> for future registrations. Selecting <em>Yes</em> for <strong><em>Update Value For All Current Users</em></strong> will update the current value for all existing members, overwriting any existing value. Optionally, select a <strong><em>Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page. Select <em>None</em> from the <strong><em>Field Type</em></strong> menu to remove an existing custom field.', UMM_SLUG).'</p>'
-    ),
-    
-    array(
-        __('Delete Custom Meta', UMM_SLUG),
-        $backup_notice . 
-        '<h2>' . __( 'Delete Custom Meta-Data For All Users' ) . '</h2><p>' . __('Deleting custom meta-data will delete the Key and data for ALL existing members AND future registrations.', UMM_SLUG).'</p>'
-    ),
-    
-    array(
-        __('Field Types And Field Settings', UMM_SLUG), 
-        '<h2>' . __( 'Field Types &amp; Field Settings' ) . '</h2><p>' . __('The <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens each contain a <strong><em>Field Type</em></strong> menu. The <em>Field Type</em> menu controls which type of form field, if any, the meta field will be represented as. The form field can be displayed in the user profile editor, or by using a short code, it can also be displayed in a Post or Page.', UMM_SLUG).'</p>
+        ),
+
+        array(
+            __('Add Custom Meta', UMM_SLUG),
+            $backup_notice .
+            '<h2>' . __( 'Custom Meta-Data For All Users', UMM_SLUG) . '</h2><p>' . __('Adding custom meta-data will add the  <strong><em>Key</em></strong> and <strong><em>Default Value</em></strong> to all existing users. The <strong><em>Default Value</em></strong> you set will become the default value for all users, and all future registrations. Optionally, select a <strong><em>Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page.', UMM_SLUG).'</p>'
+        ),
+
+        array(
+            __('Edit Custom Meta', UMM_SLUG),
+            $backup_notice .
+            '<h2>' . __( 'Edit Custom Meta-Data For All Users' ) . '</h2><p>' . __('Editing custom meta-data will edit the <strong><em>Key</em></strong> and default <strong><em>Value</em></strong> for future registrations. Selecting <em>Yes</em> for <strong><em>Update Value For All Current Users</em></strong> will update the current value for all existing members, overwriting any existing value. Optionally, select a <strong><em>Field Type</em></strong> to view more options for adding this field to the WordPress user profile editor, a Post, or a Page. Select <em>None</em> from the <strong><em>Field Type</em></strong> menu to remove an existing custom field.', UMM_SLUG).'</p>'
+        ),
+
+        array(
+            __('Delete Custom Meta', UMM_SLUG),
+            $backup_notice .
+            '<h2>' . __( 'Delete Custom Meta-Data For All Users' ) . '</h2><p>' . __('Deleting custom meta-data will delete the Key and data for ALL existing members AND future registrations.', UMM_SLUG).'</p>'
+        ),
+
+        array(
+            __('Field Types And Field Settings', UMM_SLUG),
+            '<h2>' . __( 'Field Types &amp; Field Settings' ) . '</h2><p>' . __('The <em>Add Custom Meta</em> and <em>Edit Custom Meta</em> screens each contain a <strong><em>Field Type</em></strong> menu. The <em>Field Type</em> menu controls which type of form field, if any, the meta field will be represented as. The form field can be displayed in the user profile editor, or by using a short code, it can also be displayed in a Post or Page.', UMM_SLUG).'</p>
         <p>' . __('When a <em>Field Type</em> is selected from the menu, additional settings for the field will appear. These settings are somewhat generic and may require that you add some additional attributes. For example, if you select the <em>Field Type</em>, "<em>Range</em>", you would need to specify the Range attributes in the <strong><em>Additional Attributes</em></strong> field.', UMM_SLUG).'</p>
         <strong>' . __('Example', UMM_SLUG) . ':</strong>
         <pre>min="1" max="10"</pre>
@@ -296,7 +297,7 @@ function umm_help($contextual_help, $screen_id, $screen) {
         <table class="umm-help-field-types-table widefat">
      <tr>
 	<th colspan="2">' . __('Settings', UMM_SLUG) . '</th>
-</tr>   
+</tr>
 <tr class="alternate">
 	<th>' . __('Label', UMM_SLUG) . '</th>
 	<td>' . __('A text label which is displayed before the field. HTML is allowed.', UMM_SLUG) . '</td>
@@ -353,28 +354,28 @@ function umm_help($contextual_help, $screen_id, $screen) {
 	<td>' . __('The value for the option.', UMM_SLUG) . '</td>
 </tr>
 </table>'
-   ),
-    
-    array(
-        __('Edit Columns', UMM_SLUG),
-        '<h2>' . __( 'Editing Home Screen List Columns', UMM_SLUG) . '</h2><p>' . __( 'This screen controls which columns are displayed in the <em>Home</em> screen list.<br /><br />The list on top displays the columns which are currently in use. By selecting an item from the list, and pressing the <strong><em>Remove Selected Column</em></strong> button, columns can be removed from the results table, except the <strong><em>ID</em></strong> and <strong><em>User Login</em></strong> columns, which are required.<br /><br />Columns can be added to the results table using the bottom form. To add a column, select a <strong><em>Key</em></strong> from the menu, enter a <strong><em>Label</em></strong> for the column, and press the <strong><em>Add Column</em></strong> button. The new column will then be added to the results table, and will become searchable. The <em>Label</em> is displayed at the top of the column for identification purposes.', UMM_SLUG) . '</p>'
-    ),
-    
-    array(
-        __('Backup &amp; Restore', UMM_SLUG),
-        '<h2>' . __( 'Backup &amp; Restore User Meta Data' ) . '</h2><p>' . __( 'There are several options available for backing-up and restoring the wp_usermeta database. This plugin creates the first backup automatically when first installed.', UMM_SLUG) . '</p><ol start="1">
+        ),
+
+        array(
+            __('Edit Columns', UMM_SLUG),
+            '<h2>' . __( 'Editing Home Screen List Columns', UMM_SLUG) . '</h2><p>' . __( 'This screen controls which columns are displayed in the <em>Home</em> screen list.<br /><br />The list on top displays the columns which are currently in use. By selecting an item from the list, and pressing the <strong><em>Remove Selected Column</em></strong> button, columns can be removed from the results table, except the <strong><em>ID</em></strong> and <strong><em>User Login</em></strong> columns, which are required.<br /><br />Columns can be added to the results table using the bottom form. To add a column, select a <strong><em>Key</em></strong> from the menu, enter a <strong><em>Label</em></strong> for the column, and press the <strong><em>Add Column</em></strong> button. The new column will then be added to the results table, and will become searchable. The <em>Label</em> is displayed at the top of the column for identification purposes.', UMM_SLUG) . '</p>'
+        ),
+
+        array(
+            __('Backup &amp; Restore', UMM_SLUG),
+            '<h2>' . __( 'Backup &amp; Restore User Meta Data' ) . '</h2><p>' . __( 'There are several options available for backing-up and restoring the wp_usermeta database. This plugin creates the first backup automatically when first installed.', UMM_SLUG) . '</p><ol start="1">
     <li>' . __('<strong>Backup:</strong> Creates a duplicate backup version of the wp_usermeta table, which is then added to the database.', UMM_SLUG) . '</li>
-    <li>' . __('<strong>Restore:</strong> Restore a backup which was generated using the above method.', UMM_SLUG) . '</li>   
+    <li>' . __('<strong>Restore:</strong> Restore a backup which was generated using the above method.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Generate SQL:</strong> Generates the SQL needed for restoring usermeta data from a database manager, such as phpMyAdmin. Produces a code which can be copied and pasted.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Generate PHP:</strong> Generates the PHP code needed for restoring usermeta data from a PHP file. Copy and paste the code to a PHP file, save it in the root WordPress directory, and run via a Browser.', UMM_SLUG) . '</li>
-    <li>' . __('<strong>Generate PHP Restoration File:</strong> Generates a PHP-formatted restoration file on the server in the wp-content/user-meta-manager/backups folder. The generated file can be run from the browser. You will be prompted before restoration will commence.', UMM_SLUG) . '</li>   
+    <li>' . __('<strong>Generate PHP Restoration File:</strong> Generates a PHP-formatted restoration file on the server in the wp-content/user-meta-manager/backups folder. The generated file can be run from the browser. You will be prompted before restoration will commence.', UMM_SLUG) . '</li>
     <li>' . __('<strong>Delete Backup Files:</strong> Delete ALL existing backup files from the server.', UMM_SLUG) . '</li>
     </ol>'
-    ),
-    
-    array(
-        __('Short Codes', UMM_SLUG),
-        '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
+        ),
+
+        array(
+            __('Short Codes', UMM_SLUG),
+            '<h2>' . __( 'Short Codes' ) . '</h2><p>' . __( 'A <em>Short Code</em> is a non-HTML code snippet, which can be added to Posts or Pages. The purpose for using a <em>short code</em> is to extend certain plugin features to the Post or Page in which it is inserted.', UMM_SLUG) . '</p>
         <p>' . __( 'Following is a list of the <em>short codes</em> for the User Meta Manager plugin, and their uses.</p>
     <h2>Display User Meta Data</h2>
     <p><strong>Display a single meta key, or core user data for a particular user:</strong>
@@ -457,18 +458,18 @@ The above example produces a list of users, displaying the meta keys listed in t
 <pre>[useraccess users="1 22 301" message="You do not have permission to view this content."][usermeta class="my-form-css-class" submit="Submit" success="Update successful!" error="An error occurred!" fields="test1, test2" vars="one=1&amp;amp;two=2&amp;amp;three=3" email_to="" email_from="" subject="Your email subject" message="A brief introduction.\n\n%s\n\nBest regards,\nWebsite Administrator"][/useraccess]</pre>
 In the above example, only members with a matching user id can access the meta data form.</p>
 <h2>One Code To Rule Them All!</h2>
-<p>Version 3.1.3 adds the <strong>[umm]</strong> short code, which can replace any of the above short codes.</p> 
+<p>Version 3.1.3 adds the <strong>[umm]</strong> short code, which can replace any of the above short codes.</p>
 <pre>[umm meta]</pre>
 The <strong>meta</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[usermeta]</strong> short code, and accepts the same arguments also.
 <pre>[umm access]</pre>
 The <strong>access</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[useraccess]</strong> short code, and accepts the same arguments also.
 <pre>[umm query]</pre>
 The <strong>query</strong> attribute causes the <strong>[umm]</strong> short code to function exactly like the <strong>[ummquery]</strong> short code, and accepts the same arguments also.
-<p>Additionally, the <strong>[umm]</strong> short code will perform the following functions -</p> 
+<p>Additionally, the <strong>[umm]</strong> short code will perform the following functions -</p>
 <h3>Display User Profile Editor</h3>
 <p>The <strong>[umm]</strong> short code can be used to display the entire user profile editor anyplace a short code can be used.</p>
 <pre>[umm profile]</pre>
-<p>The above example displays the entire user profile editor.</p> 
+<p>The above example displays the entire user profile editor.</p>
 <p>Using the <strong>hide</strong> attribute, you can hide any part of the page. The hide attribute accepts any <a href="http://api.jquery.com/category/selectors/" target="_blank">selectors jQuery accepts</a>. You can list any number of objects to hide. The list must be comma-delimited.</p>
 <pre>[umm profile hide="h3:contains(\'Personal Options\'), table:contains(\'Admin Color Scheme\'), h3:contains(\'Name\'), table:contains(\'Username\'), h3:contains(\'Contact Info\'), table:contains(\'Website\'), tr:contains(\'Password\')"]</pre>
 <p>The example above hides several sections of the profile editor.</p>
@@ -490,11 +491,11 @@ The <strong>redirect</strong> attribute can be used to send the user to a specif
 The <strong>redirect</strong> attribute can be used to send the user to a specific URL address on login/logout.
 <pre>[umm loginout redirect="http://homeurl"]</pre>
     ', UMM_SLUG)
-    ),
-    
-    array(
-        __('PHP API', UMM_SLUG),
-        '<h2>' . __('PHP API', UMM_SLUG) . '</h2><p>' . __( 'Below are some PHP methods you can use to test User Meta Manager data.', UMM_SLUG) . '</p>
+        ),
+
+        array(
+            __('PHP API', UMM_SLUG),
+            '<h2>' . __('PHP API', UMM_SLUG) . '</h2><p>' . __( 'Below are some PHP methods you can use to test User Meta Manager data.', UMM_SLUG) . '</p>
         <ul class="umm-methods-list">
         <li><strong class="umm-method">umm_value_contains($key, $search_for, $exact, $user_id)</strong>
         <p>' . __('Test if a meta value contains a string.', UMM_SLUG) . '</p>
@@ -530,34 +531,34 @@ if(umm_value_is($meta_key_to_test, $string_to_match)){
 }</pre></li>
 </ul>
         '
-    ),
-    
-    array(
-        __('Form Short Code Builder', UMM_SLUG),
-        '<h2>' . __('Form Short Code Builder', UMM_SLUG) . '</h2>'
-        . umm_shortcode_builder()
-    ),
-    
-    array(
-        __('License', UMM_SLUG),
-        __( '<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty expressed or implied. Always backup your database before making changes.</p>
+        ),
+
+        array(
+            __('Form Short Code Builder', UMM_SLUG),
+            '<h2>' . __('Form Short Code Builder', UMM_SLUG) . '</h2>'
+            . umm_shortcode_builder()
+        ),
+
+        array(
+            __('License', UMM_SLUG),
+            __( '<p><strong>Disclaimer:</strong><br/>Use at your own risk. No warranty expressed or implied. Always backup your database before making changes.</p>
         <p><strong>License:</strong><br/>&copy;2014+ <a href="http://jasonlau.biz" target="_blank">http://jasonlau.biz</a></p>
         <p>User Meta Manager (free version) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</p>
         <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
         <p>See the GNU General Public License for more details.<br /><a href="http://www.gnu.org/licenses/gpl.html" target="_blank">http://www.gnu.org/licenses/gpl.html</a></p>', UMM_SLUG)
-    )
-        
+        )
+
     );
-    
+
     $x = 1;
     foreach($tabs as $tab):
         $screen->add_help_tab(array(
-          'id'	=> 'umm_help_tab_' . $x,
-          'title'	=> __($tab[0]),
-          'content'	=> __($tab[1])
+            'id'	=> 'umm_help_tab_' . $x,
+            'title'	=> __($tab[0]),
+            'content'	=> __($tab[1])
         ));
         $x++;
     endforeach;
-    
+
 }
 ?>
